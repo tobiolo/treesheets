@@ -228,6 +228,7 @@ enum {
     A_DEFBGCOL,
     A_THINSELC,
     A_COPYCT,
+    A_PASTECT,
     A_MINISIZE,
     A_CUSTKEY,
     A_AUTOEXPORT,
