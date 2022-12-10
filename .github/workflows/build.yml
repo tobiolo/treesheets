@@ -3,10 +3,10 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - pastect
   pull_request:
     branches:
-      - master
+      - pastect
 
 jobs:
   build-linux:
@@ -46,19 +46,19 @@ jobs:
     - name: zip
       run: zip -r linux_treesheets_${{ matrix.cxx }}.zip TreeSheets-relocatable
     - name: upload build artifacts
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/pastect'
       uses: actions/upload-artifact@v1
       with:
         name: Linux TreeSheets ${{ matrix.cxx }}
         path: linux_treesheets_${{ matrix.cxx }}.zip
     - name: Create release
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/pastect'
       uses: ncipollo/release-action@v1
       with:
         tag: ${{ github.run_id }}
         allowUpdates: true
         omitBody: true
-        commit: master
+        commit: pastect
         artifacts: "linux_treesheets_${{ matrix.cxx }}.zip"
 
   build-windows:
@@ -94,19 +94,19 @@ jobs:
         script-file: "TS_installer.nsi"
         arguments: "/V3"
     - name: upload build artifacts
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/pastect'
       uses: actions/upload-artifact@v1
       with:
         name: Windows TreeSheets (installer)
         path: Treesheets_Setup.exe
     - name: Create release
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/pastect'
       uses: ncipollo/release-action@v1
       with:
         tag: ${{ github.run_id }}
         allowUpdates: true
         omitBody: true
-        commit: master
+        commit: pastect
         artifacts: "Treesheets_Setup.exe"
 
   build-mac:
@@ -139,17 +139,17 @@ jobs:
         rm -rf build/Build/Products/Release/TreeSheets.app.dSYM
         zip -r ../../mac_treesheets.zip build/Build/Products/Release
     - name: upload build artifacts
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/pastect'
       uses: actions/upload-artifact@v2
       with:
         name: Mac TreeSheets
         path: mac_treesheets.zip
     - name: Create release
-      if: github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/pastect'
       uses: ncipollo/release-action@v1
       with:
         tag: ${{ github.run_id }}
         allowUpdates: true
         omitBody: true
-        commit: master
+        commit: pastect
         artifacts: "mac_treesheets.zip"
