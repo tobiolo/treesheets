@@ -47,19 +47,16 @@ typedef unsigned int uint;
         if (v < (s)) v = (s); \
     }
 
-#ifdef WIN32
+#ifdef __WXMSW__
 #define PATH_SEPERATOR L"\\"
-#define LINE_SEPERATOR L"\r\n"
 #else
 #define PATH_SEPERATOR L"/"
-#ifdef __WXMAC__
-#define LINE_SEPERATOR L"\r"
-#else
-#define LINE_SEPERATOR L"\n"
 #endif
+
+#define LINE_SEPERATOR L"\n"
+
 #define __cdecl
 #define _vsnprintf vsnprintf
-#endif
 
 template <class T>
 inline void swap_(T &a, T &b) {
