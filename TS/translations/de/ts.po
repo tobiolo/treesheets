@@ -61,6 +61,9 @@ msgstr "&Text mit Kommata als Trennzeichen (CSV)..."
 msgid "&Copy\tCTRL+c"
 msgstr "&Kopieren\tCTRL+c"
 
+msgid "Paste As Continuous Text\tCTRL+ALT+v"
+msgstr "Als durchgängigen Text einfügen\tCTRL+ALT+v"
+
 #: myframe.h:587
 msgid "&Data\tCTRL+ALT+d"
 msgstr "&Daten\tCTRL+ALT+d"
