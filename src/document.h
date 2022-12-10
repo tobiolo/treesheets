@@ -1326,10 +1326,15 @@ struct Document {
                 return nullptr;
 
             case A_PASTE:
+            case A_PASTECT:
                 if (!(c = selected.ThinExpand(this))) return OneCell();
                 if (wxTheClipboard->Open()) {
                     wxTheClipboard->GetData(*dataobjc);
-                    PasteOrDrop();
+                    if (k == A_PASTECT) {
+                        PasteOrDrop(true);
+                    } else {
+                        PasteOrDrop();
+                    }
                     wxTheClipboard->Close();
                 } else if (sys->cellclipboard) {
                     c->Paste(this, sys->cellclipboard.get(), selected);
@@ -1783,7 +1788,7 @@ struct Document {
 
     void PasteSingleText(Cell *c, const wxString &t) { c->text.Insert(this, t, selected); }
 
-    void PasteOrDrop() {
+    void PasteOrDrop(bool pastect = false) {
         Cell *c = selected.ThinExpand(this);
         if (!c) return;
         wxBusyCursor wait;
@@ -1826,11 +1831,18 @@ struct Document {
             default:  // several text formats
                 if (dataobjt->GetText() != wxEmptyString) {
                     wxString s = dataobjt->GetText();
-                    if ((sys->clipboardcopy == s) && sys->cellclipboard) {
+                    if (!pastect and (sys->clipboardcopy == s) and sys->cellclipboard) {
                         c->Paste(this, sys->cellclipboard.get(), selected);
                         Refresh();
                     } else {
-                        const wxArrayString &as = wxStringTokenize(s, LINE_SEPERATOR);
+                        wxString seperator;
+                        if(pastect) {
+                            s.Replace(LINE_SEPERATOR, L" ");
+                            seperator = L"\0";
+                        } else {
+                            seperator = LINE_SEPERATOR;
+                        }
+                        const wxArrayString &as = wxStringTokenize(s, seperator);
                         if (as.size()) {
                             if (as.size() <= 1) {
                                 c->AddUndo(this);
