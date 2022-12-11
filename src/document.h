@@ -1739,8 +1739,8 @@ struct Document {
     void PasteSingleText(Cell *c, const wxString &t) { c->text.Insert(this, t, selected); }
 
     void PasteOrDrop(bool pastect = false) {
-        Cell *c = selected.GetCell();
-        if (!(c = selected.ThinExpand(this))) return;
+        Cell *c = selected.ThinExpand(this);
+        if (!c) return;
         wxBusyCursor wait;
         switch (dataobjc->GetReceivedFormat().GetType()) {
             case wxDF_FILENAME: {
