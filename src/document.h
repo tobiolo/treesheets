@@ -1510,6 +1510,7 @@ struct Document {
                     if (c->text.image)
                         c->text.image->ResetScale(sys->frame->csf);
                 selected.g->cell->ResetChildren();
+                c->ResetLayout();
                 Refresh();
                 return nullptr;
             }
