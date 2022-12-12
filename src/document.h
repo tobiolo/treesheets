@@ -1647,7 +1647,16 @@ struct Document {
                 return nullptr;
 
             case A_FILTERBYCELLBG: 
-                FilterByCellColor(c); 
+                uint cellcolor = c->cellcolor;
+                loopallcells(ci) {
+                    if(ci->cellcolor != cellcolor) {
+                        ci->text.filtered = true;
+                    } else {
+                        ci->text.filtered = false;
+                    }
+                }
+                rootgrid->ResetChildren();
+                Refresh();
                 return nullptr;
         }
 
@@ -2023,18 +2032,5 @@ struct Document {
         loopallcells(c) c->text.filtered = on && !c->text.IsInSearch();
         rootgrid->ResetChildren();
         Refresh();
-    }
-
-    void FilterByCellColor(Cell *cell) {
-       uint cellcolor = cell->cellcolor;
-       loopallcells(c) {
-         if(c->cellcolor != cellcolor) {
-            c->text.filtered = true;
-         } else {
-            c->text.filtered = false;
-         }
-       }
-       rootgrid->ResetChildren();
-       Refresh();
     }
 };
