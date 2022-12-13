@@ -1651,6 +1651,9 @@ struct Document {
                 rootgrid->ResetChildren();
                 Refresh();
                 return nullptr;
+
+            case A_FILTERMATCHNEXT:
+                return FilterMatchNext(dc);
         }
 
         if (!selected.TextEdit()) return _(L"only works in cell text mode");
@@ -1715,6 +1718,17 @@ struct Document {
         Cell *next =
             rootgrid->FindNextSearchMatch(sys->searchstring, nullptr, selected.GetCell(), lastsel);
         if (!next) return _(L"No matches for search.");
+        selected = next->parent->grid->FindCell(next);
+        sw->SetFocus();
+        ScrollOrZoom(dc, true);
+        return nullptr;
+    }
+
+    const wxChar *FilterMatchNext(wxDC &dc) {
+        bool lastsel = true;
+        Cell *next =
+            rootgrid->FindNextFilterMatch(nullptr, selected.GetCell(), lastsel);
+        if(!next) return _(L"No matches for filter.");
         selected = next->parent->grid->FindCell(next);
         sw->SetFocus();
         ScrollOrZoom(dc, true);
