@@ -84,6 +84,7 @@ struct Document {
     int editfilter;
 
     Vector<Cell *> itercells;
+    Vector<Cell *> queuedcells;
 
     wxDateTime lastmodificationtime;
 
@@ -132,6 +133,7 @@ struct Document {
 
     ~Document() {
         itercells.setsize_nd(0);
+        queuedcells.setsize_nd(0);
         DELETEP(rootgrid);
     }
 
@@ -1509,6 +1511,32 @@ struct Document {
                 selected.HomeEnd(this, dc, k == A_HOME || k == A_CHOME);
                 return nullptr;
 
+            case A_IMAGESCP:
+            case A_IMAGESCF: {
+                queuedcells.setsize_nd(0);
+                loopallcellssel(c, true) if(c->text.image) queuedcells.push() = c;
+
+                if(queuedcells.size() > 0) {
+                    long v = wxGetNumberFromUser(
+                        _(L"Please enter the percentage you want the image scaled by:"), L"%",
+                        _(L"Image Resize"), 50, 5, 400, sys->frame);
+                    if (v < 0) return nullptr;
+                    auto sc = v / 100.0;
+                    loopv(_i, queuedcells) for (Cell *c = queuedcells[_i]; c; c = nullptr) {
+                        if (k == A_IMAGESCP) {
+                            c->text.image->BitmapScale(sc);
+                        } else {
+                            c->text.image->DisplayScale(sc);
+                        }
+                        c->ResetLayout();
+                    }
+                    Refresh();    
+                    return nullptr;
+                } else {
+                    return _(L"No image found in selection.");
+                }
+            }
+
             case A_IMAGESCN: {
                 loopallcellssel(c, true)
                     if (c->text.image) {
@@ -1587,24 +1615,6 @@ struct Document {
                 if (!c->text.image) return _(L"No image in this cell.");
                 return CopyImageToClipboard(c);
             }            
-
-            case A_IMAGESCP:
-            case A_IMAGESCF: {
-                if (!c->text.image) return _(L"No image in this cell.");
-                long v = wxGetNumberFromUser(
-                    _(L"Please enter the percentage you want the image scaled by:"), L"%",
-                    _(L"Image Resize"), 50, 5, 400, sys->frame);
-                if (v < 0) return nullptr;
-                auto sc = v / 100.0;
-                if (k == A_IMAGESCP) {
-                    c->text.image->BitmapScale(sc);
-                } else {
-                    c->text.image->DisplayScale(sc);
-                }
-                c->ResetLayout();
-                Refresh();
-                return nullptr;
-            }
 
             case A_ENTERGRID:
                 if (!c->grid) Action(dc, A_NEWGRID);
