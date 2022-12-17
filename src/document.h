@@ -1507,10 +1507,11 @@ struct Document {
 
             case A_IMAGESCN: {
                 loopallcellssel(c, true)
-                    if (c->text.image)
+                    if (c->text.image) {
                         c->text.image->ResetScale(sys->frame->csf);
-                selected.g->cell->ResetChildren();
-                c->ResetLayout();
+                        c->ResetChildren();
+                        c->ResetLayout();
+                    }
                 Refresh();
                 return nullptr;
             }
