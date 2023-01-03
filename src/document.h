@@ -1680,6 +1680,12 @@ struct Document {
                 Refresh();
                 return nullptr;
 
+            case A_FILTERBYCELLBG_TB:
+                loopallcells(ci) ci->text.filtered = ci->cellcolor != sys->lastcellcolor;
+                rootgrid->ResetChildren();
+                Refresh();
+                return nullptr;
+
             case A_FILTERMATCHNEXT:
                 bool lastsel = true;
                 Cell *next =

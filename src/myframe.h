@@ -695,6 +695,7 @@ struct MyFrame : wxFrame {
             tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Cell ")));
             celldd = new ColorDropdown(tb, A_CELLCOLOR, csf, 1);
             tb->AddControl(celldd);
+            AddTBIcon(_(L"Filter by cell background"), A_FILTERBYCELLBG_TB, iconpath + L"zoom.png");
             SEPARATOR;
             tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Text ")));
             textdd = new ColorDropdown(tb, A_TEXTCOLOR, csf, 2);
