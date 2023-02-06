@@ -565,6 +565,8 @@ struct MyFrame : wxFrame {
         optmenu->Check(A_FSWATCH, sys->fswatch);
         optmenu->AppendCheckItem(A_AUTOEXPORT, _(L"Automatically export a .html on every save"));
         optmenu->Check(A_AUTOEXPORT, sys->autohtmlexport);
+        optmenu->AppendCheckItem(A_JPEG_DEFAULT_IMAGETYPE, _(L"Save images as JPEG"));
+        optmenu->Check(A_JPEG_DEFAULT_IMAGETYPE, sys->defaultimagetype == wxBITMAP_TYPE_JPEG);
         optmenu->AppendSeparator();
         optmenu->AppendCheckItem(A_CENTERED, _(L"Render document centered"));
         optmenu->Check(A_CENTERED, sys->centered);
@@ -963,6 +965,10 @@ struct MyFrame : wxFrame {
                 break;
             case A_AUTOEXPORT:
                 sys->cfg->Write(L"autohtmlexport", sys->autohtmlexport = ce.IsChecked());
+                break;
+            case A_JPEG_DEFAULT_IMAGETYPE:
+                sys->defaultimagetype = (ce.IsChecked()) ? wxBITMAP_TYPE_JPEG : wxBITMAP_TYPE_PNG;
+                sys->cfg->Write(L"jpegdefault", ce.IsChecked());
                 break;
             case A_FASTRENDER:
                 sys->cfg->Write(L"fastrender", sys->fastrender = ce.IsChecked());

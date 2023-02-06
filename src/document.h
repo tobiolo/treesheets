@@ -89,13 +89,13 @@ struct Document {
 
     #define loopcellsin(par, c) \
         CollectCells(par);      \
-        loopv(_i, itercells) for (Cell *c = itercells[_i]; c; c = nullptr)
+        loopv(_i, itercells) for (Cell *&c = itercells[_i]; c; c = nullptr)
     #define loopallcells(c)     \
         CollectCells(rootgrid); \
-        loopv(_i, itercells) for (Cell *c = itercells[_i]; c; c = nullptr)
+        loopv(_i, itercells) for (Cell *&c = itercells[_i]; c; c = nullptr)
     #define loopallcellssel(c, rec) \
         CollectCellsSel(rec);     \
-        loopv(_i, itercells) for (Cell *c = itercells[_i]; c; c = nullptr)
+        loopv(_i, itercells) for (Cell *&c = itercells[_i]; c; c = nullptr)
 
     Document()
         : sw(nullptr),
@@ -176,6 +176,8 @@ struct Document {
                         sfn.wx_str(), wxOK, sys->frame);
                 return _(L"Error writing to file.");
             }
+            wxBitmapType imt;
+
             wxDataOutputStream sos(fos);
             fos.Write("TSFF", 4);
             char vers = TS_VERSION;
@@ -186,19 +188,31 @@ struct Document {
             loopv(i, sys->imagelist) {
                 Image &image = *sys->imagelist[i];
                 if (image.trefc) {
-                    fos.Write("I", 1);
+                    imt = sys->defaultimagetype;
+                    fos.Write(imagetypeidentifiers[imt][0], 1);
                     sos.WriteDouble(image.display_scale);
-                    if (image.png_data.empty()) {
+                    if (image.image_type != imt || image.image_data.empty()) {
+                        image.image_type = imt;
                         wxImage im = image.bm_orig.ConvertToImage();
-                        im.SaveFile(fos, wxBITMAP_TYPE_PNG);
+                        im.SaveFile(fos, imt);
+
+                        wxMemoryOutputStream mos;
+                        off_t beforeimage = mos.TellO();
+                        im.SaveFile(mos, imt);
+                        off_t afterimage = mos.TellO();
+                        auto sz = afterimage - beforeimage;
+                        image.image_data.resize(sz);
+                        mos.SeekO(beforeimage);
+                        mos.CopyTo(image.image_data.data(), image.image_data.size());
+                        mos.SeekO(afterimage);
+                        mos.Close();
                     } else {
-                        // We have a copy of the PNG data loaded.. this is WAY faster
-                        // than recompressing (~30x on image heavy files).
-                        fos.Write(image.png_data.data(), image.png_data.size());
+                        fos.Write(image.image_data.data(), image.image_data.size());
                     }
                     image.savedindex = realindex++;
                 }
             }
+
             fos.Write("D", 1);
             wxZlibOutputStream zos(fos, 9);
             if (!zos.IsOk()) return _(L"Zlib error while writing file.");
@@ -830,17 +844,18 @@ struct Document {
         return nullptr;
     }
 
-    const wxChar* CopyImageToClipboard(Cell *cell) {
+    const wxChar* CopyImageToClipboard(Cell *&cell) {
         if (wxTheClipboard->Open()) {
             #ifdef __WXGTK__
-            if (!cell->text.image->png_data.empty()) {
-                wxCustomDataObject *pngimage = new wxCustomDataObject(wxDF_BITMAP);
-                pngimage->SetData(cell->text.image->png_data.size(), cell->text.image->png_data.data());
-                wxTheClipboard->SetData(pngimage);
+            Image *im = cell->text.image;
+            if (!im->image_data.empty() && imagetypeidentifiers.find(im->image_type) != imagetypeidentifiers.end()) {
+                wxCustomDataObject *image = new wxCustomDataObject(imagetypeidentifiers[im->image_type][1]);
+                image->SetData(im->image_data.size(), im->image_data.data());
+                wxTheClipboard->SetData(image);
             } else
             #endif
             {
-                wxTheClipboard->SetData(new wxBitmapDataObject(cell->text.image->bm_orig));    
+                wxTheClipboard->SetData(new wxBitmapDataObject(im->bm_orig));    
             }
             wxTheClipboard->Close();
         }
@@ -1987,7 +2002,7 @@ struct Document {
 
     void SetImageBM(Cell *c, const wxImage &im, double sc) {
         vector<uint8_t> empty;
-        c->text.image = sys->imagelist[sys->AddImageToList(im, sc, std::move(empty))];
+        c->text.image = sys->imagelist[sys->AddImageToList(im, sc, std::move(empty), im.GetType())];
     }
 
     bool LoadImageIntoCell(const wxString &fn, Cell *c, double sc) {
