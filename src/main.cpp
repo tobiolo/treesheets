@@ -32,7 +32,7 @@ static uint celltextcolors[] = {
 };
 #define CUSTOMCOLORIDX 0
 
-enum { TS_VERSION = 19, TS_TEXT = 0, TS_GRID, TS_BOTH, TS_NEITHER };
+enum { TS_VERSION = 20, TS_TEXT = 0, TS_GRID, TS_BOTH, TS_NEITHER };
 
 enum {
     A_NEW = 500,
@@ -233,6 +233,7 @@ enum {
     A_MINISIZE,
     A_CUSTKEY,
     A_AUTOEXPORT,
+    A_JPEG_DEFAULT_IMAGEFORMAT,
     A_NOP,
     A_TAGSET = 1000,  // and all values from here on
     A_SCRIPT = 2000,  // and all values from here on

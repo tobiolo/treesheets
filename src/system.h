@@ -3,6 +3,7 @@ struct Image {
     wxBitmap bm_orig;
     wxBitmap bm_display;
     vector<uint8_t> png_data;
+    vector<uint8_t> jpeg_data;
 
     int trefc = 0;
     int savedindex = -1;
@@ -16,21 +17,28 @@ struct Image {
 
     long last_display = 0;
 
-    Image(wxBitmap _bm, uint64_t _hash, double _sc, vector<uint8_t> &&pd)
-        : bm_orig(_bm), png_data(std::move(pd)), hash(_hash), display_scale(_sc) {}
+    Image(wxBitmap _bm, uint64_t _hash, double _sc, vector<uint8_t> &&pd, const bool &isjpeg)
+        : bm_orig(_bm), hash(_hash), display_scale(_sc) {
+            if (isjpeg) {
+                this->jpeg_data = std::move(pd);
+            } else {
+                this->png_data = std::move(pd);
+            } 
+        }
 
-    void BitmapScale(double sc) {
+    void BitmapScale(const double &sc) {
         ScaleBitmap(bm_orig, sc, bm_orig);
         png_data.clear();
+        jpeg_data.clear();
         bm_display = wxNullBitmap;
     }
 
-    void DisplayScale(double sc) {
+    void DisplayScale(const double &sc) {
         display_scale /= sc;
         bm_display = wxNullBitmap;
     }
 
-    void ResetScale(double sc) {
+    void ResetScale(const double &sc) {
         display_scale = sc;
         bm_display = wxNullBitmap;
     }
@@ -87,6 +95,7 @@ struct System {
     bool centered;
     bool fswatch;
     bool autohtmlexport;
+    bool jpegdefaultimageformat;
 
     int sortcolumn, sortxs, sortdescending;
 
@@ -138,6 +147,7 @@ struct System {
           centered(true),
           fswatch(true),
           autohtmlexport(false),
+          jpegdefaultimageformat(true),
           insidefiledialog(false) {
         static const wxDash glpattern[] = {1, 3};
         pen_gridlines.SetDashes(2, glpattern);
@@ -326,7 +336,29 @@ struct System {
                             if (!fis.IsOk()) png_data.clear();
                             fis.SeekI(afterpng);
                         }
-                        loadimageids.push() = AddImageToList(im, sc, std::move(png_data));
+                        loadimageids.push() = AddImageToList(im, sc, std::move(png_data), false);
+                        break;
+                    }
+
+                    case 'J': {
+                        wxDataInputStream dis(fis);
+                        wxImage im;
+                        double sc = versionlastloaded >= 20 ? dis.ReadDouble() : 1.0;
+                        vector<uint8_t> jpeg_data;
+                        off_t beforejpeg = fis.TellI();
+                        bool ok = im.LoadFile(fis);
+                        if(!ok) {
+                            return _(L"Cannot load JPEG file.");
+                        } else {
+                            off_t afterjpeg = fis.TellI();
+                            fis.SeekI(beforejpeg);
+                            auto sz = afterjpeg - beforejpeg;
+                            jpeg_data.resize(sz);
+                            fis.Read(jpeg_data.data(), jpeg_data.size());
+                            if (!fis.IsOk()) jpeg_data.clear();
+                            fis.SeekI(afterjpeg);
+                        }
+                        loadimageids.push() = AddImageToList(im, sc, std::move(jpeg_data), true);
                         break;
                     }
 
@@ -587,12 +619,12 @@ struct System {
         return (int)as.size();
     }
 
-    int AddImageToList(const wxImage &im, double sc, vector<uint8_t> &&pd) {
+    int AddImageToList(const wxImage &im, double sc, vector<uint8_t> &&pd, const bool &isjpeg) {
         auto hash = FNV1A64(string_view((char *)im.GetData(), im.GetWidth() * im.GetHeight() * 3));
         loopv(i, imagelist) {
             if (imagelist[i]->hash == hash) return i;
         }
-        imagelist.push() = new Image(wxBitmap(im), hash, sc, std::move(pd));
+        imagelist.push() = new Image(wxBitmap(im), hash, sc, std::move(pd), isjpeg);
         return imagelist.size() - 1;
     }
 
