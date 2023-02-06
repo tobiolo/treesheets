@@ -1670,3 +1670,9 @@ msgstr "Skalierung:"
 #: document.h:903
 msgid "size:"
 msgstr "Größe:"
+
+msgid "Save images as JPEG"
+msgstr "Bilder als JPEG speichern"
+
+msgid "Unknown identifer for data"
+msgstr "Unbekannter Bezeichner für Daten"
