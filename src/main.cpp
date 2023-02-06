@@ -1,5 +1,7 @@
 
 #include "stdafx.h"
+#include <wx/mstream.h>
+#include <map>
 
 #ifndef __WXMSW__
 #define SIMPLERENDER
@@ -32,7 +34,7 @@ static uint celltextcolors[] = {
 };
 #define CUSTOMCOLORIDX 0
 
-enum { TS_VERSION = 19, TS_TEXT = 0, TS_GRID, TS_BOTH, TS_NEITHER };
+enum { TS_VERSION = 20, TS_TEXT = 0, TS_GRID, TS_BOTH, TS_NEITHER };
 
 enum {
     A_NEW = 500,
@@ -233,6 +235,7 @@ enum {
     A_MINISIZE,
     A_CUSTKEY,
     A_AUTOEXPORT,
+    A_JPEG_DEFAULT_IMAGETYPE,
     A_NOP,
     A_TAGSET = 1000,  // and all values from here on
     A_SCRIPT = 2000,  // and all values from here on
@@ -245,6 +248,16 @@ enum {
     STYLE_FIXED = 4,
     STYLE_UNDERLINE = 8,
     STYLE_STRIKETHRU = 16
+};
+
+std::map<char, wxBitmapType> imagetypes = {
+    { 'I', wxBITMAP_TYPE_PNG },
+    { 'J', wxBITMAP_TYPE_JPEG }
+};
+
+std::map<wxBitmapType, vector<wxString>> imagetypeidentifiers = {
+    { wxBITMAP_TYPE_PNG, {"I", "image/png"} },
+    { wxBITMAP_TYPE_JPEG, {"J", "image/jpeg"} }
 };
 
 #include "script_interface.h"
