@@ -1052,7 +1052,7 @@ struct Document {
             case A_CASESENSITIVESEARCH: {
                 sys->casesensitivesearch = !(sys->casesensitivesearch);
                 sys->cfg->Write(L"casesensitivesearch", sys->casesensitivesearch);
-                sys->frame->search(sys->searchstring);
+                this->Refresh();
                 return nullptr;
             }
 
