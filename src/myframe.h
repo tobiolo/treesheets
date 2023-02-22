@@ -1036,6 +1036,7 @@ struct MyFrame : wxFrame {
     }
 
     void search(wxString searchstring) {
+        sys->darkennonmatchingcells = (searchstring.Len() != 0);
         sys->searchstring = searchstring;
         Document *doc = GetCurTab()->doc;
         doc->selected.g = nullptr;
