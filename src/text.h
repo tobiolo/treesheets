@@ -8,7 +8,7 @@ struct Text {
     Image *image;
 
     wxDateTime lastedit;
-    bool filtered;
+    bool filtered, searchfound;
 
     Text()
         : cell(nullptr),
@@ -17,7 +17,8 @@ struct Text {
           stylebits(0),
           extent(0),
           image(nullptr),
-          filtered(false) {
+          filtered(false),
+          searchfound(false) {
         WasEdited();
     }
 
@@ -177,6 +178,7 @@ struct Text {
         else
             return sys->searchstring.Len() && t.Lower().Find(sys->searchstring.Lower()) >= 0;
     }
+    
     int Render(Document *doc, int bx, int by, int depth, wxDC &dc, int &leftoffset,
                int maxcolwidth) {
         int ixs = 0, iys = 0;
@@ -197,12 +199,9 @@ struct Text {
         leftoffset = h;
         int i = 0;
         int lines = 0;
-        bool searchfound = IsInSearch();
         bool istag = cell->IsTag(doc);
         if (cell->tiny) {
-            if (searchfound)
-                dc.SetPen(*wxRED_PEN);
-            else if (filtered)
+            if (filtered)
                 dc.SetPen(*wxLIGHT_GREY_PEN);
             else if (istag)
                 dc.SetPen(*wxBLUE_PEN);
@@ -232,9 +231,7 @@ struct Text {
                     }
                 }
             } else {
-                if (searchfound)
-                    dc.SetTextForeground(*wxRED);
-                else if (filtered)
+                if (filtered)
                     dc.SetTextForeground(*wxLIGHT_GREY);
                 else if (istag)
                     dc.SetTextForeground(*wxBLUE);
