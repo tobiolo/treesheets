@@ -233,7 +233,7 @@ struct System {
         c->cellcolor = 0xCCDCE2;
         c->grid->InitCells();
         Document *doc = NewTabDoc();
-        doc->InitWith(c, L"");
+        doc->InitWith(c, L"", nullptr);
         return doc->rootgrid;
     }
 
@@ -267,6 +267,7 @@ struct System {
 
         {  // limit destructors
             wxBusyCursor wait;
+            Cell *ics = nullptr;
             wxFFileInputStream fis(fn);
             if (!fis.IsOk()) return _(L"Cannot open file.");
 
@@ -353,7 +354,7 @@ struct System {
                         if (!zis.IsOk()) return _(L"Cannot decompress file.");
                         wxDataInputStream dis(zis);
                         int numcells = 0, textbytes = 0;
-                        Cell *root = Cell::LoadWhich(dis, nullptr, numcells, textbytes);
+                        Cell *root = Cell::LoadWhich(dis, nullptr, numcells, textbytes, ics);
                         if (!root) return _(L"File corrupted!");
 
                         doc = NewTabDoc(true);
@@ -362,7 +363,7 @@ struct System {
                                 -1;  // if not, user will lose tmp without warning when he closes
                             doc->modified = true;
                         }
-                        doc->InitWith(root, filename);
+                        doc->InitWith(root, filename, ics);
 
                         if (versionlastloaded >= 11) {
                             for (;;) {
@@ -389,9 +390,7 @@ struct System {
     done:
 
         FileUsed(filename, doc);
-
-        doc->ClearSelectionRefresh();
-
+        doc->Refresh();
         if (anyimagesfailed)
             wxMessageBox(
                 _(L"PNG decode failed on some images in this document\nThey have been replaced by red squares."),

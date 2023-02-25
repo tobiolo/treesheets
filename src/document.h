@@ -137,9 +137,20 @@ struct Document {
 
     uint Background() { return rootgrid ? rootgrid->cellcolor : 0xFFFFFF; }
 
-    void InitWith(Cell *r, wxString filename) {
+    void InitWith(Cell *r, wxString filename, Cell *ics) {
         rootgrid = r;
-        selected = Selection(r->grid, 0, 0, 1, 1);
+        if(ics) {
+            Grid* ipg = ics->parent->grid;
+            if(ipg) {
+                foreachcellingrid(c, ipg) {
+                    if(c == ics) {
+                        selected = Selection(ipg, x, y, 1, 1);
+                    }
+                }
+            }
+        } else {
+            selected = Selection(r->grid, 0, 0, 1, 1);
+        }
         ChangeFileName(filename, false);
     }
 
@@ -159,7 +170,7 @@ struct Document {
 
     const wxChar *SaveDB(bool *success, bool istempfile = false, int page = -1) {
         if (filename.empty()) return _(L"Save cancelled.");
-
+        Cell *ocs = selected.GetFirst();
         auto start_saving_time = wxGetLocalTimeMillis();
 
         {  // limit destructors
@@ -206,7 +217,7 @@ struct Document {
             wxZlibOutputStream zos(fos, 9);
             if (!zos.IsOk()) return _(L"Zlib error while writing file.");
             wxDataOutputStream dos(zos);
-            rootgrid->Save(dos);
+            rootgrid->Save(dos, ocs);
             for (auto tagit = tags.begin(); tagit != tags.end(); ++tagit) {
                 dos.WriteString(tagit->first);
             }
