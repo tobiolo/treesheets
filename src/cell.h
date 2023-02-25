@@ -306,20 +306,25 @@ struct Cell {
         doc->AddUndo(this);
     }
 
-    void Save(wxDataOutputStream &dos) const {
+    void Save(wxDataOutputStream &dos, Cell *ocs) const {
         dos.Write8(celltype);
         dos.Write32(cellcolor);
         dos.Write32(textcolor);
         dos.Write8(drawstyle);
+        uint cellflags = 0x0;
         if (HasTextState()) {
-            dos.Write8(grid ? TS_BOTH : TS_TEXT);
+            cellflags = grid ? TS_BOTH : TS_TEXT;
+            if(this == ocs) cellflags |= TS_SELECTION_MASK;
+            dos.Write8(cellflags);
             text.Save(dos);
-            if (grid) grid->Save(dos);
+            if (grid) grid->Save(dos, ocs);
         } else if (grid) {
             dos.Write8(TS_GRID);
-            grid->Save(dos);
+            grid->Save(dos, ocs);
         } else {
-            dos.Write8(TS_NEITHER);
+            cellflags = TS_NEITHER;
+            if(this == ocs) cellflags |= TS_SELECTION_MASK;
+            dos.Write8(cellflags);
         }
     }
 
@@ -332,16 +337,16 @@ struct Cell {
         return grid;
     }
 
-    Cell *LoadGrid(wxDataInputStream &dis, int &numcells, int &textbytes) {
+    Cell *LoadGrid(wxDataInputStream &dis, int &numcells, int &textbytes, Cell *&ics) {
         int xs = dis.Read32();
         Grid *g = new Grid(xs, dis.Read32());
         grid = g;
         g->cell = this;
-        if (!g->LoadContents(dis, numcells, textbytes)) return nullptr;
+        if (!g->LoadContents(dis, numcells, textbytes, ics)) return nullptr;
         return this;
     }
 
-    static Cell *LoadWhich(wxDataInputStream &dis, Cell *_p, int &numcells, int &textbytes) {
+    static Cell *LoadWhich(wxDataInputStream &dis, Cell *_p, int &numcells, int &textbytes, Cell *&ics) {
         Cell *c = new Cell(_p, nullptr, dis.Read8());
         numcells++;
         if (sys->versionlastloaded >= 8) {
@@ -349,14 +354,18 @@ struct Cell {
             c->textcolor = dis.Read32() & 0xFFFFFF;
         }
         if (sys->versionlastloaded >= 15) c->drawstyle = dis.Read8();
-        int ts;
-        switch (ts = dis.Read8()) {
+        int ts = dis.Read8();
+        if(ts & TS_SELECTION_MASK) {
+            ics = c;
+            ts &= ~TS_SELECTION_MASK;
+        }
+        switch (ts) {
             case TS_BOTH:
             case TS_TEXT:
                 c->text.Load(dis);
                 textbytes += c->text.t.Len();
                 if (ts == TS_TEXT) return c;
-            case TS_GRID: return c->LoadGrid(dis, numcells, textbytes);
+            case TS_GRID: return c->LoadGrid(dis, numcells, textbytes, ics);
             case TS_NEITHER: return c;
             default: return nullptr;
         }

@@ -34,6 +34,8 @@ static uint celltextcolors[] = {
 
 enum { TS_VERSION = 20, TS_TEXT = 0, TS_GRID, TS_BOTH, TS_NEITHER };
 
+uint TS_SELECTION_MASK = 0x80;
+
 enum {
     A_NEW = 500,
     A_OPEN,
