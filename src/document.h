@@ -137,9 +137,19 @@ struct Document {
 
     uint Background() { return rootgrid ? rootgrid->cellcolor : 0xFFFFFF; }
 
-    void InitWith(Cell *r, wxString filename) {
+    void InitWith(Cell *r, wxString filename, Cell *ics) {
         rootgrid = r;
-        selected = Selection(r->grid, 0, 0, 1, 1);
+        if(ics) {
+            if(ics->parent->grid) {
+                foreachcellingrid(c, ics->parent->grid) {
+                    if(c == ics) {
+                        selected = Selection(ics->parent->grid, x, y, 1, 1);
+                    }
+                }
+            }
+        } else {
+            selected = Selection(r->grid, 0, 0, 1, 1);
+        }
         ChangeFileName(filename, false);
     }
 
@@ -159,7 +169,7 @@ struct Document {
 
     const wxChar *SaveDB(bool *success, bool istempfile = false, int page = -1) {
         if (filename.empty()) return _(L"Save cancelled.");
-
+        Cell *ocs = selected.GetFirst();
         auto start_saving_time = wxGetLocalTimeMillis();
 
         {  // limit destructors
@@ -206,7 +216,7 @@ struct Document {
             wxZlibOutputStream zos(fos, 9);
             if (!zos.IsOk()) return _(L"Zlib error while writing file.");
             wxDataOutputStream dos(zos);
-            rootgrid->Save(dos);
+            rootgrid->Save(dos, ocs);
             for (auto tagit = tags.begin(); tagit != tags.end(); ++tagit) {
                 dos.WriteString(tagit->first);
             }
@@ -1552,7 +1562,8 @@ struct Document {
                 size_t counter = 0, counterpos;
                 wxString oimgfn, imgfn;
                 loopallcellssel(c, true) {
-                    if (c->text.image) {
+                    Image *tim = c->text.image;
+                    if (tim) {
                         if(!oimgfn) { // first encounter
                             oimgfn = ::wxFileSelector(
                                 _(L"Choose image file to save:"), L"", L"", L"png",
@@ -1572,8 +1583,14 @@ struct Document {
                                 imgfn.wx_str(), wxOK, sys->frame);
                             return _(L"Error writing to file.");
                             }
-                        wxImage im = c->text.image->bm_orig.ConvertToImage();
-                        im.SaveFile(imagefs, wxBITMAP_TYPE_PNG);
+                        if (tim->image_type == 'I' && !tim->image_data.empty()) {
+                            // We have a copy of the image data loaded.. this is WAY faster
+                            // than recompressing (~30x on image heavy files).
+                            imagefs.Write(tim->image_data.data(), tim->image_data.size());
+                        } else {
+                            wxImage im = tim->bm_orig.ConvertToImage();
+                            im.SaveFile(imagefs, wxBITMAP_TYPE_PNG);
+                        }
                         counter++;
                     }                
                 }
