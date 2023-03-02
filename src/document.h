@@ -192,8 +192,11 @@ struct Document {
             fos.Write("TSFF", 4);
             char vers = TS_VERSION;
             fos.Write(&vers, 1);
-            sos.Write8(selected.xs);
-            sos.Write8(selected.ys);
+            uint xs, ys;
+            xs = selected.xs;
+            ys = selected.ys;
+            sos.Write8(xs);
+            sos.Write8(ys);
             loopv(i, sys->imagelist) sys->imagelist[i]->trefc = 0;
             rootgrid->ImageRefCount();
             int realindex = 0;
