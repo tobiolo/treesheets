@@ -1375,7 +1375,7 @@ struct Document {
                 if (selected.TextEdit()) {
                     selected.Cursor(this, (k==A_ENTERCELL ? A_DOWN : A_RIGHT), false, false, dc, true);
                 } else {
-                    selected.EnterEdit(this, 0, (int)c->text.t.Len());
+                    selected.EnterEdit(this, (int)c->text.t.Len(), (int)c->text.t.Len());
                     DrawSelectMove(dc, selected, true);
                 }
                 return nullptr;
