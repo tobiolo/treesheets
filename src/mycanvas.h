@@ -188,5 +188,10 @@ struct TSCanvas : public wxScrolledWindow {
             frame->SetStatusText(msg ? msg : L"", 0);
     }
 
+    void OnDPIChanged(wxDPIChangedEvent &dce) {
+         wxClientDC dc(this);
+         doc->Draw(dc);
+    }
+
     DECLARE_EVENT_TABLE()
 };
