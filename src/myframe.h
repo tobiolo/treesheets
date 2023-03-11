@@ -1221,5 +1221,9 @@ struct MyFrame : wxFrame {
         }
     }
 
+    void OnDPIChanged(wxDPIChangedEvent &dce) {
+        // TODO
+    }
+
     DECLARE_EVENT_TABLE()
 };

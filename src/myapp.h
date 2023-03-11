@@ -47,6 +47,20 @@ struct MyApp : wxApp {
 
             // wxWidgets should really be doing this itself, but it doesn't (or expects you to
             // want to use a manifest), so we have to call it ourselves.
+
+            // HiDPI API for Windows >= Vista
+
+            typedef BOOL (WINAPI * SETPROCESSDPIAWARE_T)(void);
+            SETPROCESSDPIAWARE_T SetProcessDPIAware = NULL;
+
+            HMODULE user32 = LoadLibraryA("User32.dll");
+            if (user32) {
+                SetProcessDPIAware =
+                    (SETPROCESSDPIAWARE_T)GetProcAddress(user32, "SetProcessDPIAware");
+            }
+
+            // HiDPI API for Windows >= 8.1
+
             #ifndef DPI_ENUMS_DECLARED
             typedef enum PROCESS_DPI_AWARENESS
             {
@@ -55,23 +69,30 @@ struct MyApp : wxApp {
                 PROCESS_PER_MONITOR_DPI_AWARE = 2
             } PROCESS_DPI_AWARENESS;
             #endif
-
-            typedef BOOL (WINAPI * SETPROCESSDPIAWARE_T)(void);
             typedef HRESULT (WINAPI * SETPROCESSDPIAWARENESS_T)(PROCESS_DPI_AWARENESS);
-            HMODULE shcore = LoadLibraryA("Shcore.dll");
             SETPROCESSDPIAWARENESS_T SetProcessDpiAwareness = NULL;
+
+            HMODULE shcore = LoadLibraryA("Shcore.dll");
             if (shcore) {
                 SetProcessDpiAwareness =
                     (SETPROCESSDPIAWARENESS_T)GetProcAddress(shcore, "SetProcessDpiAwareness");
             }
-            HMODULE user32 = LoadLibraryA("User32.dll");
-            SETPROCESSDPIAWARE_T SetProcessDPIAware = NULL;
+
+            // HiDPI API for Windows 10 >= version 1607
+
+            typedef BOOL (WINAPI * SETPROCESSDPIAWARENESSCONTEXT_T)(DPI_AWARENESS_CONTEXT);
+            SETPROCESSDPIAWARENESSCONTEXT_T SetProcessDpiAwarenessContext = NULL;
             if (user32) {
-                SetProcessDPIAware =
-                    (SETPROCESSDPIAWARE_T)GetProcAddress(user32, "SetProcessDPIAware");
+                SetProcessDpiAwarenessContext =
+                    (SETPROCESSDPIAWARENESSCONTEXT_T)GetProcAddress(user32, "SetProcessDpiAwarenessContext");
             }
 
-            if (SetProcessDpiAwareness) {
+            // Call APIs
+
+            if (SetProcessDpiAwarenessContext) {
+                SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+            }
+            else if (SetProcessDpiAwareness) {
                 SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
             } else if (SetProcessDPIAware) {
                 SetProcessDPIAware();
@@ -170,6 +191,10 @@ struct MyApp : wxApp {
 
     void MacOpenFile(const wxString &fn) {
         if (sys) sys->Open(fn);
+    }
+
+    void OnDPIChanged(wxDPIChangedEvent &dce) {
+        // TODO
     }
 
     DECLARE_EVENT_TABLE()
