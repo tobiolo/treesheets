@@ -14,9 +14,15 @@ BEGIN_EVENT_TABLE(treesheets::MyFrame, wxFrame)
   EVT_ICONIZE(treesheets::MyFrame::OnIconize)
   EVT_AUINOTEBOOK_PAGE_CHANGED(wxID_ANY, treesheets::MyFrame::OnTabChange)
   EVT_AUINOTEBOOK_PAGE_CLOSE(wxID_ANY, treesheets::MyFrame::OnTabClose)
+  #ifdef __WXMSW__
+  EVT_DPI_CHANGED(treesheets::MyFrame::OnDPIChanged)
+  #endif
 END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(treesheets::MyApp, wxApp)
+  #ifdef __WXMSW__
+  EVT_DPI_CHANGED(treesheets::MyApp::OnDPIChanged)
+  #endif
 END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(treesheets::TSCanvas, wxScrolledWindow)
@@ -32,6 +38,9 @@ BEGIN_EVENT_TABLE(treesheets::TSCanvas, wxScrolledWindow)
   EVT_CONTEXT_MENU(treesheets::TSCanvas::OnContextMenuClick)
   EVT_SIZE(treesheets::TSCanvas::OnSize)
   EVT_SCROLLWIN(treesheets::TSCanvas::OnScrollWin)
+  #ifdef __WXMSW__
+  EVT_DPI_CHANGED(treesheets::TSCanvas::OnDPIChanged)
+  #endif
 END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(treesheets::ThreeChoiceDialog, wxDialog)

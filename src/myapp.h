@@ -42,45 +42,6 @@ struct MyApp : wxApp {
         //wxSystemOptions::SetOption("mac.toolbar.no-native", 1);
         #endif
 
-        #ifdef __WXMSW__
-            InitUnhandledExceptionFilter();
-
-            // wxWidgets should really be doing this itself, but it doesn't (or expects you to
-            // want to use a manifest), so we have to call it ourselves.
-            #ifndef DPI_ENUMS_DECLARED
-            typedef enum PROCESS_DPI_AWARENESS
-            {
-                PROCESS_DPI_UNAWARE = 0,
-                PROCESS_SYSTEM_DPI_AWARE = 1,
-                PROCESS_PER_MONITOR_DPI_AWARE = 2
-            } PROCESS_DPI_AWARENESS;
-            #endif
-
-            typedef BOOL (WINAPI * SETPROCESSDPIAWARE_T)(void);
-            typedef HRESULT (WINAPI * SETPROCESSDPIAWARENESS_T)(PROCESS_DPI_AWARENESS);
-            HMODULE shcore = LoadLibraryA("Shcore.dll");
-            SETPROCESSDPIAWARENESS_T SetProcessDpiAwareness = NULL;
-            if (shcore) {
-                SetProcessDpiAwareness =
-                    (SETPROCESSDPIAWARENESS_T)GetProcAddress(shcore, "SetProcessDpiAwareness");
-            }
-            HMODULE user32 = LoadLibraryA("User32.dll");
-            SETPROCESSDPIAWARE_T SetProcessDPIAware = NULL;
-            if (user32) {
-                SetProcessDPIAware =
-                    (SETPROCESSDPIAWARE_T)GetProcAddress(user32, "SetProcessDPIAware");
-            }
-
-            if (SetProcessDpiAwareness) {
-                SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-            } else if (SetProcessDPIAware) {
-                SetProcessDPIAware();
-            }
-
-            if (user32) FreeLibrary(user32);
-            if (shcore) FreeLibrary(shcore);
-        #endif
-
         auto lang = wxLocale::GetSystemLanguage();
         if (lang == wxLANGUAGE_UNKNOWN || !wxLocale::IsAvailable(lang)) {
             lang = wxLANGUAGE_ENGLISH;
@@ -170,6 +131,10 @@ struct MyApp : wxApp {
 
     void MacOpenFile(const wxString &fn) {
         if (sys) sys->Open(fn);
+    }
+
+    void OnDPIChanged(wxDPIChangedEvent &dce) {
+        // TODO
     }
 
     DECLARE_EVENT_TABLE()
