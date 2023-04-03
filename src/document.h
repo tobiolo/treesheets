@@ -1361,10 +1361,11 @@ struct Document {
                 return nullptr;
 
             case A_PASTE:
+            case A_PASTECT:
                 if (!(c = selected.ThinExpand(this))) return OneCell();
                 if (wxTheClipboard->Open()) {
                     wxTheClipboard->GetData(*dataobjc);
-                    PasteOrDrop();
+                    PasteOrDrop(k == A_PASTECT);
                     wxTheClipboard->Close();
                 } else if (sys->cellclipboard) {
                     c->Paste(this, sys->cellclipboard.get(), selected);
@@ -1884,7 +1885,7 @@ struct Document {
 
     void PasteSingleText(Cell *c, const wxString &t) { c->text.Insert(this, t, selected); }
 
-    void PasteOrDrop() {
+    void PasteOrDrop(bool joinlines) {
         Cell *c = selected.ThinExpand(this);
         if (!c) return;
         wxBusyCursor wait;
@@ -1931,6 +1932,11 @@ struct Document {
                         c->Paste(this, sys->cellclipboard.get(), selected);
                         Refresh();
                     } else {
+                        if (joinlines) {
+                            for (auto LINE_SEPERATOR_CHARACTER: LINE_SEPERATOR) {
+                                s.Replace(wxString(LINE_SEPERATOR_CHARACTER), wxString(""));
+                            }
+                        }
                         const wxArrayString &as = wxStringTokenize(s, LINE_SEPERATOR);
                         if (as.size()) {
                             if (as.size() <= 1) {
