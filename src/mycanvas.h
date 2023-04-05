@@ -4,6 +4,7 @@ struct TSCanvas : public wxScrolledWindow {
 
     int mousewheelaccum;
     bool lastrmbwaswithctrl;
+    bool firstpaint;
 
     wxPoint lastmousepos;
 
@@ -13,7 +14,8 @@ struct TSCanvas : public wxScrolledWindow {
                            wxScrolledWindowStyle | wxWANTS_CHARS),
           mousewheelaccum(0),
           doc(nullptr),
-          lastrmbwaswithctrl(false) {
+          lastrmbwaswithctrl(false),
+          firstpaint(true) {
         SetBackgroundStyle(wxBG_STYLE_PAINT);
         SetBackgroundColour(*wxWHITE);
         DisableKeyboardScrolling();
@@ -28,9 +30,9 @@ struct TSCanvas : public wxScrolledWindow {
     }
 
     void OnPaint(wxPaintEvent &event) {
-        #ifdef __WXMAC__
+        // #ifdef __WXMAC__
             wxPaintDC dc(this);
-        #elif __WXGTK__
+        /* #elif __WXGTK__
             wxPaintDC dc(this);
         #else
             auto sz = GetClientSize();
@@ -38,8 +40,13 @@ struct TSCanvas : public wxScrolledWindow {
             wxBitmap buffer(sz.GetX(), sz.GetY(), 24);
             wxBufferedPaintDC dc(this, buffer);
         #endif
+        */
         // DoPrepareDC(dc);
         doc->Draw(dc);
+        if (firstpaint) {
+            doc->ScrollOrZoom(dc); 
+            firstpaint = false;
+        }
         // Display has been re-layouted, compute hover selection again.
         // TODO: lastmousepos doesn't seem correct anymore after a scroll operation in latest wxWidgets.
         /*
