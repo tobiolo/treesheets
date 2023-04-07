@@ -76,10 +76,10 @@ jobs:
         (gc 'wxWidgets\build\msw\wx_setup.props') -replace '<wxReleaseRuntimeLibrary>MultiThreadedDLL</wxReleaseRuntimeLibrary>', '<wxReleaseRuntimeLibrary>MultiThreaded</wxReleaseRuntimeLibrary>' | Out-File -encoding ASCII 'wxWidgets\build\msw\wx_setup.props'
     - name: build wxWidgets
       working-directory: wxWidgets
-      run: msbuild.exe build/msw/wx_vc14.sln /p:Configuration=Release /p:Platform=x64 /p:RuntimeLibrary=MultiThreaded
+      run: msbuild.exe build/msw/wx_vc14.sln /p:Configuration=Debug /p:Platform=x64 /p:RuntimeLibrary=MultiThreaded
     - name: build TreeSheets
       run: |
-        msbuild.exe TreeSheets\treesheets.sln /p:Configuration=Release /p:Platform=x64
+        msbuild.exe TreeSheets\treesheets.sln /p:Configuration=Debug /p:Platform=x64
         Remove-Item TS\*.pdb
         Remove-Item TS\*.ipdb
         Remove-Item TS\*.iobj
