@@ -129,3 +129,13 @@ if(NOT APPLE AND NOT WIN32)
     install(FILES TS/treesheets.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
     install(FILES TS/treesheets.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/mime/packages)
 endif()
+
+find_package(Doxygen 
+    REQUIRED dot
+)
+
+doxygen_add_docs(
+    doc
+    ${PROJECT_SOURCE_DIR}/src
+    COMMENT "Generate Doxygen HTML documentation"
+)
