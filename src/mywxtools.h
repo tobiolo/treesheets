@@ -67,21 +67,19 @@ struct ColorPopup : wxVListBoxComboPopup {
 };
 
 struct ColorDropdown : wxOwnerDrawnComboBox {
-    double csf;
 
-    ColorDropdown(wxWindow *parent, wxWindowID id, double _csf, int sel) {
-        csf = _csf;
+    ColorDropdown(wxWindow *parent, wxWindowID id, int sel) {
         wxArrayString as;
         as.Add(L"", sizeof(celltextcolors) / sizeof(uint));
-        Create(parent, id, L"", wxDefaultPosition, wxSize(44, 22) * csf, as,
+        Create(parent, id, L"", wxDefaultPosition, FromDIP(wxSize(44, 22)), as,
                wxCB_READONLY | wxCC_SPECIAL_DCLICK);
         SetPopupControl(new ColorPopup(this));
         SetSelection(sel);
         SetPopupMaxHeight(wxDisplay().GetGeometry().GetHeight() * 3 / 4);
     }
 
-    wxCoord OnMeasureItem(size_t item) const { return 22 * csf; }
-    wxCoord OnMeasureItemWidth(size_t item) const { return 40 * csf; }
+    wxCoord OnMeasureItem(size_t item) const { return FromDIP(22); }
+    wxCoord OnMeasureItemWidth(size_t item) const { return FromDIP(40); }
     void OnDrawBackground(wxDC &dc, const wxRect &rect, int item, int flags) const {
         DrawRectangle(dc, 0xFFFFFF, rect.x, rect.y, rect.width, rect.height);
     }
