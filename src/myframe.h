@@ -2,7 +2,8 @@ struct MyFrame : wxFrame {
     wxMenu *editmenupopup;
     wxString exepath_;
     wxFileHistory filehistory;
-    wxTextCtrl *filter, *replaces;
+    wxTextCtrl *replaces;
+    wxSearchCtrl *filter;
     wxToolBar *tb;
     int refreshhack, refreshhackinstances;
     BlinkTimer bt;
@@ -666,10 +667,11 @@ struct MyFrame : wxFrame {
             SEPARATOR;
             AddTBIcon(_(L"Run"), A_RUN, iconpath + L"run.png");
             tb->AddSeparator();
-            tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Search ")));
             tb->AddControl(filter = 
-                new wxTextCtrl(tb, A_SEARCH, "", wxDefaultPosition, FromDIP(wxSize(80, 22)), wxTE_PROCESS_ENTER));
-            AddTBIcon(_(L"Go to Next Search Result"), A_SEARCHNEXT, iconpath + L"search.png");
+                new wxSearchCtrl(tb, A_SEARCH, "", wxDefaultPosition, FromDIP(wxSize(120, 22))));
+            filter->ShowSearchButton(true);
+            filter->ShowCancelButton(true);
+            filter->Bind(wxEVT_KEY_DOWN, &MyFrame::OnSearchKeyDown, this);
             SEPARATOR;
             tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Replace ")));
             tb->AddControl(replaces =
@@ -850,47 +852,6 @@ struct MyFrame : wxFrame {
     }
 
     void OnMenu(wxCommandEvent &ce) {
-        wxTextCtrl *tc;
-        if (((tc = filter) && filter == wxWindow::FindFocus()) ||
-            ((tc = replaces) && replaces == wxWindow::FindFocus())) {
-            // FIXME: have to emulate this behavior because menu always captures these events (??)
-            long from, to;
-            tc->GetSelection(&from, &to);
-            switch (ce.GetId()) {
-                case A_MLEFT:
-                case A_LEFT:
-                    if (from != to)
-                        tc->SetInsertionPoint(from);
-                    else if (from)
-                        tc->SetInsertionPoint(from - 1);
-                    return;
-                case A_MRIGHT:
-                case A_RIGHT:
-                    if (from != to)
-                        tc->SetInsertionPoint(to);
-                    else if (to < tc->GetLineLength(0))
-                        tc->SetInsertionPoint(to + 1);
-                    return;
-
-                case A_SHOME: tc->SetSelection(0, to); return;
-                case A_SEND: tc->SetSelection(from, 1000); return;
-
-                case A_SCLEFT:
-                case A_SLEFT:
-                    if (from) tc->SetSelection(from - 1, to);
-                    return;
-                case A_SCRIGHT:
-                case A_SRIGHT:
-                    if (to < tc->GetLineLength(0)) tc->SetSelection(from, to + 1);
-                    return;
-
-                case A_BACKSPACE: tc->Remove(from - (from == to), to); return;
-                case A_DELETE: tc->Remove(from, to + (from == to)); return;
-                case A_HOME: tc->SetSelection(0, 0); return;
-                case A_END: tc->SetSelection(1000, 1000); return;
-                case A_SELALL: tc->SetSelection(0, 1000); return;
-            }
-        }
         TSCanvas *sw = GetCurTab();
         wxClientDC dc(sw);
         sw->DoPrepareDC(dc);
@@ -999,6 +960,21 @@ struct MyFrame : wxFrame {
                     sw->Status(sw->doc->Action(dc, ce.GetId()));
                     break;
                 }
+        }
+    }
+
+    void OnSearchKeyDown(wxKeyEvent &ke) {
+        if(ke.GetKeyCode() == WXK_ESCAPE) {
+            filter->Clear();
+            Document *doc = GetCurTab()->doc;
+            if (doc->searchfilter)
+                doc->SetSearchFilter(false);
+            else
+                doc->Refresh();
+            GetCurTab()->Status();
+            GetCurTab()->SetFocus();
+        } else {
+            ke.Skip();
         }
     }
 
