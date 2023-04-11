@@ -2,8 +2,6 @@
 BEGIN_EVENT_TABLE(treesheets::MyFrame, wxFrame)
   EVT_SIZING(treesheets::MyFrame::OnSizing)
   EVT_MENU(wxID_ANY, treesheets::MyFrame::OnMenu)
-  EVT_TEXT(A_SEARCH, treesheets::MyFrame::OnSearch)
-  EVT_TEXT_ENTER(A_SEARCH, treesheets::MyFrame::OnSearchEnter)
   EVT_CLOSE(treesheets::MyFrame::OnClosing)
   EVT_MAXIMIZE(treesheets::MyFrame::OnMaximize)
   EVT_ACTIVATE(treesheets::MyFrame::OnActivate)
