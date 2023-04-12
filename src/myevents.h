@@ -1,6 +1,7 @@
 
 BEGIN_EVENT_TABLE(treesheets::MyFrame, wxFrame)
   EVT_SIZING(treesheets::MyFrame::OnSizing)
+  EVT_MENU(wxID_FIND, treesheets::MyFrame::OnSearch)
   EVT_MENU(wxID_ANY, treesheets::MyFrame::OnMenu)
   EVT_TEXT(A_SEARCH, treesheets::MyFrame::OnSearch)
   EVT_SEARCHCTRL_SEARCH_BTN(A_SEARCH, treesheets::MyFrame::OnSearchEnter)
