@@ -852,45 +852,10 @@ struct MyFrame : wxFrame {
     }
 
     void OnMenu(wxCommandEvent &ce) {
-        wxTextCtrl *tc;
-        if ((tc = replaces) && replaces == wxWindow::FindFocus()) {
-            // FIXME: have to emulate this behavior because menu always captures these events (??)
-            long from, to;
-            tc->GetSelection(&from, &to);
-            switch (ce.GetId()) {
-                case A_MLEFT:
-                case A_LEFT:
-                    if (from != to)
-                        tc->SetInsertionPoint(from);
-                    else if (from)
-                        tc->SetInsertionPoint(from - 1);
-                    return;
-                case A_MRIGHT:
-                case A_RIGHT:
-                    if (from != to)
-                        tc->SetInsertionPoint(to);
-                    else if (to < tc->GetLineLength(0))
-                        tc->SetInsertionPoint(to + 1);
-                    return;
+        if (ce.GetId() == A_SEARCH || ce.GetId() == A_REPLACE) {
+            ce.Skip();
+            return;
 
-                case A_SHOME: tc->SetSelection(0, to); return;
-                case A_SEND: tc->SetSelection(from, 1000); return;
-
-                case A_SCLEFT:
-                case A_SLEFT:
-                    if (from) tc->SetSelection(from - 1, to);
-                    return;
-                case A_SCRIGHT:
-                case A_SRIGHT:
-                    if (to < tc->GetLineLength(0)) tc->SetSelection(from, to + 1);
-                    return;
-
-                case A_BACKSPACE: tc->Remove(from - (from == to), to); return;
-                case A_DELETE: tc->Remove(from, to + (from == to)); return;
-                case A_HOME: tc->SetSelection(0, 0); return;
-                case A_END: tc->SetSelection(1000, 1000); return;
-                case A_SELALL: tc->SetSelection(0, 1000); return;
-            }
         }
         TSCanvas *sw = GetCurTab();
         wxClientDC dc(sw);
