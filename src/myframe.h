@@ -889,6 +889,11 @@ struct MyFrame : wxFrame {
                 case A_HOME: tc->SetSelection(0, 0); return;
                 case A_END: tc->SetSelection(1000, 1000); return;
                 case A_SELALL: tc->SetSelection(0, 1000); return;
+                case A_CANCELEDIT:
+                    filter->Clear();
+                    GetCurTab()->SetFocus();
+                    ce.Skip();
+                    return;
             }
         }
         TSCanvas *sw = GetCurTab();
