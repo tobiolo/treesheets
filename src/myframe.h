@@ -669,6 +669,7 @@ struct MyFrame : wxFrame {
             tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Search ")));
             tb->AddControl(filter = 
                 new wxTextCtrl(tb, A_SEARCH, "", wxDefaultPosition, FromDIP(wxSize(80, 22)), wxTE_PROCESS_ENTER));
+            filter->Bind(wxEVT_KEY_DOWN, &MyFrame::OnSearchKeyDown, this);
             AddTBIcon(_(L"Go to Next Search Result"), A_SEARCHNEXT, iconpath + L"search.png");
             SEPARATOR;
             tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Replace ")));
@@ -999,6 +1000,21 @@ struct MyFrame : wxFrame {
                     sw->Status(sw->doc->Action(dc, ce.GetId()));
                     break;
                 }
+        }
+    }
+
+    void OnSearchKeyDown(wxKeyEvent &ke) {
+        if(ke.GetKeyCode() == WXK_ESCAPE) {
+            filter->Clear();
+            Document *doc = GetCurTab()->doc;
+            if (doc->searchfilter)
+                doc->SetSearchFilter(false);
+            else
+                doc->Refresh();
+            GetCurTab()->Status();
+            GetCurTab()->SetFocus();
+        } else {
+            ke.Skip();
         }
     }
 
