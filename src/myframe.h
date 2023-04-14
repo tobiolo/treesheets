@@ -850,6 +850,7 @@ struct MyFrame : wxFrame {
     }
 
     void OnMenu(wxCommandEvent &ce) {
+        TSCanvas *sw = GetCurTab();
         wxTextCtrl *tc;
         if (((tc = filter) && filter == wxWindow::FindFocus()) ||
             ((tc = replaces) && replaces == wxWindow::FindFocus())) {
@@ -889,9 +890,9 @@ struct MyFrame : wxFrame {
                 case A_HOME: tc->SetSelection(0, 0); return;
                 case A_END: tc->SetSelection(1000, 1000); return;
                 case A_SELALL: tc->SetSelection(0, 1000); return;
+                case A_CANCELEDIT: replaces->Clear(); filter->Clear(); sw->SetFocus(); return;
             }
         }
-        TSCanvas *sw = GetCurTab();
         wxClientDC dc(sw);
         sw->DoPrepareDC(dc);
         sw->doc->ShiftToCenter(dc);
