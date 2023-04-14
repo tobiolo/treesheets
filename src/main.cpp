@@ -118,9 +118,7 @@ enum {
     A_ITALIC,
     A_TT,
     A_UNDERL,
-    A_SEARCH,
     A_CASESENSITIVESEARCH,
-    A_REPLACE,
     A_REPLACEONCE,
     A_REPLACEONCEJ,
     A_REPLACEALL,
@@ -244,7 +242,13 @@ enum {
     A_NOP,
     A_TAGSET = 1000,  // and all values from here on
     A_SCRIPT = 2000,  // and all values from here on
-    A_MAXACTION = 3000
+    A_MAXACTION = 3000,
+    // The following actions shall be excluded from the 
+    // Menu event handler. Therefore, put these actions
+    // at the end of the list to exclude them from the
+    // range for the event handler.
+    A_SEARCH,
+    A_REPLACE
 };
 
 enum {
