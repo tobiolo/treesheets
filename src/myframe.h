@@ -850,6 +850,9 @@ struct MyFrame : wxFrame {
     }
 
     void OnMenu(wxCommandEvent &ce) {
+        TSCanvas *sw = GetCurTab();
+        wxClientDC dc(sw);
+        sw->DoPrepareDC(dc);
         wxTextCtrl *tc;
         if (((tc = filter) && filter == wxWindow::FindFocus()) ||
             ((tc = replaces) && replaces == wxWindow::FindFocus())) {
@@ -889,11 +892,23 @@ struct MyFrame : wxFrame {
                 case A_HOME: tc->SetSelection(0, 0); return;
                 case A_END: tc->SetSelection(1000, 1000); return;
                 case A_SELALL: tc->SetSelection(0, 1000); return;
+                case A_CANCELEDIT: 
+                    replaces->Clear();
+                    filter->Clear();
+                    sw->SetFocus();
+                    return;
+                case A_ENTERGRID:
+                case A_ENTERCELL:
+                    Document *doc = GetCurTab()->doc;
+                    wxString searchstring = ce.GetString();
+                    if (searchstring.Len() == 0) {
+                        sw->SetFocus();
+                    } else {
+                        doc->SearchNext(dc, false);
+                    }
+                    return;
             }
         }
-        TSCanvas *sw = GetCurTab();
-        wxClientDC dc(sw);
-        sw->DoPrepareDC(dc);
         sw->doc->ShiftToCenter(dc);
         auto Check = [&](const wxChar *cfg) {
             sys->cfg->Write(cfg, ce.IsChecked());
