@@ -101,14 +101,18 @@ file(
     GLOB locales
     LIST_DIRECTORIES true
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/TS/translations
-    TS/translations/*/ts.mo
+    TS/translations/*/ts.po
 )
 list(
     TRANSFORM locales
-    REPLACE "/ts\\.mo$" ""
+    REPLACE "/ts\\.po$" ""
 )
 if(APPLE OR WIN32 OR TREESHEETS_RELOCATABLE_INSTALLATION)
     foreach(locale ${locales})
+        ADD_CUSTOM_COMMAND(
+            OUTPUT "TS/translations/${locale}/ts.mo"
+            COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o "TS/translations/${locale}/ts.mo" "TS/translations/${locale}/ts.po"
+        )
         install(
             FILES "TS/translations/${locale}/ts.mo"
             DESTINATION "${CMAKE_INSTALL_PREFIX}/translations/${locale}"
@@ -117,6 +121,10 @@ if(APPLE OR WIN32 OR TREESHEETS_RELOCATABLE_INSTALLATION)
 else()
     # Falling back to GNU scheme
     foreach(locale ${locales})
+        ADD_CUSTOM_COMMAND(
+            OUTPUT "TS/translations/${locale}/ts.mo"
+            COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o "TS/translations/${locale}/ts.mo" "TS/translations/${locale}/ts.po"
+        )
         install(
             FILES "TS/translations/${locale}/ts.mo"
             DESTINATION "${CMAKE_INSTALL_LOCALEDIR}/${locale}/LC_MESSAGES"
