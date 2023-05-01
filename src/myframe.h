@@ -1070,6 +1070,7 @@ struct MyFrame : wxFrame {
                 TSCanvas *p = (TSCanvas *)nb->GetPage(i);
                 p->doc->dpichanged = true;
                 }
+        Update();
     }
 
     void OnIconize(wxIconizeEvent &me) {
