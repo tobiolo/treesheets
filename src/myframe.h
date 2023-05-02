@@ -1073,6 +1073,7 @@ struct MyFrame : wxFrame {
             }
             nb->SetTabCtrlHeight(-1);
         }
+        idd->Update();
         Update();
     }
 
