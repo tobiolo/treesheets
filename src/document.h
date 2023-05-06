@@ -1096,6 +1096,13 @@ struct Document {
                 return nullptr;
             }
 
+            case A_CLEARREPLACE: {
+                sys->frame->replaces->Clear();
+                sys->frame->filter->Clear();
+                sw->SetFocus();
+                return nullptr;
+            }
+
             case A_ROUND0:
             case A_ROUND1:
             case A_ROUND2:
