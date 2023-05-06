@@ -175,7 +175,7 @@ struct Text {
         if(sys->casesensitivesearch)
             return sys->searchstring.Len() && t.Find(sys->searchstring) >= 0;
         else
-            return sys->searchstring.Len() && t.Lower().Find(sys->searchstring.Lower()) >= 0;
+            return sys->searchstring.Len() && t.Lower().Find(sys->searchstring) >= 0;
     }
     
     int Render(Document *doc, int bx, int by, int depth, wxDC &dc, int &leftoffset,
@@ -410,7 +410,10 @@ struct Text {
     }
 
     void ReplaceStr(const wxString &str) {
-        for (int i = 0, j; (j = t.Mid(i).Lower().Find(sys->searchstring)) >= 0;) {
+        for (int i = 0, j; sys->casesensitivesearch ? 
+                (j = t.Mid(i).Find(sys->searchstring)) : 
+                (j = t.Mid(i).Lower().Find(sys->searchstring)) >= 0;) 
+        {
             // does this need WasEdited()?
             i += j;
             t.Remove(i, sys->searchstring.Len());
