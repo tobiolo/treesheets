@@ -1090,12 +1090,6 @@ struct Document {
                 return nullptr;
             }
 
-            case A_CLEARSEARCH: {
-                sys->frame->filter->Clear();
-                sw->SetFocus();
-                return nullptr;
-            }
-
             case A_ROUND0:
             case A_ROUND1:
             case A_ROUND2:
@@ -1117,12 +1111,34 @@ struct Document {
                 if (sys->frame->borddd) sys->frame->borddd->ShowPopup();
                 break;
 
+            case A_REPLACEONCE:
+            case A_REPLACEONCEJ:
             case A_REPLACEALL: {
                 if (!sys->searchstring.Len()) return _(L"No search.");
-                rootgrid->AddUndo(this);  // expensive?
-                rootgrid->FindReplaceAll(sys->frame->replaces->GetValue());
-                rootgrid->ResetChildren();
-                Refresh();
+                if (k == A_REPLACEALL) {
+                    wxString _filter = sys->frame->filter->GetValue();
+                    wxString _replaces = sys->frame->replaces->GetValue();
+                    rootgrid->AddUndo(this);  // expensive?
+                    rootgrid->FindReplaceAll(_replaces);
+                    // Swap the text in the search and replace text control
+                    // so that the user still sees the replacements (now in the search filter)
+                    // and is able to undo the operation by repeating the action
+                    sys->frame->filter->SetValue(_replaces);
+                    sys->frame->replaces->SetValue(_filter);
+                    rootgrid->ResetChildren();
+                    Refresh();
+                } else {
+                    selected.g->ReplaceStr(this, sys->frame->replaces->GetValue(), selected);
+                    if (k == A_REPLACEONCEJ) return SearchNext(dc, true);
+                }
+                return nullptr;
+            }
+
+             case A_CLEARREPLACE:
+             case A_CLEARSEARCH: {
+                if (k == A_CLEARREPLACE) sys->frame->replaces->Clear();
+                if (k == A_CLEARSEARCH) sys->frame->filter->Clear();
+                sw->SetFocus();
                 return nullptr;
             }
 
@@ -1435,14 +1451,6 @@ struct Document {
 
             case A_SORTD: return Sort(true);
             case A_SORT: return Sort(false);
-
-            case A_REPLACEONCE:
-            case A_REPLACEONCEJ: {
-                if (!sys->searchstring.Len()) return _(L"No search.");
-                selected.g->ReplaceStr(this, sys->frame->replaces->GetValue(), selected);
-                if (k == A_REPLACEONCEJ) return SearchNext(dc, true);
-                return nullptr;
-            }
 
             case A_SCOLS:
                 selected.y = 0;

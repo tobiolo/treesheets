@@ -676,7 +676,10 @@ struct MyFrame : wxFrame {
             SEPARATOR;
             tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Replace ")));
             tb->AddControl(replaces =
-                new wxTextCtrl(tb, A_REPLACE, "", wxDefaultPosition, FromDIP(wxSize(60, 22))));
+                new wxTextCtrl(tb, A_REPLACE, "", wxDefaultPosition, FromDIP(wxSize(80, 22))));
+            AddTBIcon(_(L"Clear replace"), A_CLEARREPLACE, iconpath + L"cancel.png");
+            AddTBIcon(_(L"Replace in selection"), A_REPLACEONCE, iconpath + L"replace.png");
+            AddTBIcon(_(L"Replace All"), A_REPLACEALL, iconpath + L"replaceall.png");
             tb->AddSeparator();
             tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Cell ")));
             celldd = new ColorDropdown(tb, A_CELLCOLOR, 1);
