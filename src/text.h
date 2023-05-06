@@ -175,7 +175,7 @@ struct Text {
         if(sys->casesensitivesearch)
             return sys->searchstring.Len() && t.Find(sys->searchstring) >= 0;
         else
-            return sys->searchstring.Len() && t.Lower().Find(sys->searchstring.Lower()) >= 0;
+            return sys->searchstring.Len() && t.Lower().Find(sys->searchstring) >= 0;
     }
     
     int Render(Document *doc, int bx, int by, int depth, wxDC &dc, int &leftoffset,
@@ -410,11 +410,29 @@ struct Text {
     }
 
     void ReplaceStr(const wxString &str) {
-        for (int i = 0, j; (j = t.Mid(i).Lower().Find(sys->searchstring)) >= 0;) {
+        for (int i = 0, j; (j = t.Mid(i).Find(sys->searchstring)) >= 0;) 
+        {
             // does this need WasEdited()?
             i += j;
             t.Remove(i, sys->searchstring.Len());
             t.insert(i, str);
+            i += str.Len();
+        }
+    }
+
+    void ReplaceStr(const wxString &str, const wxString &lstr) {
+        // Maintain a second copy of the text
+        // that is all lowercase and is modified in parallel to t
+        // to avoid lowercasing of t in each iteration
+        wxString lowert = t.Lower();
+        for (int i = 0, j; (j = lowert.Mid(i).Find(sys->searchstring)) >= 0;) 
+        {
+            // does this need WasEdited()?
+            i += j;
+            t.Remove(i, sys->searchstring.Len());
+            lowert.Remove(i, sys->searchstring.Len());
+            t.insert(i, str);
+            lowert.insert(i, lstr);
             i += str.Len();
         }
     }

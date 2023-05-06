@@ -324,6 +324,9 @@ struct Grid {
     }
 
     void FindReplaceAll(const wxString &str) { foreachcell(c) c->FindReplaceAll(str); }
+    void FindReplaceAll(const wxString &str, const wxString &lstr) { 
+        foreachcell(c) c->FindReplaceAll(str, lstr);
+    }
     void ReplaceCell(Cell *o, Cell *n) { foreachcell(c) if (c == o) c = n; }
     Selection FindCell(Cell *o) {
         foreachcell(c) if (c == o) return Selection(this, x, y, 1, 1);
@@ -693,6 +696,13 @@ struct Grid {
         cell->AddUndo(doc);
         cell->ResetChildren();
         foreachcellinsel(c, s) c->text.ReplaceStr(str);
+        doc->Refresh();
+    }
+
+    void ReplaceStr(Document *doc, const wxString &str, const wxString &lstr, Selection &s) {
+        cell->AddUndo(doc);
+        cell->ResetChildren();
+        foreachcellinsel(c, s) c->text.ReplaceStr(str, lstr);
         doc->Refresh();
     }
 
