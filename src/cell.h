@@ -406,7 +406,7 @@ struct Cell {
                 lastwasselected = false;
             }
         } else {
-            if (text.t.Lower().Find(search.Lower()) >= 0) {
+            if (text.t.Lower().Find(search) >= 0) {
                 if (lastwasselected) best = this;
                 lastwasselected = false;
             }
