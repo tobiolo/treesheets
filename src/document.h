@@ -1279,14 +1279,20 @@ struct Document {
                     returnmessage = CopyImageToClipboard(c);
                 } else {
                     if (wxTheClipboard->Open()) {
-                        wxString s;
+                        wxString s, html;
                         if (k == A_COPYCT) {
                             loopallcellssel(c, true) if (c->text.t.Len()) s += c->text.t + " ";
                         } else {
                             s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
                         }
                         sys->clipboardcopy = s;
-                        wxTheClipboard->SetData(new wxTextDataObject(s));
+                        html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
+                        wxDataObjectComposite *copyobj = new wxDataObjectComposite();
+                        wxCustomDataObject *htmlobj = new wxCustomDataObject(wxDF_HTML);
+                        htmlobj->SetData(html.Len(), html);
+                        copyobj->Add(new wxTextDataObject(s), false);
+                        copyobj->Add(htmlobj, true);
+                        wxTheClipboard->SetData(copyobj);
                         wxTheClipboard->Close();
                         returnmessage = _(L"Text copied to clipboard");
                     }
