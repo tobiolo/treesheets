@@ -708,6 +708,22 @@ struct Document {
         return ExportFile(fn, k, true);
     }
 
+    wxBitmap GetBitmap() {
+        maxx = layoutxs;
+        maxy = layoutys;
+        originx = originy = 0;
+        wxBitmap bm(maxx, maxy, 24);
+        wxMemoryDC mdc(bm);
+        DrawRectangle(mdc, Background(), 0, 0, maxx, maxy);
+        Render(mdc);
+        return bm;
+    }
+
+    wxBitmap GetSubBitmapFromSelection(Selection &s) {
+        wxRect r = s.g->GetRect(this, s, true);
+        return GetBitmap().GetSubBitmap(r);
+    }
+
     const wxChar *ExportFile(const wxString &fn, int k, bool currentview) {
         auto root = currentview ? curdrawroot : rootgrid;
         if (k == A_EXPCSV) {
@@ -717,13 +733,7 @@ struct Document {
                 return _(L"Cannot export grid that is not flat (zoom the view to the desired grid, and/or use Flatten).");
         }
         if (k == A_EXPIMAGE) {
-            maxx = layoutxs;
-            maxy = layoutys;
-            originx = originy = 0;
-            wxBitmap bm(maxx, maxy, 24);
-            wxMemoryDC mdc(bm);
-            DrawRectangle(mdc, Background(), 0, 0, maxx, maxy);
-            Render(mdc);
+            wxBitmap bm = GetBitmap();
             Refresh();
             if (!bm.SaveFile(fn, wxBITMAP_TYPE_PNG)) return _(L"Error writing PNG file!");
         } else {
@@ -1289,6 +1299,9 @@ struct Document {
                         sys->clipboardcopy = s;
                         html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
                         wxDataObjectComposite *copyobj = new wxDataObjectComposite();
+                        wxBitmapDataObject *bmobj = 
+                            new wxBitmapDataObject(GetSubBitmapFromSelection(selected));
+                        copyobj->Add(bmobj);
                         auto *htmlobj = 
                         // wxGTK crashes when the HTML Data Object is requested
                         // so workaround this issue with a custom data object
