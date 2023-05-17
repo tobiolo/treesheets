@@ -817,6 +817,7 @@ struct MyFrame : wxFrame {
     void OnTabChange(wxAuiNotebookEvent &nbe) {
         TSCanvas *sw = (TSCanvas *)nb->GetPage(nbe.GetSelection());
         sw->Status();
+        SetSearchTextBoxBackgroundColour();
         sys->TabChange(sw->doc);
     }
 
@@ -1010,10 +1011,16 @@ struct MyFrame : wxFrame {
         }
     }
 
+    void SetSearchTextBoxBackgroundColour(bool found = false) {
+        filter->SetBackgroundColour(found ? *wxGREEN : wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX));
+        filter->SetForegroundColour(found ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT));
+    }
+
     void OnSearch(wxCommandEvent &ce) {
         wxString searchstring = ce.GetString();
         sys->darkennonmatchingcells = searchstring.Len() != 0;
         sys->searchstring = (sys->casesensitivesearch) ? searchstring : searchstring.Lower();
+        SetSearchTextBoxBackgroundColour();
         Document *doc = GetCurTab()->doc;
         if (doc->searchfilter)
             doc->SetSearchFilter(sys->searchstring.Len() != 0);
