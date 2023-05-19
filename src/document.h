@@ -514,8 +514,6 @@ struct Document {
     }
 
     void Render(wxDC &dc) {
-        ResetFont();
-        PickFont(dc, 0, 0, 0);
         dc.SetTextForeground(*wxLIGHT_GREY);
         int i = 0;
         for (Cell *p = curdrawroot->parent; p; p = p->parent)
