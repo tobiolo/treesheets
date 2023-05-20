@@ -291,6 +291,11 @@ struct treesheets {
 
     #include "treesheets_impl.h"
 
+    #include "mywxtools.h"
+    #include "mycanvas.h"
+    #include "myframe.h"
+    #include "myapp.h"
+
     #include "selection.h"
     #include "text.h"
     #include "cell.h"
@@ -299,11 +304,6 @@ struct treesheets {
 
     #include "document.h"
     #include "system.h"
-
-    #include "mywxtools.h"
-    #include "mycanvas.h"
-    #include "myframe.h"
-    #include "myapp.h"
 };
 
 treesheets::System *treesheets::sys = nullptr;
