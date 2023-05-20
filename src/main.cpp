@@ -258,7 +258,7 @@ enum {
     STYLE_STRIKETHRU = 16
 };
 
-std::map<char, pair<wxBitmapType, wxString>> imagetypes = {
+const std::map<char, pair<wxBitmapType, wxString>> imagetypes = {
     { 'I', {wxBITMAP_TYPE_PNG, "image/png"} },
     { 'J', {wxBITMAP_TYPE_JPEG, "image/jpeg"} }
 };

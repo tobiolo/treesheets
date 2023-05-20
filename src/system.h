@@ -21,7 +21,7 @@ struct Image {
 
 
     void ImageRescale(double sc) {
-        wxBitmapType it = imagetypes[image_type].first;
+        wxBitmapType it = imagetypes.at(image_type).first;
         wxImage im = sys->ConvertBufferToWxImage(image_data, it);
         im.Rescale(im.GetWidth() * sc, im.GetHeight() * sc);
         image_data = sys->ConvertWxImageToBuffer(im, it);
@@ -40,7 +40,7 @@ struct Image {
 
     wxBitmap &Display() {
         if (!bm_display.IsOk()) {
-            wxBitmapType it = imagetypes[image_type].first;
+            wxBitmapType it = imagetypes.at(image_type).first;
             wxBitmap bm = sys->ConvertBufferToWxBitmap(image_data, it);
             pixel_width = bm.GetWidth();
             ScaleBitmap(bm, 1.0 / display_scale * sys->frame->csf, bm_display);
@@ -297,7 +297,7 @@ struct System {
                     case 'I':
                     case 'J': {
                         char iti = *buf;
-                        wxBitmapType imt = imagetypes[iti].first;
+                        wxBitmapType imt = imagetypes.at(iti).first;
                         if (versionlastloaded < 9) dis.ReadString();
                         double sc = versionlastloaded >= 19 ? dis.ReadDouble() : 1.0;
                         vector<uint8_t> image_data;

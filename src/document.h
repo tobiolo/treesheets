@@ -879,7 +879,7 @@ struct Document {
                 } else {
                     // Always convert to PNG file format because wxWidgets has trouble dealing with other 
                     // image file formats in clipboard (especially for pasting).
-                    wxImage imi = sys->ConvertBufferToWxImage(im->image_data, imagetypes[im->image_type].first);
+                    wxImage imi = sys->ConvertBufferToWxImage(im->image_data, imagetypes.at(im->image_type).first);
                     vector<uint8_t> idv = sys->ConvertWxImageToBuffer(imi, wxBITMAP_TYPE_PNG);
                     image->SetData(idv.size(), idv.data());
                 }
