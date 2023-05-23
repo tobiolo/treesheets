@@ -1205,6 +1205,23 @@ struct Document {
                 return scaledviewingmode ? _(L"Now viewing TreeSheet to fit to the screen exactly, press F12 to return to normal.")
                                          : _(L"1:1 scale restored.");
 
+            case A_FILTERRANGE: {
+                wxString beginrange_str = wxGetTextFromUser(
+                    _(L"Please type in the start datetime. Both date AND time must be entered."), 
+                    _(L"Start datetime"), "1970-01-01T12:00:00", sys->frame);
+                wxDateTime beginrange = ParseDateTimeString(beginrange_str);
+                wxString endrange_str = wxGetTextFromUser(
+                    _(L"Please type in the end datetime. Both date AND time must be entered."), 
+                    _(L"End datetime"), "2099-12-24T23:59:00", sys->frame);
+                wxDateTime endrange = ParseDateTimeString(endrange_str);
+                if(beginrange.IsValid() && endrange.IsValid()) {
+                    ApplyEditRangeFilter(beginrange, endrange);
+                } else {
+                    return _(L"No valid datetime given!");
+                }
+                return nullptr;
+            }
+
             case A_FILTER5:
                 editfilter = 5;
                 ApplyEditFilter();
@@ -2237,6 +2254,22 @@ struct Document {
         loopv(i, itercells) itercells[i]->text.filtered = i > itercells.size() * editfilter / 100;
         rootgrid->ResetChildren();
         Refresh();
+    }
+
+    void ApplyEditRangeFilter(wxDateTime &rangebegin, wxDateTime &rangeend) {
+        searchfilter = false;
+        CollectCells(rootgrid);
+        loopv(i, itercells) itercells[i]->text.filtered = 
+            !itercells[i]->text.lastedit.IsBetween(rangebegin, rangeend);
+        rootgrid->ResetChildren();
+        Refresh();
+    }
+
+    wxDateTime ParseDateTimeString(const wxString &str) {
+        wxDateTime dt;
+        wxString::const_iterator end;
+        if(!dt.ParseDateTime(str, &end)) dt = wxInvalidDateTime;
+        return dt;
     }
 
     void SetSearchFilter(bool on) {
