@@ -406,6 +406,16 @@ struct System {
 
     done:
 
+        loopv(i, sys->imagelist) sys->imagelist[i]->trefc = 0;
+        doc->rootgrid->ImageRefCount();
+
+        ThreadPool pool(std::thread::hardware_concurrency());   
+        loopv(i, sys->imagelist) {
+            pool.enqueue([](Image *img) {
+                if(img->trefc) img->Display();    
+            }, sys->imagelist[i]);
+        }
+
         FileUsed(filename, doc);
         doc->Refresh();
         if (anyimagesfailed)
@@ -475,8 +485,8 @@ struct System {
     }
 
     void PurgeImages() {
-        for (int i = 0; i < imagelist.size(); i++) {
-            imagelist[i]->Purge();
+        loopv(i, sys->imagelist) {
+            sys->imagelist[i]->Purge();
         }
     }
 
