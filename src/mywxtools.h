@@ -173,3 +173,8 @@ static wxBitmap ConvertBufferToWxBitmap(vector<uint8_t> &buf, wxBitmapType bmt) 
     wxBitmap bm(im, 32);
     return bm;
 }
+
+static void RefreshImageRefCount(Cell *rootgrid) {
+    loopv(i, sys->imagelist) sys->imagelist[i]->trefc = 0;
+    rootgrid->ImageRefCount();
+}

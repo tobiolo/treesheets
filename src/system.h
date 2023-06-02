@@ -409,8 +409,7 @@ struct System {
 
     done:
 
-        loopv(i, sys->imagelist) sys->imagelist[i]->trefc = 0;
-        doc->rootgrid->ImageRefCount();
+        RefreshImageRefCount(doc->rootgrid);
         {
             ThreadPool pool(std::thread::hardware_concurrency());   
             loopv(i, sys->imagelist) {

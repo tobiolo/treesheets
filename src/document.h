@@ -198,8 +198,7 @@ struct Document {
             fos.Write(&vers, 1);
             sos.Write8(selected.xs);
             sos.Write8(selected.ys);
-            loopv(i, sys->imagelist) sys->imagelist[i]->trefc = 0;
-            rootgrid->ImageRefCount();
+            RefreshImageRefCount(rootgrid);
             int realindex = 0;
             loopv(i, sys->imagelist) {
                 Image &image = *sys->imagelist[i];
