@@ -1097,6 +1097,8 @@ struct MyFrame : wxFrame {
             nb->SetTabCtrlHeight(-1);
         }
         idd->FillBitmapVector(imagepath);
+        loopv(i, sys->imagelist)
+            sys->imagelist[i]->bm_display = wxNullBitmap;
     }
 
     void OnIconize(wxIconizeEvent &me) {
