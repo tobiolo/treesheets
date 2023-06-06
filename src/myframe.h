@@ -17,7 +17,7 @@ struct MyFrame : wxFrame {
     MyApp *app;
     wxFileSystemWatcher *watcher;
     bool watcherwaitingforuser;
-    double csf = FromDIP(1.0); // TODO: functions using this attribute should be modified to handle device-independent pixels
+    double csf; // TODO: functions using this attribute should be modified to handle device-independent pixels
     std::vector<std::string> scripts_in_menu;
     bool zenmode;
     ColorDropdown *celldd = nullptr;
@@ -92,6 +92,7 @@ struct MyFrame : wxFrame {
           fromclosebox(true),
           app(_app),
           watcherwaitingforuser(false),
+          csf(FromDIP(1.0)),
           watcher(nullptr),
           zenmode(false),
           searchmatchfound(false) {
@@ -1089,6 +1090,7 @@ struct MyFrame : wxFrame {
     }
 
     void OnDPIChanged(wxDPIChangedEvent &dce) {
+        csf = FromDIP(1.0);
         if (nb) {
             loop(i, nb->GetPageCount()) {
                 TSCanvas *p = (TSCanvas *)nb->GetPage(i);
@@ -1097,6 +1099,8 @@ struct MyFrame : wxFrame {
             nb->SetTabCtrlHeight(-1);
         }
         idd->FillBitmapVector(imagepath);
+        loopv(i, sys->imagelist)
+            sys->imagelist[i]->bm_display = wxNullBitmap;
     }
 
     void OnIconize(wxIconizeEvent &me) {
