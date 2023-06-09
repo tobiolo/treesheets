@@ -400,6 +400,37 @@ struct Document {
         Refresh();
     }
 
+    void DragCopy() {
+        Cell *c = selected.GetCell();
+        sys->cellclipboard = c ? c->Clone(nullptr) : selected.g->CloneSel(selected);
+        wxDataObjectComposite dragdata;
+        if(c && !c->text.t && c->text.image) {
+            Image *im = c->text.image;
+            if (!im->image_data.empty() && imagetypes.find(im->image_type) != imagetypes.end()) {
+                wxBitmap bm = ConvertBufferToWxBitmap(im->image_data, imagetypes.at(im->image_type).first);
+                dragdata.Add(new wxBitmapDataObject(bm));
+            }
+        } else {
+            wxString s, html;
+            s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
+            html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
+            sys->clipboardcopy = s;
+            
+            dragdata.Add(new wxTextDataObject(s));
+            auto *htmlobj = 
+            #ifdef __WXGTK__
+                new wxCustomDataObject(wxDF_HTML);
+            htmlobj->SetData(html.Len(), html);
+            #else
+                new wxHTMLDataObject(html);
+            #endif
+            dragdata.Add(htmlobj);
+        }
+        wxDropSource dragSource(dragdata, sw);
+        wxDragResult result = dragSource.DoDragDrop(true);
+        return;
+    }
+
     void Drag(wxDC &dc) {
         if (!selected.g || !hover.g || !begindrag.g) return;
         if (isctrlshiftdrag) {
