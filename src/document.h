@@ -400,6 +400,74 @@ struct Document {
         Refresh();
     }
 
+    void Copy(int mode) {
+        Cell *c = selected.GetCell();
+        sys->cellclipboard = c ? c->Clone(nullptr) : selected.g->CloneSel(selected);
+        
+        switch(mode) {
+            case DND: {
+                wxDataObjectComposite dragdata;
+                if(c && !c->text.t && c->text.image) {
+                    Image *im = c->text.image;
+                    if (!im->image_data.empty() && imagetypes.find(im->image_type) != imagetypes.end()) {
+                        wxBitmap bm = ConvertBufferToWxBitmap(im->image_data, imagetypes.at(im->image_type).first);
+                        dragdata.Add(new wxBitmapDataObject(bm));
+                    }
+                } else {
+                    wxString s, html;
+                    s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
+                    html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
+                    sys->clipboardcopy = s;
+                    
+                    dragdata.Add(new wxTextDataObject(s));
+                    auto *htmlobj = 
+                    #ifdef __WXGTK__
+                        new wxCustomDataObject(wxDF_HTML);
+                    htmlobj->SetData(html.Len(), html);
+                    #else
+                        new wxHTMLDataObject(html);
+                    #endif
+                    dragdata.Add(htmlobj);
+                }
+                wxDropSource dragSource(dragdata, sw);
+                wxDragResult result = dragSource.DoDragDrop(true);
+                break;
+            }
+            case CLIPBOARD:
+            default: {
+                wxDataObjectComposite *clipboarddata = new wxDataObjectComposite();
+                if(c && !c->text.t && c->text.image) {
+                    Image *im = c->text.image;
+                    if (!im->image_data.empty() && imagetypes.find(im->image_type) != imagetypes.end()) {
+                        wxBitmap bm = ConvertBufferToWxBitmap(im->image_data, imagetypes.at(im->image_type).first);
+                        clipboarddata->Add(new wxBitmapDataObject(bm));
+                    }
+                } else {
+                    wxString s, html;
+                    s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
+                    html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
+                    sys->clipboardcopy = s;
+                    
+                    clipboarddata->Add(new wxTextDataObject(s));
+                    auto *htmlobj = 
+                    #ifdef __WXGTK__
+                        new wxCustomDataObject(wxDF_HTML);
+                    htmlobj->SetData(html.Len(), html);
+                    #else
+                        new wxHTMLDataObject(html);
+                    #endif
+                    clipboarddata->Add(htmlobj);
+                }
+                if(wxTheClipboard->Open()) {
+                    wxTheClipboard->SetData(clipboarddata);
+                    wxTheClipboard->Close();
+                }
+                break;
+            }
+        }
+        return;
+    }
+
     void Drag(wxDC &dc) {
         if (!selected.g || !hover.g || !begindrag.g) return;
         if (isctrlshiftdrag) {
@@ -876,70 +944,11 @@ struct Document {
         return nullptr;
     }
 
-    const wxChar *CopyImageToClipboard(Cell *cell) {
-        if (wxTheClipboard->Open()) {
-            Image *im = cell->text.image;
-            if (!im->image_data.empty() && imagetypes.find(im->image_type) != imagetypes.end()) {
-                #ifdef __WXGTK__
-                wxCustomDataObject *image = new wxCustomDataObject("image/png");
-                if(im->image_type == 'I') {
-                    image->SetData(im->image_data.size(), im->image_data.data());
-                } else {
-                    // Always convert to PNG file format because wxWidgets has trouble dealing with other 
-                    // image file formats in clipboard (especially for pasting).
-                    wxImage imi = ConvertBufferToWxImage(im->image_data, imagetypes.at(im->image_type).first);
-                    vector<uint8_t> idv = ConvertWxImageToBuffer(imi, wxBITMAP_TYPE_PNG);
-                    image->SetData(idv.size(), idv.data());
-                }
-                wxTheClipboard->SetData(image);
-                #else
-                wxBitmap bm = ConvertBufferToWxBitmap(im->image_data, imagetypes.at(im->image_type).first);
-                wxTheClipboard->SetData(new wxBitmapDataObject(bm));
-                #endif
-            }
-            wxTheClipboard->Close();
-            return _(L"Image copied to clipboard");
-        }
-        return nullptr;
-    }
-
     const wxChar *CopySubBitmapToClipboard(Selection &sel) {
         if (wxTheClipboard->Open()) {
             wxTheClipboard->SetData(new wxBitmapDataObject(GetSubBitmap(sel)));
             wxTheClipboard->Close();
             return _(L"Bitmap copied to clipboard");
-        }
-        return nullptr;
-    }
-
-    const wxChar *CopyTextToClipboard(Selection &sel, bool cont = false) {
-        if (wxTheClipboard->Open()) {
-            wxString s, html;
-            if (cont) {
-                loopallcellssel(c, true) if (c->text.t.Len()) s += c->text.t + " ";
-            } else {
-                s = sel.g->ConvertToText(sel, 0, A_EXPTEXT, this);
-            }
-            sys->clipboardcopy = s;
-            html = sel.g->ConvertToText(sel, 0, A_EXPHTMLT, this);
-            wxDataObjectComposite *copyobj = new wxDataObjectComposite();
-            auto *htmlobj = 
-            // wxGTK crashes when the HTML Data Object is requested
-            // so workaround this issue with a custom data object
-            #ifdef __WXGTK__
-                new wxCustomDataObject(wxDF_HTML);
-            htmlobj->SetData(html.Len(), html);
-            #else
-                new wxHTMLDataObject(html);
-            #endif
-            copyobj->Add(htmlobj);
-            // wxGTK under Wayland fails to offer multiple data objects.
-            // Instead, the last one added to the composite data object
-            // will be offered under wxGTK/Wayland.
-            copyobj->Add(new wxTextDataObject(s), true);
-            wxTheClipboard->SetData(copyobj);
-            wxTheClipboard->Close();
-            return _(L"Text copied to clipboard");
         }
         return nullptr;
     }
@@ -1372,14 +1381,7 @@ struct Document {
                     sys->cellclipboard = c ? c->Clone(nullptr) : selected.g->CloneSel(selected);
                 }
 
-                const wxChar *returnmessage;
-                if(c and c->text.image and !c->text.t) {
-                    returnmessage = CopyImageToClipboard(c);
-                } else if (k == A_COPYBM) {
-                    returnmessage = CopySubBitmapToClipboard(selected);
-                } else {
-                    returnmessage = CopyTextToClipboard(selected, k == A_COPYCT);
-                }
+                Copy(CLIPBOARD);
 
                 if (k == A_CUT) {
                     if (!selected.TextEdit()) {
@@ -1393,7 +1395,7 @@ struct Document {
                     Refresh();
                 }
                 ZoomOutIfNoGrid(dc);
-                return returnmessage;
+                return nullptr;
 
             case A_SELALL:
                 selected.SelAll();
@@ -1852,12 +1854,6 @@ struct Document {
         switch (k) {
             case A_NEXT: selected.Next(this, dc, false); return nullptr;
             case A_PREV: selected.Next(this, dc, true); return nullptr;
-
-            case A_IMAGECPY: {
-                if (selected.Thin()) return NoThin();
-                if (!c->text.image) return _(L"No image in this cell.");
-                return CopyImageToClipboard(c);
-            }
 
             case A_ENTERGRID:
                 if (!c->grid) Action(dc, A_NEWGRID);
