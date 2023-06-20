@@ -70,16 +70,22 @@ jobs:
     - uses: actions/checkout@v3
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
+    - name: Add Clang to PATH
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+        update: true
+        install: mingw-w64-ucrt-x86_64-clang
     - name: clone wxWidgets
       run: |
         git clone --depth 1 --recurse-submodules https://github.com/wxWidgets/wxWidgets
         (gc 'wxWidgets\build\msw\wx_setup.props') -replace '<wxReleaseRuntimeLibrary>MultiThreadedDLL</wxReleaseRuntimeLibrary>', '<wxReleaseRuntimeLibrary>MultiThreaded</wxReleaseRuntimeLibrary>' | Out-File -encoding ASCII 'wxWidgets\build\msw\wx_setup.props'
     - name: build wxWidgets
       working-directory: wxWidgets
-      run: msbuild.exe build/msw/wx_vc14.sln /p:Configuration=Release /p:Platform=x64 /p:RuntimeLibrary=MultiThreaded
+      run: msbuild.exe build/msw/wx_vc14.sln /p:Configuration=Release /p:Platform=x64 /p:RuntimeLibrary=MultiThreaded /p:CLToolExe=clang-cl.exe /p:CLToolPath=C:\msys2\ucrt64\bin
     - name: build TreeSheets
       run: |
-        msbuild.exe TreeSheets\treesheets.sln /p:Configuration=Release /p:Platform=x64
+        msbuild.exe TreeSheets\treesheets.sln /p:Configuration=Release /p:Platform=x64 /p:CLToolExe=clang-cl.exe /p:CLToolPath=C:\msys2\ucrt64\bin
         Remove-Item TS\*.pdb
         Remove-Item TS\*.ipdb
         Remove-Item TS\*.iobj
