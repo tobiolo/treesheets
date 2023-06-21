@@ -278,6 +278,7 @@ struct MyFrame : wxFrame {
             selmenu->AppendSeparator();
             MyAppend(selmenu, A_LINK, _(L"Go To &Matching Cell\tF6"));
             MyAppend(selmenu, A_LINKREV, _(L"Go To Matching Cell (Reverse)\tSHIFT+F6"));
+            MyAppend(selmenu, A_LINKIMG, _(L"Go To Cell with Matching Image\tSHIFT+F7"));
 
             wxMenu *temenu = new wxMenu();
             MyAppend(temenu, A_LEFT, _(L"Cursor Left\tLEFT"));

@@ -1864,10 +1864,12 @@ struct Document {
                 return nullptr;
 
             case A_LINK:
+            case A_LINKIMG:
             case A_LINKREV: {
-                if (!c->text.t.Len()) return _(L"No text in this cell.");
+                if (k != A_LINKIMG && !c->text.t.Len()) return _(L"No text in this cell.");
+                if (k == A_LINKIMG && !c->text.image) return _(L"No image in this cell.");
                 bool t1 = false, t2 = false;
-                Cell *link = rootgrid->FindLink(selected, c, nullptr, t1, t2, k == A_LINK);
+                Cell *link = rootgrid->FindLink(selected, c, nullptr, t1, t2, k != A_LINKREV, k == A_LINKIMG);
                 if (!link || !link->parent) return _(L"No matching cell found!");
                 SetSelect(link->parent->grid->FindCell(link));
                 ScrollOrZoom(dc, true);
