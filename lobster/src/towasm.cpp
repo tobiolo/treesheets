@@ -13,10 +13,10 @@
 // limitations under the License.
 
 // Include this first to ensure it is free of dependencies.
+#include "lobster/stdafx.h"
+
 #include "lobster/wasm_binary_writer.h"
 #include "lobster/wasm_binary_writer_test.h"
-
-#include "lobster/stdafx.h"
 
 #include "lobster/disasm.h"  // Some shared bytecode utilities.
 #include "lobster/compiler.h"
