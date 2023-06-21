@@ -278,6 +278,8 @@ struct MyFrame : wxFrame {
             selmenu->AppendSeparator();
             MyAppend(selmenu, A_LINK, _(L"Go To &Matching Cell\tF6"));
             MyAppend(selmenu, A_LINKREV, _(L"Go To Matching Cell (Reverse)\tSHIFT+F6"));
+            MyAppend(selmenu, A_LINKIMG, _(L"Go To Cell with Matching Image\tF7"));
+            MyAppend(selmenu, A_LINKIMGREV, _(L"Go To Cell With Matching Cell (Reverse)\tSHIFT+F7"));
 
             wxMenu *temenu = new wxMenu();
             MyAppend(temenu, A_LEFT, _(L"Cursor Left\tLEFT"));
@@ -377,7 +379,7 @@ struct MyFrame : wxFrame {
             MyAppend(laymenu, A_BS, _(L"Bubble Style Rendering\tALT+8"));
             MyAppend(laymenu, A_LS, _(L"Line Style Rendering\tALT+9"));
             laymenu->AppendSeparator();
-            MyAppend(laymenu, A_TEXTGRID, _(L"Toggle Vertical Layout\tF7"),
+            MyAppend(laymenu, A_TEXTGRID, _(L"Toggle Vertical Layout\tALT+0"),
                      _(L"Make a hierarchy layout more vertical (default) or more horizontal"));
 
             editmenu = new wxMenu();
