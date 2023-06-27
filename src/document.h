@@ -449,7 +449,8 @@ struct Document {
                     Image *im = c->text.image;
                     if (!im->image_data.empty() && imagetypes.find(im->image_type) != imagetypes.end()) {
                         wxBitmap bm = ConvertBufferToWxBitmap(im->image_data, imagetypes.at(im->image_type).first);
-                        clipboarddata->Add(new wxBitmapDataObject(bm));
+                        wxBitmapDataObject *bdo = new wxBitmapDataObject(bm);
+                        clipboarddata->Add(bdo);
                     }
                 } else {
                     wxString s, html;
