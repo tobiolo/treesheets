@@ -903,6 +903,23 @@ struct MyFrame : wxFrame {
                 case A_END: tc->SetSelection(1000, 1000); return;
                 case A_SELALL: tc->SetSelection(0, 1000); return;
                 case A_CANCELEDIT: tc->Clear(); sw->SetFocus(); return;
+                #ifdef __WXMSW__
+                // fixme: Make wxWidgets process Return key in text control on MSW
+                // with EVT_TEXT_ENTER like on the other platforms
+                case A_ENTERCELL: 
+                case A_ENTERGRID: {
+                    if (tc == filter) {
+                        wxString searchstring = ce.GetString();
+                        if (searchstring.Len() == 0) {
+                            sw->SetFocus();
+                        } else {
+                            wxClientDC dc(sw);
+                            sw->doc->SearchNext(dc, false, true);
+                            tc->SetFocus();
+                        }
+                    }
+                }
+                #endif
             }
         }
         wxClientDC dc(sw);
