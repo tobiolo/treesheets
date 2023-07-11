@@ -1040,6 +1040,7 @@ struct MyFrame : wxFrame {
         } else
             doc->Refresh();
         GetCurTab()->Status();
+        ce.Skip();
     }
 
     void OnSearchEnter(wxCommandEvent &ce) {
