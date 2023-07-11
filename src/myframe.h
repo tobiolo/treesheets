@@ -682,7 +682,7 @@ struct MyFrame : wxFrame {
             SEPARATOR;
             tb->AddControl(new wxStaticText(tb, wxID_ANY, _(L"Replace ")));
             tb->AddControl(replaces =
-                new wxTextCtrl(tb, A_REPLACE, "", wxDefaultPosition, FromDIP(wxSize(80, 22)), wxWANTS_CHARS));
+                new wxTextCtrl(tb, A_REPLACE, "", wxDefaultPosition, FromDIP(wxSize(80, 22)), wxWANTS_CHARS | wxTE_PROCESS_ENTER));
             AddTBIcon(_(L"Clear replace"), A_CLEARREPLACE, iconpath + L"cancel.png");
             AddTBIcon(_(L"Replace in selection"), A_REPLACEONCE, iconpath + L"replace.png");
             AddTBIcon(_(L"Replace All"), A_REPLACEALL, iconpath + L"replaceall.png");
@@ -904,16 +904,29 @@ struct MyFrame : wxFrame {
                 case A_END: tc->SetSelection(1000, 1000); return;
                 case A_SELALL: tc->SetSelection(0, 1000); return;
                 case A_ENTERCELL: {
-                    // fixme: this is an adaption of OnSearchEnter serving as
-                    // workaround because wxEVT_TEXT_ENTER is not generated on Windows
-                    if (tc != filter) return;
-                    if (sys->searchstring.Len() == 0) {
-                        sw->SetFocus();
-                    } else {
-                        wxClientDC dc(sw);
-                        sw->doc->SearchNext(dc, false, true);
+                    wxClientDC dc(sw);
+                    switch(tc) {
+                        // OnSearchEnter equivalent implementation for MSW
+                        // as EVT_TEXT_ENTER event is not generated.
+                        case filter: {
+                            if (sys->searchstring.Len() == 0) {
+                                sw->SetFocus();
+                            } else {
+                                sw->doc->Action(dc, A_SEARCHNEXT);
+                            }
+                            return;
+                        }
+                        // OnReplaceEnter equivalent implementation for MSW
+                        // as EVT_TEXT_ENTER event is not generated.
+                        case replaces: {
+                            if (sys->frame->replaces->GetValue().Len() == 0) {
+                                sw->SetFocus();
+                            } else {
+                                sw->doc->Action(dc, A_REPLACEONCEJ);
+                            }
+                            return;
+                        }
                     }
-                    return;
                 }
                 #endif
                 case A_CANCELEDIT: tc->Clear(); sw->SetFocus(); return;
@@ -1062,7 +1075,19 @@ struct MyFrame : wxFrame {
             sw->SetFocus();
         } else {
             wxClientDC dc(sw);
-            doc->SearchNext(dc, false, true);
+            sw->doc->Action(dc, A_SEARCHNEXT);
+        }
+    }
+
+    void OnReplaceEnter(wxCommandEvent &ce) {
+        TSCanvas *sw = GetCurTab();
+        Document *doc = GetCurTab()->doc;
+        wxString replacestring = ce.GetString();
+        if (replacestring.Len() == 0) {
+            sw->SetFocus();
+        } else {
+            wxClientDC dc(sw);
+            sw->doc->Action(dc, A_REPLACEONCEJ);
         }
     }
 
