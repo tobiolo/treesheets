@@ -1202,7 +1202,7 @@ struct Document {
                 } else {
                     loopallcellssel(c, true) if(c->text.IsInSearch()) c->AddUndo(this);
                     selected.g->ReplaceStr(this, replaces, lreplaces, selected);
-                    if (k == A_REPLACEONCEJ) return SearchNext(dc, true, true);
+                    if (k == A_REPLACEONCEJ) return SearchNext(dc, false, true);
                 }
                 return _(L"Text has been replaced.");
             }
