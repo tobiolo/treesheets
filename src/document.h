@@ -69,6 +69,7 @@ struct Document {
 
     bool redrawpending;
     bool scrolltoselection;
+    bool initialzoomtoselection;
     bool dpichanged;
 
     bool scaledviewingmode;
@@ -112,6 +113,7 @@ struct Document {
           blink(true),
           redrawpending(false),
           scrolltoselection(true),
+          initialzoomtoselection(true),
           dpichanged(false),
           scaledviewingmode(false),
           currentviewscale(1),
@@ -665,8 +667,11 @@ struct Document {
         DrawSelect(dc, selected);
         if (hover.g) hover.g->DrawHover(this, dc, hover);
         if (scaledviewingmode) { dc.SetUserScale(1, 1); }
-        if (scrolltoselection) {
+        if (initialzoomtoselection) {
             Zoom(initialzoomlevel, dc);
+            initialzoomtoselection = false;
+        }
+        if (scrolltoselection) {
             ScrollIfSelectionOutOfView(dc, selected);
             scrolltoselection = false;
         }
