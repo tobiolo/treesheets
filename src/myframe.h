@@ -1155,6 +1155,10 @@ struct MyFrame : wxFrame {
                 nb->SetTabCtrlHeight(-1);
             }
             idd->FillBitmapVector(imagepath);
+            wxImage foldiconi;
+            foldiconi.LoadFile(GetDataPath(L"images/nuvola/fold.png"));
+            foldicon = wxBitmap(foldiconi);
+            ScaleBitmap(foldicon, FromDIP(1.0) / 3.0, foldicon);
         }
     }
 
