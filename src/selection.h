@@ -371,4 +371,15 @@ class Selection {
         }
         doc->DrawSelectMove(dc, *this);
     }
+
+    inline bool IsWordSep(wxChar ch) {
+        // represents: !"#$%&'()*+,-./    :;<=>?@    [\]^    {|}~    `
+        return (32 < ch && ch < 48) || (57 < ch && ch < 65) || (90 < ch && ch < 95) || (122 < ch && ch < 127) || ch == 96;
+    }
+
+    inline int CharType(wxChar ch) {
+        if (wxIsspace(ch)) return TEXT_SPACE;
+        if (IsWordSep(ch)) return TEXT_SEP;
+        return TEXT_CHAR;
+    }
 };
