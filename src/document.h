@@ -415,33 +415,49 @@ struct Document {
         sys->clipboardcopy = wxEmptyString;
         
         switch(mode) {
-            case DRAGANDDROP: {
+            case CLIPBOARD:
+            case DRAGANDDROP: 
+            default: {
                 sys->cellclipboard = c ? c->Clone(nullptr) : selected.g->CloneSel(selected);
                 wxDataObjectComposite dragdata;
                 if (c && !c->text.t && c->text.image) {
                     Image *im = c->text.image;
                     if (!im->image_data.empty() && imagetypes.find(im->image_type) != imagetypes.end()) {
                         wxBitmap bm = ConvertBufferToWxBitmap(im->image_data, imagetypes.at(im->image_type).first);
-                        dragdata.Add(new wxBitmapDataObject(bm));
+                        if (mode == DRAGANDDROP) dragdata.Add(new wxBitmapDataObject(bm));
+                        if (mode == CLIPBOARD && wxTheClipboard->Open()) {
+                            wxTheClipboard->SetData(new wxBitmapDataObject(bm));
+                            wxTheClipboard->Close();
+                        }
                     }
                 } else {
-                    wxString s, html;
-                    s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
-                    html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
-                    if (!selected.TextEdit()) sys->clipboardcopy = s;
-                    
-                    dragdata.Add(new wxTextDataObject(s));
-                    auto *htmlobj = 
-                    #ifdef __WXGTK__
-                        new wxCustomDataObject(wxDF_HTML);
-                    htmlobj->SetData(html.Len(), html);
-                    #else
-                        new wxHTMLDataObject(html);
-                    #endif
-                    dragdata.Add(htmlobj);
+                    wxString s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
+                    wxDataObjectComposite *clipboarddata = 
+                        (mode == CLIPBOARD) ? new wxDataObjectComposite() : nullptr;
+                    if (mode == DRAGANDDROP) dragdata.Add(new wxTextDataObject(s));
+                    if (mode == CLIPBOARD) clipboarddata->Add(new wxTextDataObject(s));
+                    if (!selected.TextEdit()) {
+                        sys->clipboardcopy = s;
+                        wxString html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
+                        auto *htmlobj = 
+                        #ifdef __WXGTK__
+                            new wxCustomDataObject(wxDF_HTML);
+                        htmlobj->SetData(html.Len(), html);
+                        #else
+                            new wxHTMLDataObject(html);
+                        #endif
+                        if (mode == DRAGANDDROP) dragdata.Add(htmlobj);
+                        if (mode == CLIPBOARD) clipboarddata->Add(htmlobj);
+                    }
+                    if (mode == DRAGANDDROP) {
+                            wxDropSource dragsource(dragdata, sw);
+                            dragsource.DoDragDrop(true);
+                        }
+                    if (mode == CLIPBOARD && wxTheClipboard->Open()) {
+                            wxTheClipboard->SetData(clipboarddata);
+                            wxTheClipboard->Close();
+                    }
                 }
-                wxDropSource dragsource(dragdata, sw);
-                dragsource.DoDragDrop(true);
                 break;
             }
             case CLIPBOARD_CONTINUOUS_TEXT: {
@@ -454,41 +470,6 @@ struct Document {
                 if (wxTheClipboard->Open()) {
                     wxTheClipboard->SetData(clipboardtextdata);
                     wxTheClipboard->Close();
-                }
-                break;
-            }
-            case CLIPBOARD:
-            default: {
-                sys->cellclipboard = c ? c->Clone(nullptr) : selected.g->CloneSel(selected);
-                if (c && !c->text.t && c->text.image) {
-                    Image *im = c->text.image;
-                    if (!im->image_data.empty() && imagetypes.find(im->image_type) != imagetypes.end()) {
-                        wxBitmap bm = ConvertBufferToWxBitmap(im->image_data, imagetypes.at(im->image_type).first);
-                        if (wxTheClipboard->Open()) {
-                            wxTheClipboard->SetData(new wxBitmapDataObject(bm));
-                            wxTheClipboard->Close();
-                        }   
-                    }
-                } else {
-                    wxDataObjectComposite *clipboarddata = new wxDataObjectComposite();
-                    wxString s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
-                    clipboarddata->Add(new wxTextDataObject(s));
-                    if (!selected.TextEdit()) {
-                        sys->clipboardcopy = s;
-                        wxString html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
-                        auto *htmlobj = 
-                        #ifdef __WXGTK__
-                            new wxCustomDataObject(wxDF_HTML);
-                        htmlobj->SetData(html.Len(), html);
-                        #else
-                            new wxHTMLDataObject(html);
-                        #endif
-                        clipboarddata->Add(htmlobj);
-                    }
-                    if (wxTheClipboard->Open()) {
-                        wxTheClipboard->SetData(clipboarddata);
-                        wxTheClipboard->Close();
-                    }
                 }
                 break;
             }
