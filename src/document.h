@@ -425,20 +425,12 @@ struct Document {
                         dragdata.Add(new wxBitmapDataObject(bm));
                     }
                 } else {
-                    wxString s, html;
-                    s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
-                    html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
-                    if (!selected.TextEdit()) sys->clipboardcopy = s;
-                    
+                    wxString s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
                     dragdata.Add(new wxTextDataObject(s));
-                    auto *htmlobj = 
-                    #ifdef __WXGTK__
-                        new wxCustomDataObject(wxDF_HTML);
-                    htmlobj->SetData(html.Len(), html);
-                    #else
-                        new wxHTMLDataObject(html);
-                    #endif
-                    dragdata.Add(htmlobj);
+                    if (!selected.TextEdit()) {
+                        auto *htmlobj = CopyEntireCells(s);
+                        dragdata.Add(htmlobj);
+                    }
                 }
                 wxDropSource dragsource(dragdata, sw);
                 dragsource.DoDragDrop(true);
@@ -474,15 +466,7 @@ struct Document {
                     wxString s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
                     clipboarddata->Add(new wxTextDataObject(s));
                     if (!selected.TextEdit()) {
-                        sys->clipboardcopy = s;
-                        wxString html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
-                        auto *htmlobj = 
-                        #ifdef __WXGTK__
-                            new wxCustomDataObject(wxDF_HTML);
-                        htmlobj->SetData(html.Len(), html);
-                        #else
-                            new wxHTMLDataObject(html);
-                        #endif
+                        auto *htmlobj = CopyEntireCells(s);
                         clipboarddata->Add(htmlobj);
                     }
                     if (wxTheClipboard->Open()) {
@@ -494,6 +478,22 @@ struct Document {
             }
         }
         return;
+    }
+
+    #ifdef __WXGTK__
+        wxCustomDataObject *CopyEntireCells(wxString &s) {
+    #else
+        wxHTMLDataObject *CopyEntireCells(wxString &s) {
+    #endif
+        sys->clipboardcopy = s;
+        wxString html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
+        #ifdef __WXGTK__
+            wxCustomDataObject *htmlobj = new wxCustomDataObject(wxDF_HTML);
+            htmlobj->SetData(html.Len(), html);
+        #else
+            wxHTMLDataObject *htmlobj = new wxHTMLDataObject(html);
+        #endif
+        return htmlobj;
     }
 
     void Drag(wxDC &dc) {
