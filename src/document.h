@@ -425,20 +425,20 @@ struct Document {
                         dragdata.Add(new wxBitmapDataObject(bm));
                     }
                 } else {
-                    wxString s, html;
-                    s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
-                    html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
-                    if (!selected.TextEdit()) sys->clipboardcopy = s;
-                    
+                    wxString s = selected.g->ConvertToText(selected, 0, A_EXPTEXT, this);
                     dragdata.Add(new wxTextDataObject(s));
-                    auto *htmlobj = 
-                    #ifdef __WXGTK__
-                        new wxCustomDataObject(wxDF_HTML);
-                    htmlobj->SetData(html.Len(), html);
-                    #else
-                        new wxHTMLDataObject(html);
-                    #endif
-                    dragdata.Add(htmlobj);
+                    if (!selected.TextEdit()) {
+                        sys->clipboardcopy = s;
+                        wxString html = selected.g->ConvertToText(selected, 0, A_EXPHTMLT, this);
+                        auto *htmlobj = 
+                        #ifdef __WXGTK__
+                            new wxCustomDataObject(wxDF_HTML);
+                        htmlobj->SetData(html.Len(), html);
+                        #else
+                            new wxHTMLDataObject(html);
+                        #endif
+                        dragdata.Add(htmlobj);
+                    }
                 }
                 wxDropSource dragsource(dragdata, sw);
                 dragsource.DoDragDrop(true);
