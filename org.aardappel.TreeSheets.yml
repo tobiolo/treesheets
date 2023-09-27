@@ -20,4 +20,4 @@ modules:
     builddir: true
     sources:
       - type: git
-        url: https://github.com/aardappel/treesheets
+        url: https://github.com/t2b3/treesheets
