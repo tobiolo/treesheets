@@ -30,8 +30,7 @@ if(NOT APPLE AND NOT WIN32)
     include(GNUInstallDirs)
 endif()
 
-# set(CMAKE_CXX_STANDARD 17)  # this doesn't work correctly on all CMake versions :(
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set(CMAKE_CXX_STANDARD 17)
 
 OPTION(TREESHEETS_WITH_STATIC_WXWIDGETS "Build wxWidgets along with TreeSheets and link TreeSheets against static wxWidgets library" OFF)
 
@@ -66,7 +65,7 @@ add_library(lobster STATIC ${lobster_sources})
 target_include_directories(lobster PUBLIC lobster/include lobster/src lobster/external/libtcc)
 
 add_library(lobster-impl STATIC src/lobster_impl.cpp)
-target_link_libraries(lobster-impl PRIVATE lobster)
+target_link_libraries(lobster-impl PUBLIC lobster)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
