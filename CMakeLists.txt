@@ -39,6 +39,7 @@ OPTION(TREESHEETS_WITH_STATIC_WXWIDGETS "Build wxWidgets along with TreeSheets a
 
 if (TREESHEETS_WITH_STATIC_WXWIDGETS)
     set(wxBUILD_SHARED OFF)
+    set(wxBUILD_USE_STATIC_RUNTIME ON)
     add_subdirectory(lib/wxWidgets)
 else()
     find_package(wxWidgets REQUIRED aui adv core xml net)
