@@ -65,7 +65,7 @@ add_library(lobster STATIC ${lobster_sources})
 target_include_directories(lobster PUBLIC lobster/include lobster/src lobster/external/libtcc)
 
 add_library(lobster-impl STATIC src/lobster_impl.cpp)
-target_link_libraries(lobster-impl PRIVATE lobster)
+target_link_libraries(lobster-impl lobster)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
