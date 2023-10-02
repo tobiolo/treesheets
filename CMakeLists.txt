@@ -61,11 +61,22 @@ file(
         lobster/src/tccbind.cpp
         lobster/external/libtcc/libtcc.c
 )
-add_library(lobster STATIC ${lobster_sources})
-target_include_directories(lobster PUBLIC lobster/include lobster/src lobster/external/libtcc)
+
+if (WIN32) 
+    file(
+        GLOB stackwalker_sources
+            lobster/include/StackWalker/*.cpp
+    )
+
+    add_library(lobster STATIC ${lobster_sources} ${stackwalker_sources})
+    target_include_directories(lobster PUBLIC lobster/include lobster/src lobster/external/libtcc lobster/include/StackWalker)
+else()
+    add_library(lobster STATIC ${lobster_sources})
+    target_include_directories(lobster PUBLIC lobster/include lobster/src lobster/external/libtcc)
+endif()
 
 add_library(lobster-impl STATIC src/lobster_impl.cpp)
-target_link_libraries(lobster-impl PRIVATE lobster)
+target_link_libraries(lobster-impl PUBLIC lobster)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
@@ -90,6 +101,7 @@ endif()
 if (TREESHEETS_WITH_STATIC_WXWIDGETS)
     target_link_libraries(
         treesheets
+        PUBLIC
         wx::aui
         wx::adv
         wx::core
