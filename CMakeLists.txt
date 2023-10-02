@@ -39,6 +39,7 @@ OPTION(TREESHEETS_WITH_STATIC_WXWIDGETS "Build wxWidgets along with TreeSheets a
 
 if (TREESHEETS_WITH_STATIC_WXWIDGETS)
     set(wxBUILD_SHARED OFF)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     add_subdirectory(lib/wxWidgets)
 else()
     find_package(wxWidgets REQUIRED aui adv core xml net)
