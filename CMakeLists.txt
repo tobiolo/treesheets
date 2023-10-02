@@ -90,12 +90,12 @@ endif()
 if (TREESHEETS_WITH_STATIC_WXWIDGETS)
     target_link_libraries(
         treesheets
+        lobster-impl
         wx::aui
         wx::adv
         wx::core
         wx::xml
         wx::net
-        lobster-impl
     )
 else()
     target_link_libraries(
