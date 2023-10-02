@@ -75,10 +75,18 @@ if (WITH_CLANG_TIDY)
 set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=cppcoreguidelines-*,clang-analyzer-*,readability-*,performance-*,portability-*,concurrency-*,modernize-*)
 endif()
 
-add_executable(
-    treesheets
-    src/main.cpp
-)
+if (WIN32)
+    add_executable(
+        treesheets
+        WIN32
+        src/main.cpp
+    )
+else()
+    add_executable(
+        treesheets
+        src/main.cpp
+    )
+endif()
 
 if (TREESHEETS_WITH_STATIC_WXWIDGETS)
     target_link_libraries(
