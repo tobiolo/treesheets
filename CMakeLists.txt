@@ -81,6 +81,7 @@ endif()
 if (WIN32)
     add_executable(
         treesheets
+        WIN32
         src/main.cpp
     )
 else()
