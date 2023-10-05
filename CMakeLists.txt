@@ -67,6 +67,10 @@ target_include_directories(lobster PUBLIC lobster/include lobster/src lobster/ex
 add_library(lobster-impl STATIC src/lobster_impl.cpp)
 target_link_libraries(lobster-impl PRIVATE lobster)
 
+if (WIN32)
+    add_library(stackwalker STATIC lobster/include/StackWalker/StackWalker.cpp lobster/include/StackWalker/StackWalker.cpp)
+endif()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 OPTION(WITH_CLANG_TIDY "Run clang-tidy linter" OFF)
@@ -74,28 +78,58 @@ if (WITH_CLANG_TIDY)
 set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=cppcoreguidelines-*,clang-analyzer-*,readability-*,performance-*,portability-*,concurrency-*,modernize-*)
 endif()
 
-add_executable(
-    treesheets
-    src/main.cpp
-)
-
-if (TREESHEETS_WITH_STATIC_WXWIDGETS)
-    target_link_libraries(
+if (WIN32)
+    add_executable(
         treesheets
-        wx::aui
-        wx::adv
-        wx::core
-        wx::xml
-        wx::net
-        lobster-impl
+        src/main.cpp
     )
 else()
-    target_link_libraries(
+    add_executable(
         treesheets
-        PRIVATE
-        ${wxWidgets_LIBRARIES}
-        lobster-impl
+        src/main.cpp
     )
+endif()
+
+if (TREESHEETS_WITH_STATIC_WXWIDGETS)
+    if (WIN32)
+        target_link_libraries(
+            treesheets
+            wx::aui
+            wx::adv
+            wx::core
+            wx::xml
+            wx::net
+            lobster-impl
+            stackwalker
+        )
+    else()
+        target_link_libraries(
+            treesheets
+            wx::aui
+            wx::adv
+            wx::core
+            wx::xml
+            wx::net
+            lobster-impl
+        )
+    endif()
+else()
+    if (WIN32)
+        target_link_libraries(
+            treesheets
+            PRIVATE
+            ${wxWidgets_LIBRARIES}
+            lobster-impl
+        )
+    else()
+        target_link_libraries(
+            treesheets
+            PRIVATE
+            ${wxWidgets_LIBRARIES}
+            lobster-impl
+            stackwalker
+            )
+    endif()
 endif()
 if(NOT APPLE AND NOT WIN32 AND NOT TREESHEETS_RELOCATABLE_INSTALLATION)
     set(TREESHEETS_BINDIR ${CMAKE_INSTALL_BINDIR})
