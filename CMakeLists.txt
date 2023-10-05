@@ -68,7 +68,7 @@ add_library(lobster-impl STATIC src/lobster_impl.cpp)
 target_link_libraries(lobster-impl PRIVATE lobster)
 
 if (WIN32)
-    add_library(stackwalker STATIC lobster/include/StackWalker/StackWalker.cpp lobster/include/StackWalker/StackWalker.cpp)
+    add_library(stackwalker STATIC lobster/include/StackWalker/StackWalker.cpp lobster/include/StackWalker/StackWalkerHelpers.cpp)
 endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
