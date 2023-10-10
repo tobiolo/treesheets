@@ -914,12 +914,11 @@ struct Document {
         if (uk == WXK_NONE || (k < ' ' && k) || k == WXK_DELETE) {
             switch (k) {
                 case WXK_BACK:  // no menu shortcut available in wxwidgets
-                    if (!ctrl) { 
-                        return Action(dc, A_BACKSPACE);
-                    } else {  // prevent Ctrl+H from being treated as Backspace
-                        break;
-                    }
-                case WXK_RETURN: return Action(dc, shift ? A_ENTERGRID : A_ENTERCELL);
+                    if (!ctrl) return Action(dc, A_BACKSPACE);
+                    break; // Prevent Ctrl+H from being treated as Backspace
+                case WXK_RETURN: 
+                    if (!ctrl) return Action(dc, shift ? A_ENTERGRID : A_ENTERCELL);
+                    break; // Prevent Ctrl+M from being treated as Return
                 case WXK_ESCAPE:  // docs say it can be used as a menu accelerator, but it does not
                                   // trigger from there?
                     return Action(dc, A_CANCELEDIT);
@@ -1434,6 +1433,27 @@ struct Document {
                     return _(L"Bitmap copied to clipboard");
                 }
                 return nullptr;
+
+            case A_MERGE: {
+                if (selected.xs * selected.ys == 1) return nullptr;
+                auto fc = selected.GetFirst();
+                fc->parent->AddUndo(this);
+                loopallcellssel(ci, true) if (ci != fc && ci->text.t.Len()) 
+                        fc->text.t += " " + ci->text.t;
+                loopallcellssel(ci, false) if (ci != fc) ci->Clear();
+                Selection deletesel(
+                    selected.g, 
+                    selected.x + int(selected.xs > 1), // sidestep is possible?
+                    selected.y + int(selected.ys > 1),
+                    selected.xs - int(selected.xs > 1),
+                    selected.ys - int(selected.ys > 1)
+                );
+                selected.g->MultiCellDeleteSub(this, deletesel);
+                SetSelect(Selection(selected.g, selected.x, selected.y, 1, 1));
+                fc->ResetLayout();
+                Refresh();
+                return nullptr;
+            }
 
             case A_SELALL:
                 selected.SelAll();
