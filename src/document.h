@@ -817,9 +817,13 @@ struct Document {
         return bm;
     }
 
-    wxBitmap GetSubBitmap(Selection &s) {
+    wxBitmap GetSubBitmap(wxDC &dc, Selection &s) {
         wxRect r = s.g->GetRect(this, s, true);
+        #ifdef __WXMSW__
+        return dc.GetAsBitmap(&r);
+        #else
         return GetBitmap().GetSubBitmap(r);
+        #endif
     }
 
     void RefreshImageRefCount(bool includefolded) {
@@ -1423,7 +1427,7 @@ struct Document {
 
             case A_COPYBM:
                 if (wxTheClipboard->Open()) {
-                    wxTheClipboard->SetData(new wxBitmapDataObject(GetSubBitmap(selected)));
+                    wxTheClipboard->SetData(new wxBitmapDataObject(GetSubBitmap(dc, selected)));
                     wxTheClipboard->Close();
                     return _(L"Bitmap copied to clipboard");
                 }
