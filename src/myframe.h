@@ -907,27 +907,6 @@ struct MyFrame : wxFrame {
                 case A_HOME: tc->SetSelection(0, 0); return;
                 case A_END: tc->SetSelection(1000, 1000); return;
                 case A_SELALL: tc->SetSelection(0, 1000); return;
-                case A_ENTERCELL: {
-                    wxClientDC dc(sw);
-                    if (tc == filter) {
-                        // OnSearchEnter equivalent implementation for MSW
-                        // as EVT_TEXT_ENTER event is not generated.
-                        if (sys->searchstring.Len() == 0) {
-                            sw->SetFocus();
-                        } else {
-                            sw->doc->Action(dc, A_SEARCHNEXT);
-                        }
-                    } else if (tc == replaces) {
-                        // OnReplaceEnter equivalent implementation for MSW
-                        // as EVT_TEXT_ENTER event is not generated.
-                        if (sys->frame->replaces->GetValue().Len() == 0) {
-                            sw->SetFocus();
-                        } else {
-                            sw->doc->Action(dc, A_REPLACEONCEJ);
-                        }
-                    }
-                    return;
-                }
                 #endif
                 case A_CANCELEDIT: tc->Clear(); sw->SetFocus(); return;
             }
