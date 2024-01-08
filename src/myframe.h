@@ -713,7 +713,7 @@ struct MyFrame : wxFrame {
             wxStatusBar *sb = CreateStatusBar(4);
             sb->SetOwnBackgroundColour(toolbgcol);
             SetStatusBarPane(0);
-            int swidths[] = {-1, 200, 120, 100};
+            int swidths[] = {-1, 240, 120, 100};
             SetStatusWidths(4, swidths);
         }
 
