@@ -66,8 +66,8 @@ jobs:
       run: git clone --depth 1 --recurse-submodules https://github.com/wxWidgets/wxWidgets lib/wxWidgets
     - name: build TreeSheets
       run: |
-        cmake -S . -B _build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=TS -DTREESHEETS_WITH_STATIC_WXWIDGETS=ON
-        cmake --build _build -j4 --config Release
+        cmake -S . -B _build -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=TS -DTREESHEETS_WITH_STATIC_WXWIDGETS=ON
+        cmake --build _build -j4 --config Debug
         cmake --install _build
         Remove-Item -path TS\include -recurse
         Remove-Item -path TS\lib -recurse
