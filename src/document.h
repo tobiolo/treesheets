@@ -2072,9 +2072,15 @@ struct Document {
     }
 
     uint PickColor(wxFrame *fr, uint defcol) {
-        wxColour col = wxGetColourFromUser(fr, wxColour(defcol));
-        if (col.IsOk())
-            return (col.Blue() << 16) + (col.Green() << 8) + col.Red();
+        wxColourData coldata;
+        coldata.SetColour(wxColour(defcol));
+        wxColourDialog coldlg(fr, &coldata);
+        if (coldlg.ShowModal() == wxID_OK) {
+            coldata = coldlg.GetColourData();
+            wxColour col = coldata.GetColour();
+            if (col.IsOk())
+                return (col.Blue() << 16) + (col.Green() << 8) + col.Red();
+        }
         return -1;
     }
 
