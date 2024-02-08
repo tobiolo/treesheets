@@ -63,7 +63,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.1
     - name: clone wxWidgets
-      run: git clone --depth 1 --recurse-submodules https://github.com/wxWidgets/wxWidgets lib/wxWidgets
+      run: git clone --depth 1 --branch v3.2.4 --recurse-submodules https://github.com/wxWidgets/wxWidgets lib/wxWidgets
     - name: build TreeSheets
       run: |
         cmake -S . -B _build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=TS -DTREESHEETS_WITH_STATIC_WXWIDGETS=ON
