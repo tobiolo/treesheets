@@ -114,6 +114,10 @@ struct TSCanvas : public wxScrolledWindow {
 
     void OnKeyDown(wxKeyEvent &ce) { ce.Skip(); }
     void OnChar(wxKeyEvent &ce) {
+        if (wxWindow::FindFocus() != this) {
+            ce.Skip();
+            return;
+        }
         /*
         if (sys->insidefiledialog)
         {

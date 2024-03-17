@@ -863,6 +863,7 @@ struct MyFrame : wxFrame {
             switch (ce.GetId()) {
                 #ifdef __WXMSW__
                 // FIXME: have to emulate this behavior on Windows because menu always captures these events (??)
+                /*
                 case A_MLEFT:
                 case A_LEFT:
                     if (from != to)
@@ -912,6 +913,7 @@ struct MyFrame : wxFrame {
                     }
                     return;
                 }
+                */
                 #endif
                 case A_CANCELEDIT: tc->Clear(); sw->SetFocus(); return;
             }
