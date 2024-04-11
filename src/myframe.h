@@ -745,15 +745,15 @@ struct MyFrame : wxFrame {
             imagetools->AddControl(idd);
             imagetools->Realize();
 
-            aui.AddPane(filetools, wxAuiPaneInfo().Name("filetools").ToolbarPane().Top());
-            aui.AddPane(edittools, wxAuiPaneInfo().Name("edittools").ToolbarPane().Top());
-            aui.AddPane(zoomtools, wxAuiPaneInfo().Name("zoomtools").ToolbarPane().Top());
-            aui.AddPane(gridtools, wxAuiPaneInfo().Name("gridtools").ToolbarPane().Top());
-            aui.AddPane(scripttools, wxAuiPaneInfo().Name("scripttools").ToolbarPane().Top());
-            aui.AddPane(searchtools, wxAuiPaneInfo().Name("searchtools").ToolbarPane().Top());
-            aui.AddPane(replacetools, wxAuiPaneInfo().Name("replacetools").ToolbarPane().Top());
-            aui.AddPane(colortools, wxAuiPaneInfo().Name("colortools").ToolbarPane().Top());
-            aui.AddPane(imagetools, wxAuiPaneInfo().Name("imagetools").ToolbarPane().Top());
+            aui.AddPane(filetools, wxAuiPaneInfo().Name("filetools").ToolbarPane().Top().Resizable());
+            aui.AddPane(edittools, wxAuiPaneInfo().Name("edittools").ToolbarPane().Top().Resizable());
+            aui.AddPane(zoomtools, wxAuiPaneInfo().Name("zoomtools").ToolbarPane().Top().Resizable());
+            aui.AddPane(gridtools, wxAuiPaneInfo().Name("gridtools").ToolbarPane().Top().Resizable());
+            aui.AddPane(scripttools, wxAuiPaneInfo().Name("scripttools").ToolbarPane().Top().Resizable());
+            aui.AddPane(searchtools, wxAuiPaneInfo().Name("searchtools").ToolbarPane().Top().Resizable());
+            aui.AddPane(replacetools, wxAuiPaneInfo().Name("replacetools").ToolbarPane().Top().Resizable());
+            aui.AddPane(colortools, wxAuiPaneInfo().Name("colortools").ToolbarPane().Top().Resizable());
+            aui.AddPane(imagetools, wxAuiPaneInfo().Name("imagetools").ToolbarPane().Top().Resizable());
         }
 
         if (showsbar) {
@@ -1196,6 +1196,7 @@ struct MyFrame : wxFrame {
             idd->FillBitmapVector(imagepath);
             if (GetStatusBar()) SetDPIAwareStatusWidths();
         }
+        aui.Update();
     }
 
     void OnIconize(wxIconizeEvent &me) {
