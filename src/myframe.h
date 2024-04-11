@@ -1196,6 +1196,19 @@ struct MyFrame : wxFrame {
             idd->FillBitmapVector(imagepath);
             if (GetStatusBar()) SetDPIAwareStatusWidths();
         }
+
+        // Currently AUI toolbar does not resize to DPI changes, but contained controls do.
+        // So help a little bit here.
+
+        wxAuiPaneInfoArray &all_panes = aui.GetAllPanes();
+        int count = all_panes.GetCount();
+        for (int i = 0; i < count; ++i) {
+            if (wxAuiPaneInfo &pane_info = all_panes.Item(i); pane_info.IsToolbar()) {
+                pane_info.BestSize(wxDefaultSize);
+            }
+        }
+
+        aui.Update();
     }
 
     void OnIconize(wxIconizeEvent &me) {
