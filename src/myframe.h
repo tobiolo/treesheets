@@ -1196,6 +1196,7 @@ struct MyFrame : wxFrame {
             idd->FillBitmapVector(imagepath);
             if (GetStatusBar()) SetDPIAwareStatusWidths();
         }
+        aui.Update();
     }
 
     void OnIconize(wxIconizeEvent &me) {
