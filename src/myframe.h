@@ -659,7 +659,7 @@ struct MyFrame : wxFrame {
             wxString iconpath = GetDataPath(L"images/material/toolbar/");
 
             auto AddTBIcon = [&](wxAuiToolBar *atb, const wxChar *name, int action, wxString file) {
-                atb->AddTool(action, name, wxBitmapBundle::FromSVGFile(file, wxSize(24, 24)), name,
+                atb->AddTool(action, name, wxBitmapBundle::FromSVGFile(file, FromDIP(wxSize(24, 24))), name,
                              wxITEM_NORMAL);
             };
 
