@@ -70,15 +70,12 @@ Windows:
 
 Linux:
 
-- Using the version of  wxWidgets from https://github.com/wxWidgets/wxWidgets.git
-  - Follow the instructions to build there, but add `--enable-unicode` and
-   `--disable-shared` to the `configure` step.
-  - You can also build wxWidgets as a subproject in the case that TreeSheets should be built and linked statically 
-    against wxWidgets. In this case, the TreeSheets CMake project must be configured with the option
-    `TREESHEETS_WITH_STATIC_WXWIDGETS` set and with the source code of wxWidgets (including its submodules)
-    being located at `lib/wxWidgets` relative to the root of the TreeSheets source code.
 - Build with `cmake -S . -B _build -DCMAKE_BUILD_TYPE=Release` or similar.
-  You can change the default installation prefix (`/usr/local`) by passing something like `-DCMAKE_INSTALL_PREFIX=/usr`.
+  - If you have `git` installed, the submodules for wxWidgets will be automatically updated and wxWidgets will be compiled as a CMake subproject. TreeSheets will be then statically linked against this wxWidgets build.
+  - If you do like to link dynamically against an existing wxWidgets installation instead, you can switch off the option `GIT_WXWIDGETS_SUBMODULES` in the CMake project. In this case:
+    - You can use the version of wxWidgets from https://github.com/wxWidgets/wxWidgets.git.
+    - Follow the instructions to build there, but add `--enable-unicode` and `--disable-shared` to the `configure` step.
+  - You can change the default installation prefix (`/usr/local`) by passing something like `-DCMAKE_INSTALL_PREFIX=/usr`.
 - Install using `sudo make -C _build install`.
 - There is also a `src/Makefile`, this is deprecated.
 
