@@ -330,7 +330,8 @@ struct Document {
     void HandleBlink(bool reset) {
         if (redrawpending) return;
         #ifndef SIMPLERENDER
-        wxClientDC dc(sw);
+        wxClientDC cdc(sw);
+        wxGCDC dc(cdc);
         sw->DoPrepareDC(dc);
         ShiftToCenter(dc);
         DrawSelect(dc, selected, false, true);

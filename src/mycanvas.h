@@ -29,17 +29,21 @@ struct TSCanvas : public wxScrolledCanvas {
 
     void OnPaint(wxPaintEvent &event) {
         #ifdef __WXMAC__
-            wxPaintDC dc(this);
+            wxPaintDC pdc(this);
         #elif __WXGTK__
-            wxPaintDC dc(this);
+            wxPaintDC pdc(this);
         #else
             auto sz = GetClientSize();
             if (sz.GetX() <= 0 || sz.GetY() <= 0) return;
             wxBitmap buffer(sz.GetX(), sz.GetY(), 24);
-            wxBufferedPaintDC dc(this, buffer);
+            wxBufferedPaintDC pdc(this, buffer);
         #endif
         // DoPrepareDC(dc);
+
+        // Paint on a wxGraphicsContext with wxDC API calls
+        wxGCDC dc(pdc);
         doc->Draw(dc);
+        dc.GetGraphicsContext()->Flush();
         // Display has been re-layouted, compute hover selection again.
         // TODO: lastmousepos doesn't seem correct anymore after a scroll operation in latest
         // wxWidgets.
@@ -58,7 +62,8 @@ struct TSCanvas : public wxScrolledCanvas {
     }
 
     void OnMotion(wxMouseEvent &me) {
-        wxClientDC dc(this);
+        wxClientDC cdc(this);
+        wxGCDC dc(cdc);
         UpdateHover(me.GetX(), me.GetY(), dc);
         if (me.LeftIsDown() || me.RightIsDown()) {
             if (me.AltDown() && me.ShiftDown()) {
@@ -76,7 +81,8 @@ struct TSCanvas : public wxScrolledCanvas {
     void SelectClick(int mx, int my, bool right, int isctrlshift) {
         if (mx < 0 || my < 0)
             return;  // for some reason, using just the "menu" key sends a right-click at (-1, -1)
-        wxClientDC dc(this);
+        wxClientDC cdc(this);
+        wxGCDC dc(cdc);
         UpdateHover(mx, my, dc);
         doc->Select(dc, right, isctrlshift);
     }
@@ -108,7 +114,8 @@ struct TSCanvas : public wxScrolledCanvas {
     }
 
     void OnLeftDoubleClick(wxMouseEvent &me) {
-        wxClientDC dc(this);
+        wxClientDC cdc(this);
+        wxGCDC dc(cdc);
         UpdateHover(me.GetX(), me.GetY(), dc);
         Status(doc->DoubleClick(dc));
     }
@@ -132,7 +139,8 @@ struct TSCanvas : public wxScrolledCanvas {
             return;
         }
 
-        wxClientDC dc(this);
+        wxClientDC cdc(this);
+        wxGCDC dc(cdc);
         DoPrepareDC(dc);
         bool unprocessed = false;
         Status(doc->Key(dc, ce.GetUnicodeKey(), ce.GetKeyCode(), ce.AltDown(), ce.CmdDown(),
@@ -143,7 +151,8 @@ struct TSCanvas : public wxScrolledCanvas {
     void OnMouseWheel(wxMouseEvent &me) {
         bool ctrl = me.CmdDown();
         if (sys->zoomscroll) ctrl = !ctrl;
-        wxClientDC dc(this);
+        wxClientDC cdc(this);
+        wxGCDC dc(cdc);
         if (me.AltDown() || ctrl || me.ShiftDown()) {
             mousewheelaccum += me.GetWheelRotation();
             int steps = mousewheelaccum / me.GetWheelDelta();
