@@ -902,7 +902,8 @@ struct MyFrame : wxFrame {
                 case A_END: tc->SetSelection(1000, 1000); return;
                 case A_SELALL: tc->SetSelection(0, 1000); return;
                 case A_ENTERCELL: {
-                    wxClientDC dc(sw);
+                    wxClientDC cdc(sw);
+                    wxGCDC dc(cdc);
                     if (tc == filter) {
                         // OnSearchEnter equivalent implementation for MSW
                         // as EVT_TEXT_ENTER event is not generated.
@@ -922,7 +923,8 @@ struct MyFrame : wxFrame {
                 case A_CANCELEDIT: tc->Clear(); sw->SetFocus(); return;
             }
         }
-        wxClientDC dc(sw);
+        wxClientDC cdc(sw);
+        wxGCDC dc(cdc);
         sw->DoPrepareDC(dc);
         sw->doc->ShiftToCenter(dc);
         auto Check = [&](const wxChar *cfg) {
@@ -1041,7 +1043,8 @@ struct MyFrame : wxFrame {
         SetSearchTextBoxBackgroundColour(false);
         Document *doc = GetCurTab()->doc;
         TSCanvas *sw = GetCurTab();
-        wxClientDC dc(sw);
+        wxClientDC cdc(sw);
+        wxGCDC dc(cdc);
         doc->SearchNext(dc, false, false, false);
         if (doc->searchfilter) {
             doc->SetSearchFilter(sys->searchstring.Len() != 0);
@@ -1055,7 +1058,8 @@ struct MyFrame : wxFrame {
         if (ce.GetId() == A_SEARCH && ce.GetString().Len() == 0) {
             sw->SetFocus();
         } else {
-            wxClientDC dc(sw);
+            wxClientDC cdc(sw);
+            wxGCDC dc(cdc);
             sw->doc->Action(dc, ce.GetId() == A_SEARCH ? A_SEARCHNEXT : A_REPLACEONCEJ);
         }
     }

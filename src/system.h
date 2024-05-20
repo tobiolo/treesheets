@@ -155,7 +155,8 @@ struct System {
         // SetSelect(hover = Selection());
         newdoc->sw->SetFocus();
         newdoc->UpdateFileName();
-        wxClientDC dc(newdoc->sw);
+        wxClientDC cdc(newdoc->sw);
+        wxGCDC dc(cdc);
         newdoc->SearchNext(dc, false, false, false);
     }
 
