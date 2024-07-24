@@ -110,6 +110,8 @@ struct System {
     int customcolor {0xFFFFFF};
     #ifdef SIMPLERENDER
     int cursorcolor {0x00FF00};
+    #else
+    int cursorcolor {0xFFFF};
     #endif
 
     System(bool portable)
