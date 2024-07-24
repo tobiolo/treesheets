@@ -517,9 +517,7 @@ struct MyFrame : wxFrame {
         MyAppend(optmenu, A_CUSTCOL, _(L"Pick Custom &Color..."));
         MyAppend(optmenu, A_COLCELL, _(L"&Set Custom Color From Cell BG"));
         MyAppend(optmenu, A_DEFBGCOL, _(L"Pick Document Background..."));
-        #ifdef SIMPLERENDER
         MyAppend(optmenu, A_DEFCURCOL, _(L"Pick Cu&rsor Color..."));
-        #endif
         optmenu->AppendSeparator();
         optmenu->AppendCheckItem(A_SHOWTBAR, _(L"Show Toolbar"));
         optmenu->Check(A_SHOWTBAR, sys->showtoolbar);
