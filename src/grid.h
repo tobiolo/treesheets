@@ -448,12 +448,7 @@ struct Grid {
             #ifndef SIMPLERENDER
             dc.SetLogicalFunction(wxXOR);
             #endif
-            if (s.TextEdit())
-            #ifdef SIMPLERENDER
-                DrawCursor(doc, dc, s, true, sys->cursorcolor, cursoronly);
-            #else
-                DrawCursor(doc, dc, s, true, 0xFFFF, cursoronly);
-            #endif
+            if (s.TextEdit()) DrawCursor(doc, dc, s, true, sys->cursorcolor, cursoronly);
         }
         #ifndef SIMPLERENDER
         dc.SetLogicalFunction(wxCOPY);
