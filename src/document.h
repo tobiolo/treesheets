@@ -1619,7 +1619,7 @@ struct Document {
                     ::wxFileSelector(_(L"Please select an image file:"), L"", L"", L"", L"*.*",
                                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
                 c->AddUndo(this);
-                LoadImageIntoCell(fn, c, 1.0);
+                LoadImageIntoCell(fn, c, 1.0 / sys->frame->FromDIP(1.0));
                 Refresh();
                 return nullptr;
             }
@@ -2115,7 +2115,7 @@ struct Document {
                 Cell *c = selected.ThinExpand(this);
                 if (!c) return;
                 c->AddUndo(this);
-                if (!LoadImageIntoCell(as[0], c, 1.0)) PasteSingleText(c, as[0]);
+                if (!LoadImageIntoCell(as[0], c, 1.0 / sys->frame->FromDIP(1.0))) PasteSingleText(c, as[0]);
                 wantsrefresh = true;
             }
         }
@@ -2152,7 +2152,7 @@ struct Document {
             c->AddUndo(this);
             wxImage im = pdataobji.GetBitmap().ConvertToImage();
             vector<uint8_t> idv = ConvertWxImageToBuffer(im, wxBITMAP_TYPE_PNG);
-            SetImageBM(c, std::move(idv), 1.0);
+            SetImageBM(c, std::move(idv), 1.0 / sys->frame->FromDIP(1.0));
             c->Reset();
             wantsrefresh = true;
         }
