@@ -1619,7 +1619,7 @@ struct Document {
                     ::wxFileSelector(_(L"Please select an image file:"), L"", L"", L"", L"*.*",
                                      wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
                 c->AddUndo(this);
-                LoadImageIntoCell(fn, c, sys->frame->csf);
+                LoadImageIntoCell(fn, c, 1.0);
                 Refresh();
                 return nullptr;
             }
@@ -1775,9 +1775,7 @@ struct Document {
             }
 
             case A_IMAGESCN: {
-                loopallcellssel(c, true) if (c->text.image) {
-                    c->text.image->ResetScale(sys->frame->csf);
-                }
+                loopallcellssel(c, true) if (c->text.image) { c->text.image->ResetScale(1.0); }
                 curdrawroot->ResetChildren();
                 curdrawroot->ResetLayout();
                 Refresh();
@@ -2117,7 +2115,7 @@ struct Document {
                 Cell *c = selected.ThinExpand(this);
                 if (!c) return;
                 c->AddUndo(this);
-                if (!LoadImageIntoCell(as[0], c, sys->frame->csf)) PasteSingleText(c, as[0]);
+                if (!LoadImageIntoCell(as[0], c, 1.0)) PasteSingleText(c, as[0]);
                 wantsrefresh = true;
             }
         }
@@ -2154,7 +2152,7 @@ struct Document {
             c->AddUndo(this);
             wxImage im = pdataobji.GetBitmap().ConvertToImage();
             vector<uint8_t> idv = ConvertWxImageToBuffer(im, wxBITMAP_TYPE_PNG);
-            SetImageBM(c, std::move(idv), sys->frame->csf);
+            SetImageBM(c, std::move(idv), 1.0);
             c->Reset();
             wantsrefresh = true;
         }
