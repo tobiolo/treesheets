@@ -815,7 +815,7 @@ struct MyFrame : wxFrame {
 
     void ConstructToolBar() {
         tb = CreateToolBar(wxBORDER_NONE | wxTB_HORIZONTAL | wxTB_FLAT | wxTB_NODIVIDER);
-        tb->SetOwnBackgroundColour(toolbgcol);
+        if (!darkmode) tb->SetOwnBackgroundColour(toolbgcol);
 
         #ifdef __WXMAC__
         #define SEPARATOR
