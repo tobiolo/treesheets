@@ -1182,15 +1182,19 @@ struct MyFrame : wxFrame {
     }
 
     void OnDarkModeChanged(bool newmode) {
-        darkmode = newmode;
-        wxString s_filter =  filter->GetValue();
-        wxString s_replaces = replaces->GetValue();
-        delete (tb);
-        ConstructToolBar();
-        filter->SetValue(s_filter);
-        replaces->SetValue(s_replaces);
-        if (wxStatusBar *sb = this->GetStatusBar()) {
-            sb->SetOwnBackgroundColour(darkmode ? wxNullColour : toolbgcol);
+        wxEventBlocker blocker(this);
+        wxBusyCursor wait;
+        {
+            darkmode = newmode;
+            wxString s_filter =  filter->GetValue();
+            wxString s_replaces = replaces->GetValue();
+            delete (tb);
+            ConstructToolBar();
+            filter->SetValue(s_filter);
+            replaces->SetValue(s_replaces);
+            if (wxStatusBar *sb = this->GetStatusBar()) {
+                sb->SetOwnBackgroundColour(darkmode ? wxNullColour : toolbgcol);
+            }
         }
     }
 
