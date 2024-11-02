@@ -668,7 +668,7 @@ struct MyFrame : wxFrame {
         ConstructToolBar();
 
         wxStatusBar *sb = CreateStatusBar(4);
-        sb->SetOwnBackgroundColour(toolbgcol);
+        if (!darkmode) sb->SetOwnBackgroundColour(toolbgcol);
         SetStatusBarPane(0);
         SetDPIAwareStatusWidths();
         sb->Show(sys->showstatusbar);
