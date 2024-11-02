@@ -1191,8 +1191,8 @@ struct MyFrame : wxFrame {
         ConstructToolBar();
         filter->SetValue(s_filter);
         replaces->SetValue(s_replaces);
-        if (wxStatusBar *sb = this->GetStatusBar()) {
-            sb->SetOwnBackgroundColour(darkmode ? wxNullColour : toolbgcol);
+        if (wxStatusBar *sb = this->GetStatusBar(); sb && !darkmode) {
+            sb->SetOwnBackgroundColour(toolbgcol);
         }
     }
 
