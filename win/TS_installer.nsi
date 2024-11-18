@@ -70,7 +70,7 @@ Section "TreeSheets (required)"
 
   SetOutPath $INSTDIR
 
-  File /r "..\TS\*.*"
+  File /r "TS\*.*"
 
   WriteRegStr HKCU SOFTWARE\TreeSheets "Install_Dir" "$INSTDIR"
 
