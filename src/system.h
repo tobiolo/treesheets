@@ -105,6 +105,7 @@ struct System {
         void Notify() {
             sys->SaveCheck();
             sys->cfg->Flush();
+            sys->PurgeImages();
         }
     } every_second_timer;
     uint lastcellcolor {0xFFFFFF};
@@ -636,4 +637,11 @@ struct System {
     }
 
     void ImageDraw(wxBitmap *bm, wxDC &dc, int x, int y) { dc.DrawBitmap(*bm, x, y); }
+
+    void PurgeImages() {
+        for(const auto &uim: imagelist) {
+            Image *im = uim.get();
+            im->bm_display = wxNullBitmap;
+        }
+    }
 };
