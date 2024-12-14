@@ -3,7 +3,7 @@ struct Grid {
     // owning cell.
     Cell *cell;
     // subcells
-    Cell **cells;
+    vector<Cell *> cells;
     // widths for each column
     vector<int> colwidths;
     // xsize, ysize
@@ -18,7 +18,7 @@ struct Grid {
     bool tinyborder;
     bool folded {false};
 
-    Cell *&C(int x, int y) const {
+    Cell *&C(int x, int y) {
         ASSERT(x >= 0 && y >= 0 && x < xs && y < ys);
         return cells[x + y * xs];
     }
@@ -58,17 +58,13 @@ struct Grid {
                 for (bool _f = true; _f;)   \
                     for (Cell *&c = g->C(x, y); _f; _f = false)
 
-    Grid(int _xs, int _ys, Cell *_c = nullptr)
-        : xs(_xs), ys(_ys), cell(_c), cells(new Cell *[_xs * _ys]) {
+    Grid(int _xs, int _ys, Cell *_c = nullptr) : xs(_xs), ys(_ys), cell(_c), cells(_xs * _ys) {
         foreachcell(c) c = nullptr;
         InitColWidths();
         SetOrient();
     }
 
-    ~Grid() {
-        foreachcell(c) if (c) delete c;
-        delete[] cells;
-    }
+    ~Grid() { foreachcell(c) if (c) delete c; }
 
     void InitCells(Cell *clonestylefrom = nullptr) {
         foreachcell(c) c = new Cell(cell, clonestylefrom);
@@ -458,11 +454,16 @@ struct Grid {
     }
 
     void DeleteCells(int dx, int dy, int nxs, int nys) {
-        Cell **ncells = new Cell *[(xs + nxs) * (ys + nys)];
-        Cell **ncp = ncells;
-        foreachcell(c) if (x == dx || y == dy) DELETEP(c) else *ncp++ = c;
-        delete[] cells;
-        cells = ncells;
+        vector<Cell *> ncells((xs + nxs) * (ys + nys));
+        auto nit = ncells.begin();
+        foreachcell(c) {
+            if (x == dx || y == dy) {
+                DELETEP(c);
+            } else {
+                *nit++ = c;
+            }
+        }
+        cells = std::move(ncells);
         xs += nxs;
         ys += nys;
         if (dx >= 0) colwidths.erase(colwidths.begin() + dx);
@@ -519,28 +520,31 @@ struct Grid {
     void InsertCells(int dx, int dy, int nxs, int nys, Cell *nc = nullptr) {
         assert(((dx < 0) == (nxs == 0)) && ((dy < 0) == (nys == 0)));
         assert(nxs + nys == 1);
-        Cell **ocells = cells;
-        cells = new Cell *[(xs + nxs) * (ys + nys)];
+        vector<Cell *> ocells = std::move(cells);
+        cells = vector<Cell *>((xs + nxs) * (ys + nys));
         xs += nxs;
         ys += nys;
-        Cell **ncp = ocells;
+        auto oit = ocells.begin();
         SetOrient();
-        foreachcell(c) if (x == dx || y == dy) {
-            if (nc)
-                c = nc;
-            else {
-                Cell *colcell = ocells[(nxs ? max(0, min(dx - 1, xs - nxs - 1)) : x) +
-                                       (nxs ? y : max(0, min(dy - 1, ys - nys - 1))) * (xs - nxs)];
-                c = new Cell(cell, colcell);
-                c->text.relsize = colcell->text.relsize;
+        foreachcell(c) {
+            if (x == dx || y == dy) {
+                if (nc) {
+                    c = nc;
+                } else {
+                    Cell *colcell =
+                        ocells[(nxs ? max(0, min(dx - 1, xs - nxs - 1)) : x) +
+                               (nxs ? y : max(0, min(dy - 1, ys - nys - 1))) * (xs - nxs)];
+                    c = new Cell(cell, colcell);
+                    c->text.relsize = colcell->text.relsize;
+                }
+            } else {
+                c = *oit++;
             }
         }
-        else c = *ncp++;
-        delete[] ocells;
         if (dx >= 0) colwidths.insert(colwidths.begin() + dx, cell->ColWidth());
     }
 
-    void Save(wxDataOutputStream &dos, Cell *ocs) const {
+    void Save(wxDataOutputStream &dos, Cell *ocs) {
         dos.Write32(xs);
         dos.Write32(ys);
         dos.Write32(bordercolor);
@@ -883,9 +887,8 @@ struct Grid {
     }
 
     void Transpose() {
-        Cell **tr = new Cell *[xs * ys];
+        vector<Cell *> tr(xs * ys);
         foreachcell(c) tr[y + x * ys] = c;
-        delete[] cells;
         cells = tr;
         swap_(xs, ys);
         SetOrient();
@@ -905,7 +908,7 @@ struct Grid {
         sys->sortcolumn = s.x;
         sys->sortxs = xs;
         sys->sortdescending = descending;
-        qsort(cells + s.y * xs, s.ys, sizeof(Cell *) * xs,
+        qsort(cells.data() + s.y * xs, s.ys, sizeof(Cell *) * xs,
               (int(__cdecl *)(const void *, const void *))sortfunc);
     }
 
@@ -936,14 +939,14 @@ struct Grid {
                     if (t->grid) t->grid->ReParent(t);
                     f->grid = make_unique<Grid>(1, 1);
                     f->grid->cell = f;
-                    *f->grid->cells = t;
+                    f->grid->cells[0] = t;
                 }
                 // remove cell from parent, recursively if parent becomes empty
                 for (Cell *r = f; r && r != cell; r = r->parent->grid->DeleteTagParent(r, cell, f))
                     ;
                 // merge newly constructed hierarchy at this level
-                if (!*cells) {
-                    *cells = f;
+                if (cells.empty()) {
+                    cells[0] = f;
                     f->parent = cell;
                     selcell = f;
                 } else {

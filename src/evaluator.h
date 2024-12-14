@@ -100,9 +100,9 @@ struct Evaluator {
         if (sym->grid && val->grid) this->DestructuringAssign(sym->grid.get(), val->Clone(nullptr));
     }
 
-    void DestructuringAssign(Grid const *names, unique_ptr<Cell> val) {
-        Grid const *ng = names;
-        Grid const *vg = val->grid.get();
+    void DestructuringAssign(Grid *names, unique_ptr<Cell> val) {
+        Grid *ng = names;
+        Grid *vg = val->grid.get();
         if (ng->xs == vg->xs && ng->ys == vg->ys) {
             loop(x, ng->xs) loop(y, ng->ys) {
                 Cell *nc = ng->C(x, y);
