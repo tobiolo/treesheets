@@ -1161,6 +1161,8 @@ struct MyFrame : wxFrame {
             }
             nb->SetTabCtrlHeight(-1);
         }
+        // width of dropdown items is not adjusted, so reconstruct them
+        ReconstructToolBar();
         idd->FillBitmapVector(imagepath);
         if (GetStatusBar()) SetDPIAwareStatusWidths();
     }
@@ -1173,6 +1175,10 @@ struct MyFrame : wxFrame {
 
     void OnDarkModeChanged(bool newmode) {
         darkmode = newmode;
+        ReconstructToolBar();
+    }
+
+    void ReconstructToolBar() {
         wxString s_filter =  filter->GetValue();
         wxString s_replaces = replaces->GetValue();
         delete (tb);
