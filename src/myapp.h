@@ -165,7 +165,6 @@ struct MyApp : wxApp {
     void OnEventLoopEnter(wxEventLoopBase *WXUNUSED(loop)) {
         if (!initateventloop) {
             initateventloop = true;
-            frame->AppOnEventLoopEnter();
             sys->Init(filename);
         }
     }
