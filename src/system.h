@@ -469,6 +469,14 @@ struct System {
         }
     }
 
+    void CSVImportInto(Cell *p, Selection &sel, Document *tsdoc, const wxArrayString &as, wxChar sep) {
+        Cell *r = new Cell(nullptr, nullptr, CT_DATA, new Grid(1, (int)as.size()));
+        r->grid->InitCells();
+        r->grid->CSVImport(as, sep);
+        p->Paste(tsdoc, r, sel);
+        tsdoc->Refresh();
+    }
+
     const wxChar *Import(int k, Selection &sel, Document *tsdoc) {
         wxString fn = ::wxFileSelector(_(L"Please select file to import:"), L"", L"", L"", L"*.*",
                                        wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR);
@@ -521,44 +529,20 @@ struct System {
                                 }
                             }; break;
                             case A_IMPTXTC:
-                                if (Cell *p = sel.GetFirst()) {
-                                    Cell *r = new Cell(nullptr, nullptr, CT_DATA,
-                                                       new Grid(1, (int)as.size()));
-                                    r->grid->InitCells();
-                                    r->grid->CSVImport(as, L',');
-                                    p->Paste(tsdoc, r, sel);
-                                    tsdoc->Refresh();
-                                    return nullptr;
-                                } else {
-                                    InitDB(1, (int)as.size())->grid->CSVImport(as, L',');
-                                    break;
-                                }
                             case A_IMPTXTS:
+                            case A_IMPTXTT: {
+                                wxChar sep;
+                                if (k == A_IMPTXTC) sep = L',';
+                                if (k == A_IMPTXTS) sep = L';';
+                                if (k == A_IMPTXTT) sep = L'\t';
                                 if (Cell *p = sel.GetFirst()) {
-                                    Cell *r = new Cell(nullptr, nullptr, CT_DATA,
-                                                       new Grid(1, (int)as.size()));
-                                    r->grid->InitCells();
-                                    r->grid->CSVImport(as, L';');
-                                    p->Paste(tsdoc, r, sel);
-                                    tsdoc->Refresh();
+                                    CSVImportInto(p, sel, tsdoc, as, sep);
                                     return nullptr;
                                 } else {
-                                    InitDB(1, (int)as.size())->grid->CSVImport(as, L';');
-                                    break;
+                                    InitDB(1, (int)as.size())->grid->CSVImport(as, sep);
                                 }
-                            case A_IMPTXTT:
-                                if (Cell *p = sel.GetFirst()) {
-                                    Cell *r = new Cell(nullptr, nullptr, CT_DATA,
-                                                       new Grid(1, (int)as.size()));
-                                    r->grid->InitCells();
-                                    r->grid->CSVImport(as, L'\t');
-                                    p->Paste(tsdoc, r, sel);
-                                    tsdoc->Refresh();
-                                    return nullptr;
-                                } else {
-                                    InitDB(1, (int)as.size())->grid->CSVImport(as, L'\t');
-                                    break;
-                                }
+                            break;
+                            }
                         }
                     break;
                 }
