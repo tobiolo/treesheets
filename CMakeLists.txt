@@ -102,9 +102,11 @@ if (TREESHEETS_WITH_STATIC_WXWIDGETS)
     set(wxBUILD_SHARED OFF)
     set(wxBUILD_INSTALL OFF CACHE BOOL "Avoid install/uninstall target for wxWidgets in static build" FORCE)
     add_subdirectory(lib/wxWidgets)
+    set(wx_widgets_libraries wx::aui wx::adv wx::core wx::xml wx::net)
 else()
     find_package(wxWidgets REQUIRED aui adv core xml net)
     include(${wxWidgets_USE_FILE})
+    set(wx_widgets_libraries ${wxWidgets_LIBRARIES})
 endif()
 
 if(WIN32)
@@ -138,42 +140,23 @@ else()
 endif()
 
 if(WIN32)
-    target_include_directories(TreeSheets PUBLIC lobster/src)
+    set(treesheets_include_directories lobster/src src/StackWalker)
+    set(treesheets_libraries "lobster-impl" "StackWalker")
 else()
-    target_include_directories(TreeSheets PUBLIC lobster/src src/StackWalker)
+    set(treesheets_include_directories lobster/src)
+    set(treesheets_libraires "lobster-impl")
 endif()
-target_precompile_headers(TreeSheets PUBLIC src/stdafx.h)
 
-if(WIN32)
-    target_link_libraries(
-        TreeSheets
-        PRIVATE
-        $<IF:$<BOOL:${TREESHEETS_WITH_STATIC_WXWIDGETS}>,
-            wx::aui
-            wx::adv
-            wx::core
-            wx::xml
-            wx::net,
-            ${wxWidgets_LIBRARIES}
-        >
-        lobster-impl
-        StackWalker
-    )
-else()
-    target_link_libraries(
-        TreeSheets
-        PRIVATE
-        $<IF:$<BOOL:${TREESHEETS_WITH_STATIC_WXWIDGETS}>,
-            wx::aui
-            wx::adv
-            wx::core
-            wx::xml
-            wx::net,
-            ${wxWidgets_LIBRARIES}
-        >
-        lobster-impl
-    )
-endif()
+target_include_directories(TreeSheets PUBLIC ${treesheets_include_directories})
+
+target_link_libraries(
+    TreeSheets
+    PRIVATE
+    ${wx_widgets_libraries}
+    ${treesheets_libraires}
+)
+
+target_precompile_headers(TreeSheets PUBLIC src/stdafx.h)
 
 ########## TREESHEETS INSTALLATION SETTINGS ###############
 
