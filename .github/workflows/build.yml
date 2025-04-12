@@ -35,6 +35,12 @@ jobs:
         omitBody: true
         commit: master
         artifacts: "_build/treesheets_*.deb"
+    - name: Upload artifact
+      if: github.ref != 'refs/heads/master'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Ubuntu package
+        path: _build/treesheets_*.deb
 
   build-windows:
     name: Build Windows
@@ -58,6 +64,14 @@ jobs:
         omitBody: true
         commit: master
         artifacts: "_build/TreeSheets-*.exe, _build/TreeSheets-*.zip"
+    - name: Upload artifacts
+      if: github.ref != 'refs/heads/master'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Windows builds
+        path: |
+          _build/TreeSheets-*.exe
+          _build/TreeSheets-*.zip
 
   build-mac:
     name: Build Mac
@@ -86,3 +100,9 @@ jobs:
         omitBody: true
         commit: master
         artifacts: "_build/TreeSheets-*.dmg"
+    - name: Upload artifacts
+      if: github.ref != 'refs/heads/master'
+      uses: actions/upload-artifact@v4
+      with:
+        name: Apple Disk Image
+        path: _build/TreeSheets-*.dmg
