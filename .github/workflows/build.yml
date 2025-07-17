@@ -19,7 +19,7 @@ jobs:
     - name: cache build
       uses: actions/cache@v4
       with:
-        path: _build/_deps
+        path: _build
         key: ${{ runner.os }}-cmake-build-deps-${{ hashFiles('CMakeLists.txt') }}
         restore-keys: ${{ runner.os }}-cmake-build-deps
     - name: apt update
@@ -49,6 +49,8 @@ jobs:
       with:
         name: linux-builds
         path: _build/treesheets_*.deb
+    - name: Remove CPack artifact
+      run: rm -f _build/TreeSheets-*.deb
 
   build-windows:
     name: Build Windows
