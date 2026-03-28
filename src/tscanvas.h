@@ -4,6 +4,7 @@ struct TSCanvas : public wxScrolledCanvas {
     int mousewheelaccum {0};
     bool lastrmbwaswithctrl {false};
     wxPoint lastmousepos;
+    wxBitmap buffer;
 
     TSCanvas(TSFrame *fr, wxWindow *parent, const wxSize &size = wxDefaultSize)
         : wxScrolledCanvas(parent, wxID_ANY, wxDefaultPosition, size,
@@ -23,8 +24,8 @@ struct TSCanvas : public wxScrolledCanvas {
     }
 
     void OnPaint(wxPaintEvent &event) {
-        wxAutoBufferedPaintDC bdc(this);
-        wxGCDC dc(bdc);
+        if (!buffer.IsOk()) return;
+        wxBufferedPaintDC dc(this, buffer);
         DoPrepareDC(dc);
         doc->Draw(dc);
     };
@@ -161,7 +162,15 @@ struct TSCanvas : public wxScrolledCanvas {
         }
     }
 
-    void OnSize(wxSizeEvent &se) {}
+    void OnSize(wxSizeEvent &se) {
+        wxSize sz = GetClientSize();
+        if (sz.x > 0 && sz.y > 0) {
+            float sf = GetDPIScaleFactor();
+            buffer.CreateWithDIPSize(sz, sf, 32);
+        }
+        se.Skip();
+    }
+
     void OnContextMenuClick(wxContextMenuEvent &cme) {
         if (lastrmbwaswithctrl) {
             auto tagmenu = make_unique<wxMenu>();
