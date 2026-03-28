@@ -315,7 +315,8 @@ struct Document {
             }
             hover = targetcell_parent ? targetcell_parent->grid->FindCell(targetcell) : Selection();
             SetSelect(hover);
-            wxClientDC dc(canvas); // TODO: replace with wxInfoDC starting wxWidgets 3.3.0
+            wxClientDC cdc(canvas);  // TODO: replace with wxInfoDC starting wxWidgets 3.3.0
+            wxGCDC dc(cdc);
             Layout(dc);
         }
     }
