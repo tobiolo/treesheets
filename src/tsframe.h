@@ -1023,7 +1023,7 @@ struct TSFrame : wxFrame {
                                  .RightDockable(false)
                                  .Gripper(true));
         auto artprovider = aui.GetArtProvider();
-        artprovider->SetColour(wxAUI_DOCKART_BACKGROUND_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+        artprovider->SetColour(wxAUI_DOCKART_BACKGROUND_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_FRAMEBK));
         artprovider->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
     }
 
