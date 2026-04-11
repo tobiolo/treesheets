@@ -689,10 +689,23 @@ struct Document {
         scrollx = scrolly = 0;
         wxBitmap bm(maxx, maxy, 24);
         wxMemoryDC mdc(bm);
-        DrawRectangle(mdc, Background(), 0, 0, maxx, maxy);
-        Layout(mdc);
-        Render(mdc);
+        DrawView(mdc);
         return bm;
+    }
+
+    void DrawSVG(const wxString &filename) {
+        maxx = layoutxs;
+        maxy = layoutys;
+        scrollx = scrolly = 0;
+        wxSVGFileDC sdc(filename, maxx, maxy);
+        sdc.SetBitmapHandler(new wxSVGBitmapEmbedHandler());
+        DrawView(sdc);
+    }
+
+    void DrawView(wxDC &dc) {
+        DrawRectangle(dc, Background(), 0, 0, maxx, maxy);
+        Layout(dc);
+        Render(dc);
     }
 
     wxBitmap GetSubBitmap(const Selection &sel) {
@@ -711,6 +724,9 @@ struct Document {
             auto bitmap = GetBitmap();
             canvas->Refresh();
             if (!bitmap.SaveFile(filename, wxBITMAP_TYPE_PNG)) return _("Error writing PNG file!");
+        } else if (action == A_EXPSVG) {
+            DrawSVG(filename);
+            canvas->Refresh();
         } else {
             wxFFileOutputStream fos(filename, "w+b");
             if (!fos.IsOk()) {
@@ -907,6 +923,7 @@ struct Document {
                 return Export("html", "*.html", _("Choose HTML file to write"), action);
             case A_EXPTEXT: return Export("txt", "*.txt", _("Choose Text file to write"), action);
             case A_EXPIMAGE: return Export("png", "*.png", _("Choose PNG file to write"), action);
+            case A_EXPSVG: return Export("svg", "*.svg", _("Choose SVG file to write"), action);
             case A_EXPCSV: {
                 int maxdepth = 0, leaves = 0;
                 currentdrawroot->MaxDepthLeaves(0, maxdepth, leaves);
