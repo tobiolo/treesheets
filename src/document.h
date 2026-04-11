@@ -582,14 +582,12 @@ struct Document {
         Render(dc);
         DrawSelect(dc, selected);
         if (paintscrolltoselection) {
-            #ifdef __WXGTK__
+            #if defined(__WXGTK__) or defined(__WXMSW__)
                 ScrollIfSelectionOutOfView(selected);
             #else
                 canvas->CallAfter([this](){
                     ScrollIfSelectionOutOfView(selected);
-                    #ifdef __WXMAC__
-                        canvas->Refresh();
-                    #endif
+                    canvas->Refresh();
                 });
             #endif
             paintscrolltoselection = false;
