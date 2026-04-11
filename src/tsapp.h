@@ -35,10 +35,6 @@ struct TSApp : wxApp {
             int cut = exepath.Find("/MacOS");
             if (cut > 0) { exepath = exepath.SubString(0, cut) + "/Resources"; }
             wxDisableAsserts();
-            // wxSystemOptions::SetOption("mac.toolbar.no-native", 1);
-        #elif defined(__WXMSW__)
-            DeclareHiDpiAwareOnWindows();
-            MSWEnableDarkMode();
         #endif
 
         bool portable = false;
@@ -76,6 +72,10 @@ struct TSApp : wxApp {
         sys = new System(portable);
         if (start_minimized) sys->startminimized = true;
         SetupInternationalization();
+        #ifdef __WXMSW__
+            DeclareHiDpiAwareOnWindows();
+            MSWEnableDarkMode();
+        #endif
         frame = new TSFrame(this);
 
         #ifdef ENABLE_LOBSTER
