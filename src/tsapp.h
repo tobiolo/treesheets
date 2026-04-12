@@ -23,6 +23,16 @@ struct TSApp : wxApp {
     unique_ptr<wxSingleInstanceChecker> instance_checker {nullptr};
 
     bool OnInit() override {
+        SetAppName("TreeSheets");
+        SetVendorName("The TreeSheets Authors");
+
+        // Setup StackWalker and corresponding log file
+        wxHandleFatalExceptions(true);
+        wxFileName fn(wxStandardPaths::Get().GetUserDataDir(), "errors.log");
+        fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        static wxFFile f(fn.GetFullPath(), "w");
+        if (f.IsOpened()) wxLog::SetActiveTarget(new wxLogStderr(f.fp()));
+
         #if wxUSE_UNICODE == 0
             #error "must use unicode version of wx libs to ensure data integrity of .cts files"
         #endif
@@ -97,6 +107,11 @@ struct TSApp : wxApp {
 
         serv->Create(service);
         return true;
+    }
+
+    void OnFatalException() override {
+        TSStackWalker walker;
+        walker.WalkFromException();
     }
 
     void OnEventLoopEnter(wxEventLoopBase *WXUNUSED(loop)) override {
