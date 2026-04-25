@@ -37,12 +37,14 @@
 #include <wx/bmpbndl.h>
 #include <wx/colordlg.h>
 #include <wx/datectrl.h>
+#include <wx/dcgraph.h>
 #include <wx/dcsvg.h>
 #include <wx/display.h>
 #include <wx/docview.h>
 #include <wx/filename.h>
 #include <wx/fontdlg.h>
 #include <wx/fswatcher.h>
+#include <wx/graphics.h>
 #include <wx/ipc.h>
 #include <wx/mstream.h>
 #include <wx/notebook.h>

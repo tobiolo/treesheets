@@ -693,7 +693,13 @@ struct Document {
         scrollx = scrolly = 0;
         wxBitmap bm(maxx, maxy, 24);
         wxMemoryDC mdc(bm);
-        DrawView(mdc);
+        auto gc = wxGraphicsContext::Create(mdc);
+        if (gc) {
+            wxGCDC gcdc(gc);
+            DrawView(gcdc);
+        } else {
+            DrawView(mdc);
+        }
         return bm;
     }
 

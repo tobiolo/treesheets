@@ -31,7 +31,13 @@ struct TSCanvas : public wxScrolledCanvas {
             wxPaintDC dc(this);
         #endif
         DoPrepareDC(dc);
-        doc->Draw(dc);
+        auto gc = wxGraphicsContext::Create(dc);
+        if (gc) {
+            wxGCDC gcdc(gc);
+            doc->Draw(gcdc);
+        } else {
+            doc->Draw(dc);
+        }
     };
 
     void OnMotion(wxMouseEvent &me) {
