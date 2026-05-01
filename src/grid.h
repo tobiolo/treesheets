@@ -498,7 +498,7 @@ struct Grid {
         SetOrient();
         int opos = 0;
         foreachcell(c) {
-            if ((nxs > 0 && x >= dx && x < dx + nxs) || (nys > 0 && y >= dy && y < dy + nys)) {
+            if ((nxs > 0 && x == dx) || (nys > 0 && y == dy)) {
                 if (nc) {
                     c = std::move(nc);
                 } else {
@@ -644,8 +644,8 @@ struct Grid {
         shared_ptr<Grid> keepalive = cell->grid;
         int target_xs = sel.x + xs;
         int target_ys = sel.y + ys;
-        if (p->xs < target_xs) p->InsertCells(p->xs, -1, target_xs - p->xs, 0);
-        if (p->ys < target_ys) p->InsertCells(-1, p->ys, 0, target_ys - p->ys);
+        while (p->xs < target_xs) p->InsertCells(p->xs, -1, 1, 0);
+        while (p->ys < target_ys) p->InsertCells(-1, p->ys, 0, 1);
         foreachcell(c) {
             int tx = x + sel.x;
             int ty = y + sel.y;
