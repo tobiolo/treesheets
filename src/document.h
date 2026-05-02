@@ -814,7 +814,7 @@ struct Document {
                     if (!ctrl) return Action(A_BACKSPACE);
                     break;  // Prevent Ctrl+H from being treated as Backspace
                 case WXK_RETURN:
-                    return Action(shift  ? A_ENTERGRID
+                    return Action(shift  ? ctrl ? A_ENTERGRIDN : A_ENTERGRID
                                   : ctrl ? A_ENTERCELL_JUMPTOSTART
                                          : A_ENTERCELL);
                 case WXK_ESCAPE:  // docs say it can be used as a menu accelerator, but it does not
@@ -1520,19 +1520,28 @@ struct Document {
                 ScrollOrZoom();
                 return wxEmptyString;
 
-            case A_NEWGRID:
+            case A_ENTERGRID:
+            case A_ENTERGRIDN: {
                 if (!(cell = selected.ThinExpand(this))) return OneCell();
                 if (cell->grid) {
-                    SetSelect(Selection(cell->grid, 0, cell->grid->ys, 1, 0));
-                    ScrollOrZoom(true);
-                } else {
-                    cell->AddUndo(this);
-                    cell->AddGrid();
                     SetSelect(Selection(cell->grid, 0, 0, 1, 1));
-                    paintscrolltoselection = true;
-                    canvas->Refresh();
+                    ScrollOrZoom(true);
+                    return wxEmptyString;
                 }
+                int size = 1;
+                if (action == A_ENTERGRIDN &&
+                    (size = (int)::wxGetNumberFromUser(
+                         _("What subgrid size would you like to start with?"), _("size:"),
+                         _("New subgrid"), 10, 1, 25, sys->frame)) < 0) {
+                    return _("No subgrid created.");
+                }
+                cell->AddUndo(this);
+                cell->AddGrid(size, size);
+                SetSelect(Selection(cell->grid, 0, 0, 1, 1));
+                paintscrolltoselection = true;
+                canvas->Refresh();
                 return wxEmptyString;
+            }
 
             case wxID_PASTE:
                 if (!(cell = selected.ThinExpand(this))) return OneCell();
@@ -1959,12 +1968,6 @@ struct Document {
         switch (action) {
             case A_NEXT: selected.Next(this, false); return wxEmptyString;
             case A_PREV: selected.Next(this, true); return wxEmptyString;
-
-            case A_ENTERGRID:
-                if (!cell->grid) Action(A_NEWGRID);
-                SetSelect(Selection(cell->grid, 0, 0, 1, 1));
-                ScrollOrZoom(true);
-                return wxEmptyString;
 
             case A_LINK:
             case A_LINKIMG:

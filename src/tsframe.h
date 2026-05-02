@@ -431,13 +431,15 @@ struct TSFrame : wxFrame {
             MyAppend(editmenu, A_BACKSPACE_WORD, _("Delete Word Before") + "\tCTRL+BACK",
                      _("Deletes the entire word before the cursor"));
             editmenu->AppendSeparator();
-            MyAppend(editmenu, A_NEWGRID,
+            MyAppend(editmenu, A_ENTERGRID,
                      #ifdef __WXMAC__
                      _("&Insert New Grid") + "\tCTRL+G",
                      #else
                      _("&Insert New Grid") + "\tINS",
                      #endif
                      _("Adds a grid to the selected cell"));
+            MyAppend(editmenu, A_ENTERGRIDN, _("Insert New &NxN Grid") + "\tCTRL+SHIFT+G",
+                     _("Adds a NxN grid to the selected cell"));
             MyAppend(editmenu, A_WRAP, _("&Wrap in new parent") + "\tF9",
                      _("Creates a new level of hierarchy around the current selection"));
             editmenu->AppendSeparator();
@@ -860,7 +862,7 @@ struct TSFrame : wxFrame {
 
         auto celltb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
                                        wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
-        AddToolbarIcon(celltb, _("New Grid (INS)"), A_NEWGRID, iconpath, "newgrid.svg",
+        AddToolbarIcon(celltb, _("New Grid (INS)"), A_ENTERGRID, iconpath, "newgrid.svg",
                        "newgrid_dark.svg");
         AddToolbarIcon(celltb, _("Add Image"), A_IMAGE, iconpath, "image.svg", "image_dark.svg");
         AddToolbarIcon(celltb, _("Run"), wxID_EXECUTE, iconpath, "run.svg", "run_dark.svg");

@@ -41,7 +41,8 @@ enum { TS_TEXT = 0, TS_GRID = 1, TS_BOTH = 2, TS_NEITHER = 3 };
 enum {
     A_SAVEALL = 500,
     A_COLLAPSE,
-    A_NEWGRID,
+    A_ENTERGRID,
+    A_ENTERGRIDN,
     A_CLRVIEW,
     A_MARKDATA,
     A_MARKVIEWH,
@@ -131,7 +132,6 @@ enum {
     A_DECSIZE,
     A_INCWIDTH,
     A_DECWIDTH,
-    A_ENTERGRID,
     A_LINK,
     A_LINKREV,
     A_LINKIMG,
