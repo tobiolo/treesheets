@@ -642,10 +642,11 @@ struct Grid {
 
     void MergeWithParent(shared_ptr<Grid> p, Selection &sel, Document *doc) {
         shared_ptr<Grid> keepalive = cell->grid;
-        int target_xs = sel.x + xs;
-        int target_ys = sel.y + ys;
-        if (p->xs < target_xs) p->InsertCells(p->xs, -1, target_xs - p->xs, 0);
-        if (p->ys < target_ys) p->InsertCells(-1, p->ys, 0, target_ys - p->ys);
+        int nxs = sel.x + xs - p->xs;
+        int nys = sel.y + ys - p->ys;
+        if (nxs > 0 || nys > 0)
+            p->InsertCells(nxs > 0 ? p->xs : -1, nys > 0 ? p->ys : -1, nxs > 0 ? nxs : 0,
+                           nys > 0 ? nys : 0);
         foreachcell(c) {
             int tx = x + sel.x;
             int ty = y + sel.y;
