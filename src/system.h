@@ -209,7 +209,7 @@ struct System {
             wxFFileInputStream fis(fn);
             wxDataInputStream dis(fis);
             if (!fis.IsOk()) {
-                for (int i = 0, n = frame->filehistory.GetCount(); i < n; i++) {
+                for (int i = (int)frame->filehistory.GetCount() - 1; i >= 0; i--) {
                     if (frame->filehistory.GetHistoryFile(i) == filename)
                         frame->filehistory.RemoveFileFromHistory(i);
                 }
