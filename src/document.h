@@ -140,9 +140,9 @@ struct Document {
         Cell *ocs = nullptr;
         if (selected.xs != 0 && selected.ys != 0)
             ocs = selected.grid->C(selected.x, selected.y).get();
-        if (selected.y == selected.grid->ys)
+        if (selected.xs != 0 && selected.y == selected.grid->ys)
             ocs = selected.grid->C(selected.x, selected.y - 1).get();
-        if (selected.x == selected.grid->xs)
+        if (selected.ys != 0 && selected.x == selected.grid->xs)
             ocs = selected.grid->C(selected.x - 1, selected.y).get();
         auto start_saving_time = wxGetLocalTimeMillis();
 
