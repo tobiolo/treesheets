@@ -438,7 +438,7 @@ struct TSFrame : wxFrame {
                      _("&Insert New Grid") + "\tINS",
                      #endif
                      _("Adds a grid to the selected cell"));
-            MyAppend(editmenu, A_ENTERGRIDN, _("Insert New &NxN Grid") + "\tCTRL+SHIFT+G",
+            MyAppend(editmenu, A_ENTERGRIDN, _("Insert New &NxN Grid") + "\tCTRL+SHIFT+ENTER",
                      _("Adds a NxN grid to the selected cell"));
             MyAppend(editmenu, A_WRAP, _("&Wrap in new parent") + "\tF9",
                      _("Creates a new level of hierarchy around the current selection"));
