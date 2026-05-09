@@ -1537,7 +1537,7 @@ struct TSFrame : wxFrame {
     }
 
     TSCanvas *NewTab(unique_ptr<Document> doc, bool append = false, int insert_at = -1) {
-        TSCanvas *canvas = new TSCanvas(this, notebook);
+        auto *canvas = new TSCanvas(this, notebook);
         doc->canvas = canvas;
         canvas->doc = std::move(doc);
         canvas->SetScrollRate(1, 1);
