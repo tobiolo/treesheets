@@ -72,7 +72,7 @@ struct TSApp : wxApp {
         #ifdef __WXMSW__
             MSWEnableDarkMode();
         #endif
-        sys = new System(portable);
+        sys = make_unique<System>(portable);
         if (start_minimized) sys->startminimized = true;
         SetupInternationalization();
         #ifdef __WXMSW__
@@ -123,7 +123,7 @@ struct TSApp : wxApp {
     #endif
 
     int OnExit() override {
-        DELETEP(sys);
+        sys.reset();
         return 0;
     }
 
