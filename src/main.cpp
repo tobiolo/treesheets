@@ -321,7 +321,7 @@ struct treesheets {
     struct TSFrame;
     struct TSApp;
 
-    static System *sys;
+    static inline unique_ptr<System> sys = nullptr;
 
     #ifdef ENABLE_LOBSTER
         #include "treesheets_impl.h"
@@ -343,7 +343,6 @@ struct treesheets {
     #include "tsapp.h"
 };
 
-treesheets::System *treesheets::sys = nullptr;
 #ifdef ENABLE_LOBSTER
     treesheets::TreeSheetsScriptImpl treesheets::tssi;
 #endif
