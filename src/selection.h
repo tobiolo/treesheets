@@ -89,8 +89,8 @@ class Selection {
                 cursor = cursorend = 0;
             }
         } else {
-            auto at = a.GetCell();
-            auto bt = b.GetCell();
+            auto *at = a.GetCell();
+            auto *bt = b.GetCell();
             int ad = at->Depth();
             int bd = bt->Depth();
             int i = 0;

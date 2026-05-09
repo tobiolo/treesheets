@@ -144,7 +144,7 @@ struct System {
     }
 
     void LoadTutorial() {
-        auto trans = wxTranslations::Get();
+        auto *trans = wxTranslations::Get();
         auto language = trans ? trans->GetBestTranslation("ts") : wxString("");
 
         if (language.Len() == 5 &&
@@ -167,7 +167,7 @@ struct System {
         unique_ptr<Cell> c = make_unique<Cell>(nullptr, nullptr, CT_DATA, make_shared<Grid>(sizex, sizey ? sizey : sizex));
         c->cellcolor = 0xCCDCE2;
         c->grid->InitCells();
-        auto doc = NewTabDoc();
+        auto *doc = NewTabDoc();
         doc->InitWith(std::move(c), "", nullptr, 1, 1);
         return doc->root;
     }
@@ -453,11 +453,11 @@ struct System {
 
     int GetXMLNodes(wxXmlNode *node, auto &nodes, vector<wxXmlAttribute *> *attributes = nullptr,
                     bool attributestoo = false) {
-        for (auto child = node->GetChildren(); child; child = child->GetNext()) {
+        for (auto *child = node->GetChildren(); child; child = child->GetNext()) {
             if (child->GetType() == wxXML_ELEMENT_NODE) nodes.push_back(child);
         }
         if (attributestoo && attributes)
-            for (auto attribute = node->GetAttributes(); attribute;
+            for (auto *attribute = node->GetAttributes(); attribute;
                  attribute = attribute->GetNext()) {
                 attributes->push_back(attribute);
             }
@@ -542,8 +542,8 @@ struct System {
             auto col = CountCol(s);
             if (col < column && startrow != 0) return i;
             if (col > column) {
-                auto c = g->C(0, y - 1).get();
-                auto sg = c->grid.get();
+                auto *c = g->C(0, y - 1).get();
+                auto *sg = c->grid.get();
                 i = FillRows(sg ? sg : c->AddGrid(), as, col, i, sg ? sg->ys : 0) - 1;
             } else {
                 if (g->ys <= y) g->InsertCells(-1, y, 0, 1);

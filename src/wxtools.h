@@ -14,7 +14,7 @@ struct DropTarget : wxDropTarget {
     DropTarget(wxDataObject *data) : wxDropTarget(data) {};
 
     wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) {
-        auto canvas = sys->frame->GetCurrentTab();
+        auto *canvas = sys->frame->GetCurrentTab();
         wxInfoDC dc(canvas);
         canvas->doc->UpdateHover(dc, x, y);
         return canvas->doc->hover.grid ? wxDragCopy : wxDragNone;
@@ -25,7 +25,7 @@ struct DropTarget : wxDropTarget {
     }
     wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) {
         GetData();
-        auto canvas = sys->frame->GetCurrentTab();
+        auto *canvas = sys->frame->GetCurrentTab();
         wxInfoDC dc(canvas);
         canvas->doc->UpdateHover(dc, x, y);
         canvas->doc->SelectClick();
@@ -39,9 +39,9 @@ struct ThreeChoiceDialog : public wxDialog {
     ThreeChoiceDialog(wxWindow *parent, const wxString &title, const wxString &msg,
                       const wxString &ch1, const wxString &ch2, const wxString &ch3)
         : wxDialog(parent, wxID_ANY, title) {
-        auto bsv = new wxBoxSizer(wxVERTICAL);
+        auto *bsv = new wxBoxSizer(wxVERTICAL);
         bsv->Add(new wxStaticText(this, -1, msg), 0, wxALL, 5);
-        auto bsb = new wxBoxSizer(wxHORIZONTAL);
+        auto *bsb = new wxBoxSizer(wxHORIZONTAL);
         bsb->Prepend(new wxButton(this, 2, ch3), 0, wxALL, 5);
         bsb->PrependStretchSpacer(1);
         bsb->Prepend(new wxButton(this, 1, ch2), 0, wxALL, 5);
@@ -71,16 +71,16 @@ struct DateTimeRangeDialog : public wxDialog {
     wxDateTime end;
     DateTimeRangeDialog(wxWindow *parent) : wxDialog(parent, wxID_ANY, _("Date and time range")) {
         wxSizerFlags sizerflags(1);
-        auto startsizer = new wxFlexGridSizer(2, wxSize(5, 5));
+        auto *startsizer = new wxFlexGridSizer(2, wxSize(5, 5));
         startsizer->Add(&startdate, 0, wxALL, 5);
         startsizer->Add(&starttime, 0, wxALL, 5);
-        auto endsizer = new wxFlexGridSizer(2, wxSize(5, 5));
+        auto *endsizer = new wxFlexGridSizer(2, wxSize(5, 5));
         endsizer->Add(&enddate, 0, wxALL, 5);
         endsizer->Add(&endtime, 0, wxALL, 5);
-        auto btnsizer = new wxFlexGridSizer(2, wxSize(5, 5));
+        auto *btnsizer = new wxFlexGridSizer(2, wxSize(5, 5));
         btnsizer->Add(&okbtn, 0, wxALL, 5);
         btnsizer->Add(&cancelbtn, 0, wxALL, 5);
-        auto topsizer = new wxFlexGridSizer(1);
+        auto *topsizer = new wxFlexGridSizer(1);
         topsizer->Add(&introtext, 0, wxALL, 5);
         topsizer->Add(&starttext, 0, wxALL, 5);
         topsizer->Add(startsizer, sizerflags);

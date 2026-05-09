@@ -15,7 +15,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
         if (!lowestcommonancestor) {
             UpdateLowestCommonAncestor(true);
         } else {
-            for (auto p = current; p; p = p->parent) {
+            for (auto *p = current; p; p = p->parent) {
                 if (p == lowestcommonancestor) {
                     // There is no need to add current to the undo stack as
                     // lowestcommonancestor including subordinated current
@@ -64,7 +64,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
     void GoToView() { current = document->currentdrawroot; }
     bool HasSelection() { return document->selected.grid.get(); }
     void GoToSelection() {
-        auto cell = document->selected.GetFirst();
+        auto *cell = document->selected.GetFirst();
         if (cell) current = cell;
     }
     bool HasParent() { return current->parent; }
@@ -228,7 +228,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
 static int64_t TreeSheetsLoader(string_view_nt absfilename, std::string *dest, int64_t start,
                                 int64_t len) {
     size_t l = 0;
-    auto buf = (char *)loadfile(absfilename.c_str(), &l);
+    auto *buf = (char *)loadfile(absfilename.c_str(), &l);
     if (!buf) return -1;
     dest->assign(buf, l);
     free(buf);

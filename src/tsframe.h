@@ -118,7 +118,7 @@ struct TSFrame : wxFrame {
             #define ALTORCTRL "CTRL"
         #endif
 
-        auto expmenu = new wxMenu();
+        auto *expmenu = new wxMenu();
         MyAppend(expmenu, A_EXPXML, _("&XML..."),
                  _("Export the current view as XML (which can also be reimported without losing structure)"));
         expmenu->AppendSeparator();
@@ -143,7 +143,7 @@ struct TSFrame : wxFrame {
         MyAppend(expmenu, A_EXPSVG, _("&Vector graphics..."),
                 _("Export the current view to a SVG vector file."));
 
-        auto impmenu = new wxMenu();
+        auto *impmenu = new wxMenu();
         MyAppend(impmenu, A_IMPXML, _("XML..."));
         MyAppend(impmenu, A_IMPXMLA, _("XML (attributes too, for OPML etc)..."));
         MyAppend(impmenu, A_IMPTXTI, _("Indented text..."));
@@ -151,11 +151,11 @@ struct TSFrame : wxFrame {
         MyAppend(impmenu, A_IMPTXTS, _("Semi-Colon delimited text (CSV)..."));
         MyAppend(impmenu, A_IMPTXTT, _("Tab delimited text..."));
 
-        auto recentmenu = new wxMenu();
+        auto *recentmenu = new wxMenu();
         filehistory.UseMenu(recentmenu);
         filehistory.AddFilesToMenu();
 
-        auto filemenu = new wxMenu();
+        auto *filemenu = new wxMenu();
         MyAppend(filemenu, wxID_NEW, _("&New") + "\tCTRL+N", _("Create a new document"));
         MyAppend(filemenu, wxID_OPEN, _("&Open...") + "\tCTRL+O", _("Open an existing document"));
         MyAppend(filemenu, wxID_CLOSE, _("&Close") + "\tCTRL+W", _("Close current document"));
@@ -177,7 +177,7 @@ struct TSFrame : wxFrame {
 
         wxMenu *editmenu;
         loop(twoeditmenus, 2) {
-            auto sizemenu = new wxMenu();
+            auto *sizemenu = new wxMenu();
             MyAppend(sizemenu, A_INCSIZE,
                      _("&Increase text size (SHIFT+mousewheel)") + "\tSHIFT+PGUP");
             MyAppend(sizemenu, A_DECSIZE,
@@ -196,7 +196,7 @@ struct TSFrame : wxFrame {
             MyAppend(sizemenu, A_RESETWIDTH, _("Reset column widths") + "\tCTRL+R",
                      _("Reset the column widths in the selection to the default column width"));
 
-            auto bordmenu = new wxMenu();
+            auto *bordmenu = new wxMenu();
             MyAppend(bordmenu, A_BORD0, _("Border &0") + "\tCTRL+SHIFT+9");
             MyAppend(bordmenu, A_BORD1, _("Border &1") + "\tCTRL+SHIFT+1");
             MyAppend(bordmenu, A_BORD2, _("Border &2") + "\tCTRL+SHIFT+2");
@@ -204,7 +204,7 @@ struct TSFrame : wxFrame {
             MyAppend(bordmenu, A_BORD4, _("Border &4") + "\tCTRL+SHIFT+4");
             MyAppend(bordmenu, A_BORD5, _("Border &5") + "\tCTRL+SHIFT+5");
 
-            auto selmenu = new wxMenu();
+            auto *selmenu = new wxMenu();
             MyAppend(selmenu, A_NEXT,
                 #ifdef __WXGTK__
                     _("Move to next cell (TAB)")
@@ -278,7 +278,7 @@ struct TSFrame : wxFrame {
             MyAppend(selmenu, A_LINKIMGREV,
                      _("Go To Matching Cell (Image, Reverse)") + "\tSHIFT+F7");
 
-            auto temenu = new wxMenu();
+            auto *temenu = new wxMenu();
             MyAppend(temenu, A_LEFT, _("Cursor Left") + "\tLEFT");
             MyAppend(temenu, A_RIGHT, _("Cursor Right") + "\tRIGHT");
             MyAppend(temenu, A_MLEFT, _("Word Left") + "\tCTRL+LEFT");
@@ -306,7 +306,7 @@ struct TSFrame : wxFrame {
                      _("...and progress to the next cell on the right") + "\t" CTRLORALT "+ENTER");
             MyAppend(temenu, A_CANCELEDIT, _("Cancel text edits") + "\tESC");
 
-            auto stmenu = new wxMenu();
+            auto *stmenu = new wxMenu();
             MyAppend(stmenu, wxID_BOLD, _("Toggle cell &BOLD") + "\tCTRL+B");
             MyAppend(stmenu, wxID_ITALIC, _("Toggle cell &ITALIC") + "\tCTRL+I");
             MyAppend(stmenu, A_TT, _("Toggle cell &typewriter") + "\tCTRL+ALT+T");
@@ -324,13 +324,13 @@ struct TSFrame : wxFrame {
             MyAppend(stmenu, A_OPENBORDCOLOR, _("Open border colors") + "\tSHIFT+ALT+F11");
             MyAppend(stmenu, A_OPENIMGDROPDOWN, _("Open image dropdown") + "\tSHIFT+ALT+F12");
 
-            auto tagmenu = new wxMenu();
+            auto *tagmenu = new wxMenu();
             MyAppend(tagmenu, A_TAGADD, _("&Add Cell Text as Tag"));
             MyAppend(tagmenu, A_TAGREMOVE, _("&Remove Cell Text from Tags"));
             MyAppend(tagmenu, A_NOP, _("&Set Cell Text to tag (use CTRL+RMB)"),
                      _("Hold CTRL while pressing right mouse button to quickly set a tag for the current cell using a popup menu"));
 
-            auto orgmenu = new wxMenu();
+            auto *orgmenu = new wxMenu();
             MyAppend(orgmenu, A_TRANSPOSE, _("&Transpose") + "\tCTRL+SHIFT+T",
                      _("changes the orientation of a grid"));
             MyAppend(orgmenu, A_SORT, _("Sort &Ascending"),
@@ -344,7 +344,7 @@ struct TSFrame : wxFrame {
             MyAppend(orgmenu, A_FLATTEN, _("&Flatten"),
                      _("Takes a hierarchy (nested 1xN or Nx1 grids) and converts it into a flat NxN grid, useful for export to spreadsheets"));
 
-            auto imgmenu = new wxMenu();
+            auto *imgmenu = new wxMenu();
             MyAppend(imgmenu, A_IMAGE, _("&Add..."), _("Add an image to the selected cell"));
             MyAppend(imgmenu, A_IMAGESVA, _("&Save as..."),
                      _("Save image(s) from selected cell(s) to disk. Multiple images will be saved with a counter appended to each file name."));
@@ -371,13 +371,13 @@ struct TSFrame : wxFrame {
             MyAppend(imgmenu, A_IMAGER, _("Remo&ve"),
                      _("Remove image(s) from the selected cells"));
 
-            auto navmenu = new wxMenu();
+            auto *navmenu = new wxMenu();
             MyAppend(navmenu, A_BROWSE, _("Open link in &browser") + "\tF5",
                      _("Opens up the text from the selected cell in browser (should start be a valid URL)"));
             MyAppend(navmenu, A_BROWSEF, _("Open &file") + "\tF4",
                      _("Opens up the text from the selected cell in default application for the file type"));
 
-            auto laymenu = new wxMenu();
+            auto *laymenu = new wxMenu();
             MyAppend(laymenu, A_V_GS,
                      _("Vertical Layout with Grid Style Rendering") + "\t" CTRLORALT "+1");
             MyAppend(laymenu, A_V_BS,
@@ -471,7 +471,7 @@ struct TSFrame : wxFrame {
             if (!twoeditmenus) editmenupopup = editmenu;
         }
 
-        auto semenu = new wxMenu();
+        auto *semenu = new wxMenu();
         MyAppend(semenu, wxID_FIND, _("&Search") + "\tCTRL+F", _("Find in document"));
         semenu->AppendCheckItem(A_CASESENSITIVESEARCH, _("Case-sensitive search"));
         semenu->Check(A_CASESENSITIVESEARCH, sys->casesensitivesearch);
@@ -487,7 +487,7 @@ struct TSFrame : wxFrame {
                  _("Replace in Current Selection && &Jump Next") + "\tCTRL+J");
         MyAppend(semenu, A_REPLACEALL, _("Replace &All"));
 
-        auto scrollmenu = new wxMenu();
+        auto *scrollmenu = new wxMenu();
         MyAppend(scrollmenu, A_AUP, _("Scroll Up (mousewheel)") + "\tPGUP");
         MyAppend(scrollmenu, A_AUP, _("Scroll Up (mousewheel)") + "\tALT+UP");
         MyAppend(scrollmenu, A_ADOWN, _("Scroll Down (mousewheel)") + "\tPGDN");
@@ -495,7 +495,7 @@ struct TSFrame : wxFrame {
         MyAppend(scrollmenu, A_ALEFT, _("Scroll Left") + "\tALT+LEFT");
         MyAppend(scrollmenu, A_ARIGHT, _("Scroll Right") + "\tALT+RIGHT");
 
-        auto filtermenu = new wxMenu();
+        auto *filtermenu = new wxMenu();
         MyAppend(filtermenu, A_FILTEROFF, _("Turn filter &off") + "\tCTRL+SHIFT+F");
         MyAppend(filtermenu, A_FILTERS, _("Show only cells in current search"));
         MyAppend(filtermenu, A_FILTERRANGE, _("Show last edits in specific date range"));
@@ -515,7 +515,7 @@ struct TSFrame : wxFrame {
         MyAppend(filtermenu, A_FILTERBYCELLBG, _("Filter by the same cell color"));
         MyAppend(filtermenu, A_FILTERMATCHNEXT, _("Go to next filter match") + "\tCTRL+F3");
 
-        auto viewmenu = new wxMenu();
+        auto *viewmenu = new wxMenu();
         MyAppend(viewmenu, A_ZOOMIN, _("Zoom &In (CTRL+mousewheel)") + "\tCTRL+PGUP");
         MyAppend(viewmenu, A_ZOOMOUT, _("Zoom &Out (CTRL+mousewheel)") + "\tCTRL+PGDN");
         viewmenu->AppendSeparator();
@@ -548,7 +548,7 @@ struct TSFrame : wxFrame {
         viewmenu->AppendSubMenu(scrollmenu, _("Scroll Sheet"));
         viewmenu->AppendSubMenu(filtermenu, _("Filter"));
 
-        auto roundmenu = new wxMenu();
+        auto *roundmenu = new wxMenu();
         roundmenu->AppendRadioItem(A_ROUND0, _("Radius &0"));
         roundmenu->AppendRadioItem(A_ROUND1, _("Radius &1"));
         roundmenu->AppendRadioItem(A_ROUND2, _("Radius &2"));
@@ -558,7 +558,7 @@ struct TSFrame : wxFrame {
         roundmenu->AppendRadioItem(A_ROUND6, _("Radius &6"));
         roundmenu->Check(sys->roundness + A_ROUND0, true);
 
-        auto autoexportmenu = new wxMenu();
+        auto *autoexportmenu = new wxMenu();
         autoexportmenu->AppendRadioItem(A_AUTOEXPORT_HTML_NONE, _("No autoexport"));
         autoexportmenu->AppendRadioItem(A_AUTOEXPORT_HTML_WITH_IMAGES, _("Export with images"),
                                         _("Export to a HTML file with exported images alongside "
@@ -569,7 +569,7 @@ struct TSFrame : wxFrame {
                                           "TreeSheets file when document is saved"));
         autoexportmenu->Check(sys->autohtmlexport + A_AUTOEXPORT_HTML_NONE, true);
 
-        auto optmenu = new wxMenu();
+        auto *optmenu = new wxMenu();
         MyAppend(optmenu, wxID_SELECT_FONT, _("Font..."),
                  _("Set the font the document text is displayed with"));
         MyAppend(optmenu, A_SET_FIXED_FONT, _("Typewriter font..."),
@@ -649,7 +649,7 @@ struct TSFrame : wxFrame {
         optmenu->AppendSubMenu(roundmenu, _("&Roundness of grid borders"));
 
         #ifdef ENABLE_LOBSTER
-            auto scriptmenu = new wxMenu();
+            auto *scriptmenu = new wxMenu();
             MyAppend(scriptmenu, A_ADDSCRIPT, _("Add...") + "\tCTRL+ALT+L",
                      _("Add Lobster scripts to the menu"));
             MyAppend(scriptmenu, A_DETSCRIPT, _("Remove...") + "\tCTRL+SHIFT+ALT+L",
@@ -668,7 +668,7 @@ struct TSFrame : wxFrame {
             }
         #endif
 
-        auto markmenu = new wxMenu();
+        auto *markmenu = new wxMenu();
         MyAppend(markmenu, A_MARKDATA, _("&Data") + "\tCTRL+ALT+D");
         MyAppend(markmenu, A_MARKCODE, _("&Operation") + "\tCTRL+ALT+O");
         MyAppend(markmenu, A_MARKVARD, _("Variable &Assign") + "\tCTRL+ALT+A");
@@ -676,12 +676,12 @@ struct TSFrame : wxFrame {
         MyAppend(markmenu, A_MARKVIEWH, _("&Horizontal View") + "\tCTRL+ALT+.");
         MyAppend(markmenu, A_MARKVIEWV, _("&Vertical View") + "\tCTRL+ALT+,");
 
-        auto langmenu = new wxMenu();
+        auto *langmenu = new wxMenu();
         MyAppend(langmenu, wxID_EXECUTE, _("&Run") + "\tCTRL+ALT+F5");
         langmenu->AppendSubMenu(markmenu, _("&Mark as"));
         MyAppend(langmenu, A_CLRVIEW, _("&Clear Views"));
 
-        auto helpmenu = new wxMenu();
+        auto *helpmenu = new wxMenu();
         MyAppend(helpmenu, wxID_ABOUT, _("&About..."), _("Show About dialog"));
         helpmenu->AppendSeparator();
         MyAppend(helpmenu, wxID_HELP, _("Interactive &tutorial") + "\tF1",
@@ -703,7 +703,7 @@ struct TSFrame : wxFrame {
         wxAcceleratorTable accel(3, entries);
         SetAcceleratorTable(accel);
 
-        auto menubar = new wxMenuBar();
+        auto *menubar = new wxMenuBar();
         menubar->Append(filemenu, _("&File"));
         menubar->Append(editmenu, _("&Edit"));
         menubar->Append(semenu, _("&Search"));
@@ -1039,7 +1039,7 @@ struct TSFrame : wxFrame {
 
     void OnMenu(wxCommandEvent &ce) {
         wxTextCtrl *tc;
-        auto canvas = GetCurrentTab();
+        auto *canvas = GetCurrentTab();
         if ((tc = filter) && filter == wxWindow::FindFocus() ||
             (tc = replaces) && replaces == wxWindow::FindFocus()) {
             long from, to;
@@ -1306,7 +1306,7 @@ struct TSFrame : wxFrame {
     }
 
     void OnSearchReplaceEnter(wxCommandEvent &ce) {
-        auto canvas = GetCurrentTab();
+        auto *canvas = GetCurrentTab();
         if (ce.GetId() == A_SEARCH && ce.GetString().IsEmpty())
             canvas->SetFocus();
         else

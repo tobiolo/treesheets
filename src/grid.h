@@ -117,8 +117,8 @@ struct Grid {
 
     bool Layout(Document *doc, wxReadOnlyDC &dc, int depth, int &sx, int &sy, int startx, int starty,
                 bool forcetiny) {
-        auto xa = new int[xs];
-        auto ya = new int[ys];
+        auto *xa = new int[xs];
+        auto *ya = new int[ys];
         loop(i, xs) xa[i] = 0;
         loop(i, ys) ya[i] = 0;
         tinyborder = true;
@@ -347,14 +347,14 @@ struct Grid {
     }
 
     void DrawCursor(Document *doc, wxDC &dc, Selection &sel, bool full, uint color) {
-        if (auto c = sel.GetCell(); c && !c->tiny && (c->HasText() || !c->grid))
+        if (auto *c = sel.GetCell(); c && !c->tiny && (c->HasText() || !c->grid))
             c->text.DrawCursor(doc, dc, sel, full, color, colwidths[sel.x]);
     }
 
     void DrawInsert(Document *doc, wxDC &dc, Selection &sel, uint colour) {
         dc.SetPen(sys->pen_thinselect);
         if (!sel.xs) {
-            auto c = C(sel.x - (sel.x == xs), sel.y).get();
+            auto *c = C(sel.x - (sel.x == xs), sel.y).get();
             int x = c->GetX(doc) + (c->sx + g_line_width + cell_margin) * (sel.x == xs) -
                     g_line_width - cell_margin;
             loop(line, g_line_width)
@@ -362,7 +362,7 @@ struct Grid {
                             min(cell->GetY(doc) + cell->sy, doc->maxy));
             DrawRectangle(dc, colour, x - 1, c->GetY(doc), g_line_width + 2, c->sy);
         } else {
-            auto c = C(sel.x, sel.y - (sel.y == ys)).get();
+            auto *c = C(sel.x, sel.y - (sel.y == ys)).get();
             int y = c->GetY(doc) + (c->sy + g_line_width + cell_margin) * (sel.y == ys) -
                     g_line_width - cell_margin;
             loop(line, g_line_width)
@@ -376,24 +376,24 @@ struct Grid {
         if (sel.Thin()) {
             if (sel.xs) {
                 if (sel.y < ys) {
-                    auto tl = C(sel.x, sel.y).get();
+                    auto *tl = C(sel.x, sel.y).get();
                     return wxRect(tl->GetX(doc), tl->GetY(doc), tl->sx, 0);
                 } else {
-                    auto br = C(sel.x, ys - 1).get();
+                    auto *br = C(sel.x, ys - 1).get();
                     return wxRect(br->GetX(doc), br->GetY(doc) + br->sy, br->sx, 0);
                 }
             } else {
                 if (sel.x < xs) {
-                    auto tl = C(sel.x, sel.y).get();
+                    auto *tl = C(sel.x, sel.y).get();
                     return wxRect(tl->GetX(doc), tl->GetY(doc), 0, tl->sy);
                 } else {
-                    auto br = C(xs - 1, sel.y).get();
+                    auto *br = C(xs - 1, sel.y).get();
                     return wxRect(br->GetX(doc) + br->sx, br->GetY(doc), 0, br->sy);
                 }
             }
         } else {
-            auto tl = C(sel.x, sel.y).get();
-            auto br = C(sel.x + sel.xs - 1, sel.y + sel.ys - 1).get();
+            auto *tl = C(sel.x, sel.y).get();
+            auto *br = C(sel.x + sel.xs - 1, sel.y + sel.ys - 1).get();
             wxRect r(tl->GetX(doc) - cell_margin, tl->GetY(doc) - cell_margin,
                      br->GetX(doc) + br->sx - tl->GetX(doc) + cell_margin * 2,
                      br->GetY(doc) + br->sy - tl->GetY(doc) + cell_margin * 2);
@@ -473,7 +473,7 @@ struct Grid {
                 sel.ys = 1;
             }
         } else {
-            auto c = sel.GetCell();
+            auto *c = sel.GetCell();
             if (c) sel.EnterEdit(doc);
         }
     }
