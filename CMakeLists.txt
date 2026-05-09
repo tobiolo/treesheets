@@ -87,10 +87,7 @@ endif()
 
 ## Run clang-tidy linter
 
-OPTION(WITH_CLANG_TIDY "Run clang-tidy linter" OFF)
-if (WITH_CLANG_TIDY)
-    set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=cppcoreguidelines-*,clang-analyzer-*,readability-*,performance-*,portability-*,concurrency-*,modernize-*)
-endif()
+OPTION(ENABLE_CLANG_TIDY "Run clang-tidy linter" OFF)
 
 ### Libraries (lobster, lobster-impl)
 
@@ -133,9 +130,14 @@ add_executable(TreeSheets
     src/stdafx.cpp)
 
 target_compile_definitions(TreeSheets PRIVATE "PACKAGE_VERSION=\"${TREESHEETS_VERSION}\"")
+
 if(ENABLE_LOBSTER)
     target_compile_definitions(TreeSheets PRIVATE "ENABLE_LOBSTER=1")
 endif(ENABLE_LOBSTER)
+
+if(ENABLE_CLANG_TIDY)
+    set_target_properties(TreeSheets PROPERTIES CXX_CLANG_TIDY "clang-tidy")
+endif(ENABLE_CLANG_TIDY)
 
 if(APPLE)
     set_target_properties(TreeSheets PROPERTIES
