@@ -62,7 +62,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
 
     void GoToRoot() override { current = document->root.get(); }
     void GoToView() override { current = document->currentdrawroot; }
-    bool HasSelection() override { return document->selected.grid.get() != nullptr; }
+    bool HasSelection() override { return document->selected.grid != nullptr; }
     void GoToSelection() override {
         auto *cell = document->selected.GetFirst();
         if (cell != nullptr) { current = cell; }
