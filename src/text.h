@@ -239,12 +239,12 @@ struct Text {
                     dc.SetTextForeground(*wxLIGHT_GREY);
                 else if (istag)
                     dc.SetTextForeground(LightColor(doc->tags[t]));
-                else if (cell->textcolor)
+                else if (cell->textcolor != 0u)
                     dc.SetTextForeground(LightColor(cell->textcolor));  // FIXME: clean up
                 auto tx = bx + 2 + ixs;
                 auto ty = by + lines * h;
                 dc.DrawText(curl, tx + g_margin_extra, ty + g_margin_extra);
-                if (searchfound || filtered || istag || cell->textcolor)
+                if (searchfound || filtered || istag || cell->textcolor != 0u)
                     dc.SetTextForeground(LightColor(0x000000));
             }
             lines++;
