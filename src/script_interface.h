@@ -44,7 +44,7 @@ struct ScriptInterface {
     virtual bool HasImage() = 0;
     virtual void RemoveImage() = 0;
     virtual bool SetImage(std::string_view filename) = 0;
-    virtual ~ScriptInterface() {};
+    virtual ~ScriptInterface() = default;
 };
 
 extern std::string InitLobster(ScriptInterface *_si, const char *exefilepath,

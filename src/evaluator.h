@@ -2,7 +2,7 @@
     A structure describing an operation.
 */
 struct Operation {
-    virtual ~Operation() {};
+    virtual ~Operation() = default;
     const char *args;
 
     virtual unique_ptr<Cell> run() const { return nullptr; }
@@ -24,7 +24,7 @@ struct Evaluator {
     VariableMap vars;
     bool vert;
 
-    ~Evaluator() {}
+    ~Evaluator() = default;
 
     void ClearVars() {
         vars.clear();
