@@ -382,7 +382,7 @@ struct Document {
                     }
                 }
                 wxDropSource dragsource(dragdata, canvas);
-                dragsource.DoDragDrop(true);
+                dragsource.DoDragDrop(wxDrag_CopyOnly);
                 break;
             }
             case A_COPYCT: {

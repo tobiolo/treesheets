@@ -90,7 +90,8 @@ struct TSCanvas : public wxScrolledCanvas {
         if (me.ShiftDown())
             OnMotion(me);
         else
-            SelectClick(me.GetX(), me.GetY(), false, me.CmdDown() + me.AltDown() * 2);
+            SelectClick(me.GetX(), me.GetY(), false,
+                        static_cast<int>(me.CmdDown()) + static_cast<int>(me.AltDown()) * 2);
     }
 
     void OnLeftUp(wxMouseEvent &me) {

@@ -172,7 +172,7 @@ struct Grid {
         int maxx = C(xs - 1, 0)->ox + C(xs - 1, 0)->sx;
         int maxy = C(0, ys - 1)->oy + C(0, ys - 1)->sy;
         if (tinyborder || cell->drawstyle == DS_GRID) {
-            int ldelta = view_grid_outer_spacing != 0;
+            int ldelta = static_cast<int>(view_grid_outer_spacing != 0);
             auto drawlines = [&]() {
                 for (int x = ldelta; x <= xs - ldelta; x++) {
                     int xl = (x == xs ? maxx : C(x, 0)->ox - g_line_width) + bx;
@@ -207,9 +207,10 @@ struct Grid {
             int cy = by + c->oy;
             if (cx < doc->maxx && cx + c->sx > doc->scrollx && cy < doc->maxy &&
                 cy + c->sy > doc->scrolly) {
-                c->Render(doc, cx, cy, dc, depth + 1, (x == 0) * view_margin,
-                          (x == xs - 1) * view_margin, (y == 0) * view_margin,
-                          (y == ys - 1) * view_margin, colwidths[x], cell_margin);
+                c->Render(doc, cx, cy, dc, depth + 1, static_cast<int>(x == 0) * view_margin,
+                          static_cast<int>(x == xs - 1) * view_margin,
+                          static_cast<int>(y == 0) * view_margin,
+                          static_cast<int>(y == ys - 1) * view_margin, colwidths[x], cell_margin);
             }
         }
 
@@ -354,16 +355,18 @@ struct Grid {
     void DrawInsert(Document *doc, wxDC &dc, Selection &sel, uint colour) {
         dc.SetPen(sys->pen_thinselect);
         if (sel.xs == 0) {
-            auto *c = C(sel.x - (sel.x == xs), sel.y).get();
-            int x = c->GetX(doc) + (c->sx + g_line_width + cell_margin) * (sel.x == xs) -
+            auto *c = C(sel.x - static_cast<int>(sel.x == xs), sel.y).get();
+            int x = c->GetX(doc) +
+                    (c->sx + g_line_width + cell_margin) * static_cast<int>(sel.x == xs) -
                     g_line_width - cell_margin;
             loop(line, g_line_width)
                 dc.DrawLine(x + line, max(cell->GetY(doc), doc->scrolly), x + line,
                             min(cell->GetY(doc) + cell->sy, doc->maxy));
             DrawRectangle(dc, colour, x - 1, c->GetY(doc), g_line_width + 2, c->sy);
         } else {
-            auto *c = C(sel.x, sel.y - (sel.y == ys)).get();
-            int y = c->GetY(doc) + (c->sy + g_line_width + cell_margin) * (sel.y == ys) -
+            auto *c = C(sel.x, sel.y - static_cast<int>(sel.y == ys)).get();
+            int y = c->GetY(doc) +
+                    (c->sy + g_line_width + cell_margin) * static_cast<int>(sel.y == ys) -
                     g_line_width - cell_margin;
             loop(line, g_line_width)
                 dc.DrawLine(max(cell->GetX(doc), doc->scrollx), y + line,
@@ -410,7 +413,7 @@ struct Grid {
             dc.SetPen(wxPen(LightColor(0x000000)));
             wxRect g = GetRect(doc, sel);
             int lw = g_line_width;
-            int te = sel.TextEdit();
+            int te = static_cast<int>(sel.TextEdit());
             dc.DrawRectangle(g.x - 1 - lw, g.y - 1 - lw, g.width + 2 + 2 * lw, 2 + lw - te);
             dc.DrawRectangle(g.x - 1 - lw, g.y - 1 + g.height + te, g.width + 2 + 2 * lw - 5,
                              2 + lw - te);
