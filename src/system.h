@@ -378,14 +378,14 @@ struct System {
         cfg->Flush();
     }
 
-    void SaveCheck() {
+    void SaveCheck() const {
         loop(i, frame->notebook->GetPageCount()) {
             static_cast<TSCanvas *>(frame->notebook->GetPage(i))
                 ->doc->AutoSave(!frame->IsActive(), i);
         }
     }
 
-    void SaveAll() {
+    void SaveAll() const {
         loop(i, frame->notebook->GetPageCount()) {
             frame->GetCurrentTab()->doc->Save(false);
             frame->CycleTabs(1);

@@ -121,7 +121,7 @@ struct Document {
         ChangeFileName(filename, false);
     }
 
-    void UpdateFileName(int page = -1) {
+    void UpdateFileName(int page = -1) const {
         sys->frame->SetPageTitle(filename, modified ? (lastmodsinceautosave ? "*" : "+") : "",
                                  page);
     }
@@ -520,7 +520,7 @@ struct Document {
         layoutys = currentdrawroot->sy + hierarchysize + fgutter;
     }
 
-    void ShiftToCenter(wxReadOnlyDC &dc) {
+    void ShiftToCenter(wxReadOnlyDC &dc) const {
         int dlx = dc.DeviceToLogicalX(0);
         int dly = dc.DeviceToLogicalY(0);
         dc.SetDeviceOrigin(dlx > 0 ? -dlx : centerx, dly > 0 ? -dly : centery);
@@ -622,7 +622,7 @@ struct Document {
         while_printing = false;
     }
 
-    int TextSize(int depth, int relsize) {
+    int TextSize(int depth, int relsize) const {
         return max(g_mintextsize(), g_deftextsize - depth - relsize + pathscalebias);
     }
 
@@ -670,7 +670,7 @@ struct Document {
         return false;
     }
 
-    void RemoveTmpFile() {
+    void RemoveTmpFile() const {
         if (!filename.empty() && ::wxFileExists(sys->TmpName(filename)))
             ::wxRemoveFile(sys->TmpName(filename));
     }
@@ -2373,7 +2373,7 @@ struct Document {
         canvas->Refresh();
     }
 
-    void RecreateTagMenu(wxMenu &menu) {
+    void RecreateTagMenu(wxMenu &menu) const {
         int i = A_TAGSET;
         for (auto &[tag, color] : tags) { menu.Append(i++, tag); }
         if (!tags.empty()) menu.AppendSeparator();

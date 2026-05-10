@@ -12,17 +12,17 @@ struct Text {
 
     Text() { WasEdited(); }
 
-    wxBitmap *DisplayImage() {
+    wxBitmap *DisplayImage() const {
         return cell->grid && cell->grid->folded ? &sys->frame->foldicon
                                                 : (image != nullptr ? &image->Display() : nullptr);
     }
 
-    size_t EstimatedMemoryUse() {
+    size_t EstimatedMemoryUse() const {
         ASSERT(wxUSE_UNICODE);
         return sizeof(Text) + t.Length() * sizeof(wchar_t);
     }
 
-    double GetNum() {
+    double GetNum() const {
         std::wstringstream ss(t.ToStdWstring());
         double r;
         ss >> r;
@@ -89,10 +89,10 @@ struct Text {
                       g_deftextsize - g_maxtextsize() - zoomdepth);
     }
 
-    auto IsWord(wxChar c) {
+    auto IsWord(wxChar c) const {
         return wxIsalnum(c) || wxStrchr(L"_\"\'()", c) != nullptr || wxIspunct(c);
     }
-    auto GetLinePart(int &currentpos, int breakpos, int limitpos) {
+    auto GetLinePart(int &currentpos, int breakpos, int limitpos) const {
         auto startpos = currentpos;
         currentpos = breakpos;
 
@@ -125,7 +125,7 @@ struct Text {
         return t.Mid(startpos, breakpos - startpos);
     }
 
-    wxString GetLine(auto &i, auto maxcolwidth) {
+    wxString GetLine(auto &i, auto maxcolwidth) const {
         auto l = static_cast<int>(t.Len());
 
         if (i >= l) return wxEmptyString;
@@ -171,7 +171,7 @@ struct Text {
         if (tiny == 0) sx += 4;
     }
 
-    bool IsInSearch() {
+    bool IsInSearch() const {
         return sys->searchstring.Len() != 0u &&
                (sys->casesensitivesearch ? t.Find(sys->searchstring)
                                          : t.Lower().Find(sys->searchstring)) >= 0;
@@ -432,7 +432,7 @@ struct Text {
         s.EnterEdit(doc);
     }
 
-    void HomeEnd(Selection &s, bool home) {
+    void HomeEnd(Selection &s, bool home) const {
         auto i = 0;
         auto cw = cell->ColWidth();
         auto findwhere = home ? s.cursor : s.cursorend;

@@ -1492,7 +1492,7 @@ struct TSFrame : wxFrame {
 
     // helper functions
 
-    void CycleTabs(int offset = 1) {
+    void CycleTabs(int offset = 1) const {
         auto numtabs = static_cast<int>(notebook->GetPageCount());
         offset = offset >= 0 ? 1 : numtabs - 1;  // normalize to non-negative wrt modulo
         notebook->SetSelection((notebook->GetSelection() + offset) % numtabs);
@@ -1512,7 +1512,7 @@ struct TSFrame : wxFrame {
         return notebook ? static_cast<TSCanvas *>(notebook->GetCurrentPage()) : nullptr;
     }
 
-    TSCanvas *GetTabByFileName(const wxString &filename) {
+    TSCanvas *GetTabByFileName(const wxString &filename) const {
         if (notebook != nullptr) loop(i, notebook->GetPageCount()) {
                 auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 if (canvas->doc->filename == filename) {
@@ -1607,7 +1607,7 @@ struct TSFrame : wxFrame {
         if (GetStatusBar()) SetStatusText("", 0);
     }
 
-    void TabsReset() {
+    void TabsReset() const {
         if (notebook != nullptr) loop(i, notebook->GetPageCount()) {
                 auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 canvas->doc->root->ResetChildren();

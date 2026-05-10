@@ -342,7 +342,7 @@ struct Grid {
         return Selection();
     }
 
-    Selection SelectAll() { return Selection(cell->grid, 0, 0, xs, ys); }
+    Selection SelectAll() const { return Selection(cell->grid, 0, 0, xs, ys); }
     void ImageRefCount(bool includefolded) {
         if (includefolded || !folded) foreachcell(c) c->ImageRefCount(includefolded);
     }
@@ -480,7 +480,7 @@ struct Grid {
         }
     }
 
-    void DelSelf(Document *doc, Selection &s) {
+    void DelSelf(Document *doc, Selection &s) const {
         if (!doc->drawpath.empty() && doc->drawpath.back().grid == cell->grid) {
             doc->drawpath.pop_back();
             doc->currentdrawroot = doc->WalkPath(doc->drawpath);

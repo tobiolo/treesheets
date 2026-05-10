@@ -168,7 +168,7 @@ struct TSApp : wxApp {
         wxTranslations::Set(trans);
     }
 
-    wxString GetDataPath(const wxString &relpath) {
+    wxString GetDataPath(const wxString &relpath) const {
         std::filesystem::path candidatePaths[] = {
             std::filesystem::path(exepath.Length()
                                       ? exepath.ToStdString() + "/" + relpath.ToStdString()
@@ -186,7 +186,7 @@ struct TSApp : wxApp {
         return wxString(relativePath);
     }
 
-    wxString GetDocPath(const wxString &relpath) {
+    wxString GetDocPath(const wxString &relpath) const {
         std::filesystem::path candidatePaths[] = {
             std::filesystem::path(exepath.Length() != 0u
                                       ? exepath.ToStdString() + "/" + relpath.ToStdString()

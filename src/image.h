@@ -59,7 +59,7 @@ struct Image {
         return true;
     }
 
-    wxString GetFileExtension() {
+    wxString GetFileExtension() const {
         switch (type) {
             case 'J': return ".jpg";
             case 'I':

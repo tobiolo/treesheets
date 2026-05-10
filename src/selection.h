@@ -48,7 +48,7 @@ class Selection {
         firstdx = firstdy = 0;
     }
 
-    bool TextEdit() { return textedit; }
+    bool TextEdit() const { return textedit; }
     void EnterEditOnly(Document *doc) {
         textedit = true;
         SetCursorEdit(doc, true);
@@ -108,7 +108,7 @@ class Selection {
         ys = abs(a.y - b.y) + 1;
     }
 
-    int MaxCursor() { return int(GetCell()->text.t.Len()); }
+    int MaxCursor() const { return int(GetCell()->text.t.Len()); }
 
     inline bool IsWordSep(wxChar ch) {
         // represents: !"#$%&'()*+,-./    :;<=>?@    [\]^    {|}~    `
