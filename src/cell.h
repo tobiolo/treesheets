@@ -313,11 +313,11 @@ struct Cell {
                                         : wxString("<td style=\"") + style + wxString("\">"));
             str.Append(' ', indent);
             str.Append("</td>\n");
-        } else if (format == A_EXPHTMLB && (text.t.Len() || grid) && this != root) {
+        } else if (format == A_EXPHTMLB && (text.t.Len() != 0u || grid) && this != root) {
             str.Prepend("<li>");
             str.Append(' ', indent);
             str.Append("</li>\n");
-        } else if (format == A_EXPHTMLO && text.t.Len()) {
+        } else if (format == A_EXPHTMLO && text.t.Len() != 0u) {
             wxString h = wxString("h") + wxChar('0' + indent / 2) + ">";
             str.Prepend("<" + h);
             str.Append(' ', indent);

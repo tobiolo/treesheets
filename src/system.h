@@ -135,9 +135,9 @@ struct System {
             frame->notebook->SetSelection(selection);
         }
 
-        if (!frame->notebook->GetPageCount()) LoadTutorial();
+        if (frame->notebook->GetPageCount() == 0u) LoadTutorial();
 
-        if (!frame->notebook->GetPageCount()) InitDB(10);
+        if (frame->notebook->GetPageCount() == 0u) InitDB(10);
 
         // Refresh();
         every_second_timer.Start(1000);
@@ -300,7 +300,7 @@ struct System {
                         if (versionlastloaded >= 11) {
                             for (;;) {
                                 auto tag = dis.ReadString();
-                                if (!tag.Len()) break;
+                                if (tag.Len() == 0u) break;
                                 doc->tags[tag] =
                                     versionlastloaded >= 24 ? dis.Read32() : g_tagcolor_default;
                             }
@@ -470,7 +470,7 @@ struct System {
         const auto &words = wxStringTokenize(
             node->GetType() == wxXML_ELEMENT_NODE ? node->GetNodeContent() : node->GetContent());
         loop(i, words.GetCount()) {
-            if (c->text.t.Len()) c->text.t.Append(L' ');
+            if (c->text.t.Len() != 0u) c->text.t.Append(L' ');
             c->text.t.Append(words[i]);
         }
 
@@ -489,7 +489,7 @@ struct System {
         auto numrows = GetXMLNodes(node, nodes, &attributes, attributestoo);
         if (!numrows) return;
 
-        if (nodes.size() == 1 && (!c->text.t.Len() || nodes[0]->IsWhitespaceOnly()) &&
+        if (nodes.size() == 1 && (c->text.t.Len() == 0u || nodes[0]->IsWhitespaceOnly()) &&
             nodes[0]->GetName() != "row") {
             FillXML(c, nodes[0], attributestoo);
         } else {

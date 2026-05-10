@@ -172,7 +172,7 @@ struct Text {
     }
 
     bool IsInSearch() {
-        return sys->searchstring.Len() &&
+        return sys->searchstring.Len() != 0u &&
                (sys->casesensitivesearch ? t.Find(sys->searchstring)
                                          : t.Lower().Find(sys->searchstring)) >= 0;
     }
@@ -357,13 +357,13 @@ struct Text {
     }
 
     void SetRelSize(Selection &s) {
-        if (t.Len() || !cell->parent) return;
+        if (t.Len() != 0u || !cell->parent) return;
         int dd[] = {0, 1, 1, 0, 0, -1, -1, 0};
         for (auto i = 0; i < 4; i++) {
             auto x = max(0, min(s.x + dd[i * 2], s.grid->xs - 1));
             auto y = max(0, min(s.y + dd[i * 2 + 1], s.grid->ys - 1));
             auto *c = s.grid->C(x, y).get();
-            if (c->text.t.Len()) {
+            if (c->text.t.Len() != 0u) {
                 relsize = c->text.relsize;
                 break;
             }
@@ -374,7 +374,7 @@ struct Text {
         auto prevl = t.Len();
         if (!s.TextEdit()) Clear(doc, s);
         RangeSelRemove(s);
-        if (!prevl && !keeprelsize) SetRelSize(s);
+        if (prevl == 0u && !keeprelsize) SetRelSize(s);
         t.insert(s.cursor, ins);
         s.cursor = s.cursorend = s.cursor + static_cast<int>(ins.Len());
     }

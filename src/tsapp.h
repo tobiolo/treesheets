@@ -1,7 +1,7 @@
 struct IPCServer : wxServer {
     wxConnectionBase *OnAcceptConnection(const wxString &topic) override {
         sys->frame->DeIconize();
-        if (topic.Len() && topic != "*") sys->Open(topic);
+        if (topic.Len() != 0u && topic != "*") sys->Open(topic);
         return new wxConnection();
     }
 };
@@ -62,8 +62,9 @@ struct TSApp : wxApp {
                 wxTheApp->GetAppName() + '-' + wxGetUserId(), wxStandardPaths::Get().GetTempDir()));
             if (instance_checker->IsAnotherRunning()) {
                 wxClient client;
-                client.MakeConnection("localhost", service,
-                                      filename.Len() ? filename : wxString("*"));  // fire and forget
+                client.MakeConnection(
+                    "localhost", service,
+                    filename.Len() != 0u ? filename : wxString("*"));  // fire and forget
                 return false;
             }
         }
@@ -187,7 +188,7 @@ struct TSApp : wxApp {
 
     wxString GetDocPath(const wxString &relpath) {
         std::filesystem::path candidatePaths[] = {
-            std::filesystem::path(exepath.Length()
+            std::filesystem::path(exepath.Length() != 0u
                                       ? exepath.ToStdString() + "/" + relpath.ToStdString()
                                       : relpath.ToStdString()),
             #ifdef TREESHEETS_DOCDIR

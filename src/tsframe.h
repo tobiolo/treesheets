@@ -1379,7 +1379,7 @@ struct TSFrame : wxFrame {
                 }
             }
             // all files have been saved/discarded
-            while (notebook->GetPageCount()) {
+            while (notebook->GetPageCount() != 0u) {
                 GetCurrentTab()->doc->RemoveTmpFile();
                 notebook->DeletePage(notebook->GetSelection());
             }
@@ -1532,7 +1532,7 @@ struct TSFrame : wxFrame {
         }
         key = sys->cfg->Read(item, key);
         auto newcontents = item;
-        if (key.Length()) newcontents += "\t" + key;
+        if (key.Length() != 0u) newcontents += "\t" + key;
         menu->Append(tag, newcontents, help);
         menustrings[item] = key;
     }
