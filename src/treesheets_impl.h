@@ -54,7 +54,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
 
     bool LoadDocument(const char *filename) override {
         auto message = sys->LoadDB(filename);
-        if (message.IsEmpty()) return false;
+        if (message.IsEmpty()) { return false; }
 
         SwitchToCurrentDocument();
         return true;
@@ -65,11 +65,11 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
     bool HasSelection() override { return document->selected.grid.get() != nullptr; }
     void GoToSelection() override {
         auto *cell = document->selected.GetFirst();
-        if (cell != nullptr) current = cell;
+        if (cell != nullptr) { current = cell; }
     }
     bool HasParent() override { return current->parent != nullptr; }
     void GoToParent() override {
-        if (current->parent != nullptr) current = current->parent;
+        if (current->parent != nullptr) { current = current->parent; }
     }
     int NumChildren() override { return current->grid ? current->grid->xs * current->grid->ys : 0; }
 
@@ -92,13 +92,15 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
     }
 
     void GoToChild(int n) override {
-        if (current->grid && n < current->grid->xs * current->grid->ys)
+        if (current->grid && n < current->grid->xs * current->grid->ys) {
             current = current->grid->cells[n].get();
+        }
     }
 
     void GoToColumnRow(int x, int y) override {
-        if (current->grid && x < current->grid->xs && y < current->grid->ys)
+        if (current->grid && x < current->grid->xs && y < current->grid->ys) {
             current = current->grid->C(x, y).get();
+        }
     }
 
     std::string GetText() override { return current->text.t.utf8_string(); }
@@ -205,10 +207,11 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
 
     std::string GetFileNameFromUser(bool is_save) override {
         int flags = wxFD_CHANGE_DIR;
-        if (is_save)
+        if (is_save) {
             flags |= wxFD_OVERWRITE_PROMPT | wxFD_SAVE;
-        else
+        } else {
             flags |= wxFD_OPEN | wxFD_FILE_MUST_EXIST;
+        }
         wxString fn = ::wxFileSelector(_("Choose file:"), "", "", "", "*.*", flags);
         return fn.utf8_string();
     }
@@ -231,7 +234,7 @@ static int64_t TreeSheetsLoader(string_view_nt absfilename, std::string *dest, i
                                 int64_t len) {
     size_t l = 0;
     auto *buf = (char *)loadfile(absfilename.c_str(), &l);
-    if (buf == nullptr) return -1;
+    if (buf == nullptr) { return -1; }
     dest->assign(buf, l);
     free(buf);
     return l;

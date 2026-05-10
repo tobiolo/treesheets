@@ -72,10 +72,11 @@ struct Evaluator {
     }
 
     int InferCellType(Text &t) {
-        if (ops[t.t])
+        if (ops[t.t]) {
             return CT_CODE;
-        else
+        } else {
             return CT_DATA;
+        }
     }
 
     unique_ptr<Cell> Lookup(const wxString &name) {
@@ -91,7 +92,7 @@ struct Evaluator {
 
     void Assign(const Cell *sym, const Cell *val) {
         this->SetSymbol(sym->text.t, val->Clone(nullptr));
-        if (sym->grid && val->grid) this->DestructuringAssign(sym->grid, val->Clone(nullptr));
+        if (sym->grid && val->grid) { this->DestructuringAssign(sym->grid, val->Clone(nullptr)); }
     }
 
     void DestructuringAssign(shared_ptr<Grid> names, unique_ptr<Cell> val) {
@@ -154,7 +155,7 @@ struct Evaluator {
                 }
                 break;
             case 'g':
-                if (g) op->rung(g);
+                if (g) { op->rung(g); }
                 break;
             case 'c': return op->runc(std::move(left));
         }
@@ -163,7 +164,7 @@ struct Evaluator {
 
     unique_ptr<Cell> Execute(const Operation *op, unique_ptr<Cell> left, const Cell *_right) {
         auto right = _right->Eval(*this);
-        if (!right) return left;
+        if (!right) { return left; }
         Text &t1 = left->text;
         Text &t2 = right->text;
         shared_ptr<Grid> g1 = left->grid;
@@ -199,7 +200,7 @@ struct Evaluator {
     unique_ptr<Cell> Execute(const Operation *op, unique_ptr<Cell> left, const Cell *a,
                              const Cell *b) {
         Text &l = left->text;
-        if (l.t.Len() == 0u) return left;
+        if (l.t.Len() == 0u) { return left; }
         bool cond = l.GetNum() != 0;
         return (cond ? a : b)->Eval(*this);
     }

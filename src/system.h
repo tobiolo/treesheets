@@ -126,7 +126,7 @@ struct System {
         loop(i, numfiles) {
             wxString filename;
             cfg->Read(wxString::Format("lastopenfile_%d", i), &filename);
-            if (!LoadDB(filename) && filename == focusfile) selection = i;
+            if (!LoadDB(filename) && filename == focusfile) { selection = i; }
         }
 
         if (!filename.IsEmpty()) {
@@ -135,9 +135,9 @@ struct System {
             frame->notebook->SetSelection(selection);
         }
 
-        if (frame->notebook->GetPageCount() == 0u) LoadTutorial();
+        if (frame->notebook->GetPageCount() == 0u) { LoadTutorial(); }
 
-        if (frame->notebook->GetPageCount() == 0u) InitDB(10);
+        if (frame->notebook->GetPageCount() == 0u) { InitDB(10); }
 
         // Refresh();
         every_second_timer.Start(1000);
@@ -186,8 +186,9 @@ struct System {
         auto loadedfromtmp = false;
 
         if (!fromreload) {
-            if (frame->GetTabByFileName(filename) != nullptr)
+            if (frame->GetTabByFileName(filename) != nullptr) {
                 return wxEmptyString;  //"this file is already loaded";
+            }
 
             if (::wxFileExists(TmpName(filename))) {
                 if (::wxMessageBox(
@@ -211,17 +212,18 @@ struct System {
             wxDataInputStream dis(fis);
             if (!fis.IsOk()) {
                 for (int i = (int)frame->filehistory.GetCount() - 1; i >= 0; i--) {
-                    if (frame->filehistory.GetHistoryFile(i) == filename)
+                    if (frame->filehistory.GetHistoryFile(i) == filename) {
                         frame->filehistory.RemoveFileFromHistory(i);
+                    }
                 }
                 return _("Cannot open file.");
             }
 
             char buf[4];
             fis.Read(buf, 4);
-            if (strncmp(buf, "TSFF", 4) != 0) return _("Not a TreeSheets file.");
+            if (strncmp(buf, "TSFF", 4) != 0) { return _("Not a TreeSheets file."); }
             fis.Read(&versionlastloaded, 1);
-            if (versionlastloaded > TS_VERSION) return _("File of newer version.");
+            if (versionlastloaded > TS_VERSION) { return _("File of newer version."); }
             auto xs = versionlastloaded >= 21 ? dis.Read8() : 1;
             auto ys = versionlastloaded >= 21 ? dis.Read8() : 1;
             zoomlevel = versionlastloaded >= 23 ? dis.Read8() : 0;
@@ -235,9 +237,10 @@ struct System {
                     case 'I':
                     case 'J': {
                         char iti = *buf;
-                        if (!imagetypes.contains(iti))
+                        if (!imagetypes.contains(iti)) {
                             return _("Found an image type that is not defined in this program.");
-                        if (versionlastloaded < 9) dis.ReadString();
+                        }
+                        if (versionlastloaded < 9) { dis.ReadString(); }
                         auto sc = versionlastloaded >= 19 ? dis.ReadDouble() : 1.0;
                         vector<uint8_t> image_data;
                         if (versionlastloaded >= 22) {
@@ -251,8 +254,9 @@ struct System {
                                 uchar header[8];
                                 fis.Read(header, 8);
                                 uchar expected[] = {0x89, 'P', 'N', 'G', '\r', '\n', 0x1A, '\n'};
-                                if (memcmp(header, expected, 8) != 0)
+                                if (memcmp(header, expected, 8) != 0) {
                                     return _("Corrupt PNG header.");
+                                }
                                 dis.BigEndianOrdered(true);
                                 for (;;) {  // Skip all chunks.
                                     wxInt32 len = dis.Read32();
@@ -260,7 +264,7 @@ struct System {
                                     fis.Read(fourcc, 4);
                                     fis.SeekI(len, wxFromCurrent);  // skip data
                                     dis.Read32();                   // skip CRC
-                                    if (memcmp(fourcc, "IEND", 4) == 0) break;
+                                    if (memcmp(fourcc, "IEND", 4) == 0) { break; }
                                 }
                             } else if (iti == 'J') {
                                 wxImage im;
@@ -275,7 +279,7 @@ struct System {
                             fis.Read(image_data.data(), sz);
                             fis.SeekI(afterimage);
                         }
-                        if (!fis.IsOk()) image_data.clear();
+                        if (!fis.IsOk()) { image_data.clear(); }
 
                         loadimageids.push_back(AddImageToList(sc, std::move(image_data), iti));
                         break;
@@ -283,11 +287,11 @@ struct System {
 
                     case 'D': {
                         wxZlibInputStream zis(fis);
-                        if (!zis.IsOk()) return _("Cannot decompress file.");
+                        if (!zis.IsOk()) { return _("Cannot decompress file."); }
                         wxDataInputStream dis(zis);
                         auto numcells = 0, textbytes = 0;
                         unique_ptr<Cell> root(Cell::LoadWhich(dis, nullptr, numcells, textbytes, ics));
-                        if (!root) return _("File corrupted!");
+                        if (!root) { return _("File corrupted!"); }
 
                         doc = NewTabDoc(true, insert_at);
                         if (loadedfromtmp) {
@@ -300,7 +304,7 @@ struct System {
                         if (versionlastloaded >= 11) {
                             for (;;) {
                                 auto tag = dis.ReadString();
-                                if (tag.Len() == 0u) break;
+                                if (tag.Len() == 0u) { break; }
                                 doc->tags[tag] =
                                     versionlastloaded >= 24 ? dis.Read32() : g_tagcolor_default;
                             }
@@ -336,9 +340,10 @@ struct System {
 
         FileUsed(filename, doc);
         doc->Zoom(zoomlevel, true);
-        if (anyimagesfailed)
+        if (anyimagesfailed) {
             wxMessageBox(_("PNG decode failed on some images in this document\nThey have been replaced by red squares."),
                          _("PNG decoder failure"), wxOK, frame);
+        }
 
         return wxEmptyString;
     }
@@ -357,7 +362,7 @@ struct System {
     wxString Open(const wxString &filename) {
         if (!filename.empty()) {
             auto msg = LoadDB(filename);
-            if (!msg.IsEmpty()) wxMessageBox(msg, filename, wxOK, frame);
+            if (!msg.IsEmpty()) { wxMessageBox(msg, filename, wxOK, frame); }
             return msg;
         }
         return _("Open file cancelled.");
@@ -399,7 +404,7 @@ struct System {
                 case A_IMPXML:
                 case A_IMPXMLA: {
                     wxXmlDocument doc;
-                    if (!doc.Load(filename)) goto problem;
+                    if (!doc.Load(filename)) { goto problem; }
                     unique_ptr<Cell> &root = InitDB(1);
                     Cell *c = root->grid->cells[0].get();
                     FillXML(c, doc.GetRoot(), action == A_IMPXMLA);
@@ -415,12 +420,13 @@ struct System {
                 case A_IMPTXTS:
                 case A_IMPTXTT: {
                     wxFFile file(filename);
-                    if (!file.IsOpened()) goto problem;
+                    if (!file.IsOpened()) { goto problem; }
                     wxString content;
-                    if (!file.ReadAll(&content)) goto problem;
+                    if (!file.ReadAll(&content)) { goto problem; }
                     const auto &lines = wxStringTokenize(content, LINE_SEPARATOR);
 
-                    if (!lines.empty()) switch (action) {
+                    if (!lines.empty()) {
+                        switch (action) {
                             case A_IMPTXTI: {
                                 FillRows(InitDB(1)->grid.get(), lines, CountCol(lines[0]), 0, 0);
                             }; break;
@@ -437,6 +443,7 @@ struct System {
                                     ->grid->CSVImport(lines, L'\t');
                                 break;
                         }
+                    }
                     break;
                 }
             }
@@ -456,13 +463,14 @@ struct System {
     int GetXMLNodes(wxXmlNode *node, auto &nodes, vector<wxXmlAttribute *> *attributes = nullptr,
                     bool attributestoo = false) {
         for (auto *child = node->GetChildren(); child != nullptr; child = child->GetNext()) {
-            if (child->GetType() == wxXML_ELEMENT_NODE) nodes.push_back(child);
+            if (child->GetType() == wxXML_ELEMENT_NODE) { nodes.push_back(child); }
         }
-        if (attributestoo && attributes)
+        if (attributestoo && attributes) {
             for (auto *attribute = node->GetAttributes(); attribute != nullptr;
                  attribute = attribute->GetNext()) {
                 attributes->push_back(attribute);
             }
+        }
         return nodes.size() + (attributes ? attributes->size() : 0);
     }
 
@@ -470,7 +478,7 @@ struct System {
         const auto &words = wxStringTokenize(
             node->GetType() == wxXML_ELEMENT_NODE ? node->GetNodeContent() : node->GetContent());
         loop(i, words.GetCount()) {
-            if (c->text.t.Len() != 0u) c->text.t.Append(L' ');
+            if (c->text.t.Len() != 0u) { c->text.t.Append(L' '); }
             c->text.t.Append(words[i]);
         }
 
@@ -487,7 +495,7 @@ struct System {
         vector<wxXmlNode *> nodes;
         vector<wxXmlAttribute *> attributes;
         auto numrows = GetXMLNodes(node, nodes, &attributes, attributestoo);
-        if (!numrows) return;
+        if (!numrows) { return; }
 
         if (nodes.size() == 1 && (c->text.t.Len() == 0u || nodes[0]->IsWhitespaceOnly()) &&
             nodes[0]->GetName() != "row") {
@@ -509,8 +517,9 @@ struct System {
                         c->AddGrid(desiredxs, nodes.size());
                         SetGridSettingsFromXML(c, node);
                     }
-                    loop(j, desiredxs) if (ins.size() > j)
+                    loop(j, desiredxs) if (ins.size() > j) {
                         FillXML(c->grid->C(j, i).get(), ins[j], attributestoo);
+                    }
                 }
             } else {
                 c->AddGrid(1, numrows);
@@ -533,7 +542,7 @@ struct System {
 
     int CountCol(const auto &s) {
         auto col = 0;
-        while (s[col] == ' ' || s[col] == '\t') col++;
+        while (s[col] == ' ' || s[col] == '\t') { col++; }
         return col;
     }
 
@@ -542,7 +551,7 @@ struct System {
         for (int i = startrow, n = as.size(); i < n; i++) {
             auto s = as[i];
             auto col = CountCol(s);
-            if (col < column && startrow != 0) return i;
+            if (col < column && startrow != 0) { return i; }
             if (col > column) {
                 auto *c = g->C(0, y - 1).get();
                 auto *sg = c->grid.get();
@@ -550,7 +559,7 @@ struct System {
                              sg != nullptr ? sg->ys : 0) -
                     1;
             } else {
-                if (g->ys <= y) g->InsertCells(-1, y, 0, 1);
+                if (g->ys <= y) { g->InsertCells(-1, y, 0, 1); }
                 auto &t = g->C(0, y)->text;
                 t.t = s.Trim(false);
                 y++;
@@ -562,14 +571,14 @@ struct System {
     int AddImageToList(double scale, auto &&data, char type) {
         auto hash = CalculateHash(data);
         loopv(i, imagelist) {
-            if (imagelist[i]->hash == hash && imagelist[i]->type == type) return i;
+            if (imagelist[i]->hash == hash && imagelist[i]->type == type) { return i; }
         }
         imagelist.push_back(make_unique<Image>(hash, scale, std::move(data), type));
         return imagelist.size() - 1;
     }
 
     void ImageSize(wxBitmap *bm, int &xs, int &ys) {
-        if (bm == nullptr) return;
+        if (bm == nullptr) { return; }
         xs = bm->GetWidth();
         ys = bm->GetHeight();
     }

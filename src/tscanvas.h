@@ -64,15 +64,18 @@ struct TSCanvas : public wxScrolledCanvas {
             wxPoint p = me.GetPosition() - lastmousepos;
             CursorScroll(-p.x, -p.y);
         } else {
-            if (doc->hover != doc->prev && !doc->hover.Thin()) sys->frame->UpdateStatus(doc->hover, false);
+            if (doc->hover != doc->prev && !doc->hover.Thin()) {
+                sys->frame->UpdateStatus(doc->hover, false);
+            }
         }
         lastmousepos = me.GetPosition();
     }
 
     void SelectClick(int mx, int my, bool right, int isctrlshift) {
         wxInfoDC dc(this);
-        if (mx < 0 || my < 0)
+        if (mx < 0 || my < 0) {
             return;  // for some reason, using just the "menu" key sends a right-click at (-1, -1)
+        }
         doc->isctrlshiftdrag = isctrlshift;
         doc->UpdateHover(dc, mx, my);
         doc->SelectClick(right);
@@ -84,14 +87,15 @@ struct TSCanvas : public wxScrolledCanvas {
         #ifndef __WXMSW__
         // seems to not want to give the canvas focus otherwise (thinks its already in focus
         // when its not?)
-        if (frame->filter != nullptr) frame->filter->SetFocus();
+        if (frame->filter != nullptr) { frame->filter->SetFocus(); }
         #endif
         SetFocus();
-        if (me.ShiftDown())
+        if (me.ShiftDown()) {
             OnMotion(me);
-        else
+        } else {
             SelectClick(me.GetX(), me.GetY(), false,
                         static_cast<int>(me.CmdDown()) + static_cast<int>(me.AltDown()) * 2);
+        }
     }
 
     void OnLeftUp(wxMouseEvent &me) {
@@ -144,16 +148,16 @@ struct TSCanvas : public wxScrolledCanvas {
         bool unprocessed = false;
         sys->frame->SetStatus(doc->Key(ce.GetUnicodeKey(), ce.GetKeyCode(), ce.AltDown(),
                                        ce.CmdDown(), ce.ShiftDown(), unprocessed));
-        if (unprocessed) ce.Skip();
+        if (unprocessed) { ce.Skip(); }
     }
 
     void OnMouseWheel(wxMouseEvent &me) {
         bool ctrl = me.CmdDown();
-        if (sys->zoomscroll) ctrl = !ctrl;
+        if (sys->zoomscroll) { ctrl = !ctrl; }
         if (me.AltDown() || ctrl || me.ShiftDown()) {
             mousewheelaccum += me.GetWheelRotation();
             int steps = mousewheelaccum / me.GetWheelDelta();
-            if (steps == 0) return;
+            if (steps == 0) { return; }
             mousewheelaccum -= steps * me.GetWheelDelta();
             sys->frame->SetStatus(doc->Wheel(steps, me.AltDown(), ctrl, me.ShiftDown()));
         } else if (me.GetWheelAxis() != 0u) {

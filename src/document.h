@@ -2404,7 +2404,7 @@ struct Document {
     }
 
     void ImageChange(const wxString &filename, double scale) {
-        if (!selected.grid) return;
+        if (!selected.grid) { return; }
         selected.grid->cell->AddUndo(this);
         loopallcellssel(c, false) LoadImageIntoCell(filename, c, scale);
         canvas->Refresh();
@@ -2413,7 +2413,7 @@ struct Document {
     void RecreateTagMenu(wxMenu &menu) const {
         int i = A_TAGSET;
         for (auto &[tag, color] : tags) { menu.Append(i++, tag); }
-        if (!tags.empty()) menu.AppendSeparator();
+        if (!tags.empty()) { menu.AppendSeparator(); }
         menu.Append(A_TAGADD, _("&Add Cell Text as Tag"));
         menu.Append(A_TAGREMOVE, _("&Remove Cell Text from Tags"));
     }
@@ -2443,7 +2443,7 @@ struct Document {
 
     void CollectCellsSel(bool recurse) {
         itercells.clear();
-        if (selected.grid) selected.grid->CollectCellsSel(itercells, selected, recurse);
+        if (selected.grid) { selected.grid->CollectCellsSel(itercells, selected, recurse); }
     }
 
     void ApplyEditFilter() {
@@ -2474,7 +2474,7 @@ struct Document {
     wxDateTime ParseDateTimeString(const wxString &s) {
         wxDateTime dt;
         wxString::const_iterator end;
-        if (!dt.ParseDateTime(s, &end)) dt = wxInvalidDateTime;
+        if (!dt.ParseDateTime(s, &end)) { dt = wxInvalidDateTime; }
         return dt;
     }
 

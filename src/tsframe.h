@@ -85,12 +85,13 @@ struct TSFrame : wxFrame {
 
         imagepath = app->GetDataPath("images/nuvola/dropdown/");
 
-        if (sys->singletray)
+        if (sys->singletray) {
             taskbaricon.Connect(wxID_ANY, wxEVT_TASKBAR_LEFT_UP,
                         wxTaskBarIconEventHandler(TSFrame::OnTBIDBLClick), nullptr, this);
-        else
+        } else {
             taskbaricon.Connect(wxID_ANY, wxEVT_TASKBAR_LEFT_DCLICK,
                         wxTaskBarIconEventHandler(TSFrame::OnTBIDBLClick), nullptr, this);
+        }
 
         bool showtbar, showsbar, lefttabs;
 
@@ -468,7 +469,7 @@ struct TSFrame : wxFrame {
             editmenu->AppendSubMenu(bordmenu, _("Set Grid Border Width"));
             editmenu->AppendSubMenu(tagmenu, _("Tag"));
 
-            if (twoeditmenus == 0) editmenupopup = editmenu;
+            if (twoeditmenus == 0) { editmenupopup = editmenu; }
         }
 
         auto *semenu = new wxMenu();
@@ -784,14 +785,15 @@ struct TSFrame : wxFrame {
         Show(!IsIconized());
 
         // needs to be after Show() to avoid scrollbars rendered in the wrong place?
-        if (ismax && !IsIconized()) Maximize(true);
+        if (ismax && !IsIconized()) { Maximize(true); }
 
-        if (sys->startminimized)
+        if (sys->startminimized) {
             #ifdef __WXGTK__
                 CallAfter([this]() { Iconize(true); });
             #else
                 Iconize(true);
             #endif
+        }
 
         SetFileAssoc(app->exename);
 
@@ -896,9 +898,9 @@ struct TSFrame : wxFrame {
 
         auto GetColorIndex = [&](int targetcolor, int defaultindex) {
             for (auto i = 1; i < celltextcolors.size(); ++i) {
-                if (celltextcolors[i] == targetcolor) return i;
+                if (celltextcolors[i] == targetcolor) { return i; }
             }
-            if (sys->customcolor == targetcolor) return 0;
+            if (sys->customcolor == targetcolor) { return 0; }
             return defaultindex;
         };
 
@@ -1143,8 +1145,9 @@ struct TSFrame : wxFrame {
                 }
                 break;
             case A_CUSTCOL: {
-                if (auto color = PickColor(sys->frame, sys->customcolor); color != (uint)-1)
+                if (auto color = PickColor(sys->frame, sys->customcolor); color != (uint)-1) {
                     sys->cfg->Write("customcolor", sys->customcolor = color);
+                }
                 break;
             }
 
@@ -1153,7 +1156,7 @@ struct TSFrame : wxFrame {
                     wxArrayString filenames;
                     GetFilesFromUser(filenames, this, _("Please select Lobster script file(s):"),
                                      _("Lobster Files (*.lobster)|*.lobster|All Files (*.*)|*.*"));
-                    for (auto &filename : filenames) scripts.AddFileToHistory(filename);
+                    for (auto &filename : filenames) { scripts.AddFileToHistory(filename); }
                     break;
                 }
 
@@ -1165,8 +1168,9 @@ struct TSFrame : wxFrame {
                     auto dialog = wxSingleChoiceDialog(
                         this, _("Please select the script you want to remove from the list:"),
                         _("Remove script from list..."), filenames);
-                    if (dialog.ShowModal() == wxID_OK)
+                    if (dialog.ShowModal() == wxID_OK) {
                         scripts.RemoveFileFromHistory(dialog.GetSelection());
+                    }
                     break;
                 }
             #endif
@@ -1175,7 +1179,7 @@ struct TSFrame : wxFrame {
                 int w = wxGetNumberFromUser(_("Please enter the default column width:"),
                                             _("Width"), _("Default column width"),
                                             sys->defaultmaxcolwidth, 1, 1000, sys->frame);
-                if (w > 0) sys->cfg->Write("defaultmaxcolwidth", sys->defaultmaxcolwidth = w);
+                if (w > 0) { sys->cfg->Write("defaultmaxcolwidth", sys->defaultmaxcolwidth = w); }
                 break;
             }
 
@@ -1218,7 +1222,7 @@ struct TSFrame : wxFrame {
                 break;
             case A_FULLSCREEN:
                 ShowFullScreen(!IsFullScreen());
-                if (IsFullScreen()) SetStatus(_("Press F11 to exit fullscreen mode."));
+                if (IsFullScreen()) { SetStatus(_("Press F11 to exit fullscreen mode.")); }
                 break;
             case wxID_FIND:
                 if (filter != nullptr) {
@@ -1307,10 +1311,11 @@ struct TSFrame : wxFrame {
 
     void OnSearchReplaceEnter(wxCommandEvent &ce) {
         auto *canvas = GetCurrentTab();
-        if (ce.GetId() == A_SEARCH && ce.GetString().IsEmpty())
+        if (ce.GetId() == A_SEARCH && ce.GetString().IsEmpty()) {
             canvas->SetFocus();
-        else
+        } else {
             canvas->doc->Action(ce.GetId() == A_SEARCH ? A_SEARCHNEXT : A_REPLACEONCEJ);
+        }
     }
 
     void OnChangeColor(wxCommandEvent &ce) {
@@ -1351,7 +1356,7 @@ struct TSFrame : wxFrame {
                 Show(true);
             }
             #endif
-            if (TSCanvas *canvas = GetCurrentTab()) canvas->SetFocus();
+            if (TSCanvas *canvas = GetCurrentTab()) { canvas->SetFocus(); }
         }
     }
 
@@ -1416,8 +1421,9 @@ struct TSFrame : wxFrame {
 
     void OnFileSystemEvent(wxFileSystemWatcherEvent &event) {
         // 0xF == create/delete/rename/modify
-        if ((event.GetChangeType() & 0xF) == 0 || watcherwaitingforuser || notebook == nullptr)
+        if ((event.GetChangeType() & 0xF) == 0 || watcherwaitingforuser || notebook == nullptr) {
             return;
+        }
         const auto &modfile = event.GetPath().GetFullPath();
         loop(i, notebook->GetPageCount()) {
             Document *doc = static_cast<TSCanvas *>(notebook->GetPage(i))->doc.get();
@@ -1445,7 +1451,7 @@ struct TSFrame : wxFrame {
                     int res = wxMessageBox(message, _("File modification conflict!"),
                                            wxYES_NO | wxICON_QUESTION, this);
                     watcherwaitingforuser = false;
-                    if (res != wxYES) return;
+                    if (res != wxYES) { return; }
                 }
                 auto message = sys->LoadDB(doc->filename, true, i);
                 if (!message.IsEmpty()) {
@@ -1513,13 +1519,15 @@ struct TSFrame : wxFrame {
     }
 
     TSCanvas *GetTabByFileName(const wxString &filename) const {
-        if (notebook != nullptr) loop(i, notebook->GetPageCount()) {
+        if (notebook != nullptr) {
+            loop(i, notebook->GetPageCount()) {
                 auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 if (canvas->doc->filename == filename) {
                     notebook->SetSelection(i);
                     return canvas;
                 }
             }
+        }
         return nullptr;
     }
 
@@ -1532,7 +1540,7 @@ struct TSFrame : wxFrame {
         }
         key = sys->cfg->Read(item, key);
         auto newcontents = item;
-        if (key.Length() != 0u) newcontents += "\t" + key;
+        if (key.Length() != 0u) { newcontents += "\t" + key; }
         menu->Append(tag, newcontents, help);
         menustrings[item] = key;
     }
@@ -1542,19 +1550,20 @@ struct TSFrame : wxFrame {
         doc->canvas = canvas;
         canvas->doc = std::move(doc);
         canvas->SetScrollRate(1, 1);
-        if (insert_at >= 0)
+        if (insert_at >= 0) {
             notebook->InsertPage(insert_at, canvas, _("<unnamed>"), true, wxNullBitmap);
-        else if (append)
+        } else if (append) {
             notebook->AddPage(canvas, _("<unnamed>"), true, wxNullBitmap);
-        else
+        } else {
             notebook->InsertPage(0, canvas, _("<unnamed>"), true, wxNullBitmap);
+        }
         canvas->SetDropTarget(new DropTarget(canvas->doc->dndobjc));
         canvas->SetFocus();
         return canvas;
     }
 
     void ReFocus() {
-        if (TSCanvas *canvas = GetCurrentTab()) canvas->SetFocus();
+        if (TSCanvas *canvas = GetCurrentTab()) { canvas->SetFocus(); }
     }
 
     void RenderFolderIcon() {
@@ -1583,9 +1592,11 @@ struct TSFrame : wxFrame {
     }
 
     void SetPageTitle(const wxString &filename, wxString mods, int page = -1) {
-        if (page < 0) page = notebook->GetSelection();
-        if (page < 0) return;
-        if (page == notebook->GetSelection()) SetTitle("TreeSheets - " + filename + mods);
+        if (page < 0) {
+            page = notebook->GetSelection();
+            return;
+        }
+        if (page == notebook->GetSelection()) { SetTitle("TreeSheets - " + filename + mods); }
         notebook->SetPageText(
             page,
             (filename.empty() ? wxString(_("<unnamed>")) : wxFileName(filename).GetName()) + mods);
@@ -1600,18 +1611,20 @@ struct TSFrame : wxFrame {
     #endif
 
     void SetStatus(const wxString &message) {
-        if (GetStatusBar() && !message.IsEmpty()) SetStatusText(message, 0);
+        if (GetStatusBar() && !message.IsEmpty()) { SetStatusText(message, 0); }
     }
 
     void ClearStatus() {
-        if (GetStatusBar()) SetStatusText("", 0);
+        if (GetStatusBar()) { SetStatusText("", 0); }
     }
 
     void TabsReset() const {
-        if (notebook != nullptr) loop(i, notebook->GetPageCount()) {
+        if (notebook != nullptr) {
+            loop(i, notebook->GetPageCount()) {
                 auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 canvas->doc->root->ResetChildren();
             }
+        }
     }
 
     void UpdateStatus(const Selection &s, bool updateamount) {
@@ -1622,9 +1635,10 @@ struct TSFrame : wxFrame {
                 SetStatusText(wxString::Format(_("Edited %s %s"), c->text.lastedit.FormatDate(),
                                                c->text.lastedit.FormatTime()),
                               1);
-            } else
-                for (int field : {1, 2, 3}) SetStatusText("", field);
-            if (updateamount) SetStatusText(wxString::Format(_("%d cell(s)"), s.xs * s.ys), 4);
+            } else {
+                for (int field : {1, 2, 3}) { SetStatusText("", field); }
+            }
+            if (updateamount) { SetStatusText(wxString::Format(_("%d cell(s)"), s.xs * s.ys), 4); }
         }
     }
 

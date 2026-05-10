@@ -1,9 +1,10 @@
 static void DrawRectangle(wxDC &dc, uint color, int x, int y, int xs, int ys,
                           bool outline = false) {
-    if (outline)
+    if (outline) {
         dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    else
+    } else {
         dc.SetBrush(wxBrush(LightColor(color)));
+    }
     dc.SetPen(wxPen(LightColor(color)));
     dc.DrawRectangle(x, y, xs, ys);
 }
@@ -147,7 +148,7 @@ struct ColorDropdown : wxOwnerDrawnComboBox {
 
 static uint PickColor(wxWindow *parent, uint defaultcolor) {
     auto color = wxGetColourFromUser(parent, wxColour(defaultcolor));
-    if (color.IsOk()) return (color.Blue() << 16) + (color.Green() << 8) + color.Red();
+    if (color.IsOk()) { return (color.Blue() << 16) + (color.Green() << 8) + color.Red(); }
     return -1;
 }
 
@@ -243,7 +244,7 @@ static void GetFilesFromUser(wxArrayString &filenames, wxWindow *parent, const w
                              const wxString &filter) {
     wxFileDialog filedialog(parent, title, "", "", filter,
                             wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR | wxFD_MULTIPLE);
-    if (filedialog.ShowModal() == wxID_OK) filedialog.GetPaths(filenames);
+    if (filedialog.ShowModal() == wxID_OK) { filedialog.GetPaths(filenames); }
 }
 
 static void HintIMELocation(Document *doc, int bx, int by, int bh, int stylebits) {

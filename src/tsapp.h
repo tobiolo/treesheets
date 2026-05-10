@@ -1,7 +1,7 @@
 struct IPCServer : wxServer {
     wxConnectionBase *OnAcceptConnection(const wxString &topic) override {
         sys->frame->DeIconize();
-        if (topic.Len() != 0u && topic != "*") sys->Open(topic);
+        if (topic.Len() != 0u && topic != "*") { sys->Open(topic); }
         return new wxConnection();
     }
 };
@@ -74,7 +74,7 @@ struct TSApp : wxApp {
             MSWEnableDarkMode();
         #endif
         sys = make_unique<System>(portable);
-        if (start_minimized) sys->startminimized = true;
+        if (start_minimized) { sys->startminimized = true; }
         SetupInternationalization();
         #ifdef __WXMSW__
             DeclareHiDpiAwareOnWindows();
