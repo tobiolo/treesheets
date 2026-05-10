@@ -7,8 +7,8 @@ struct Operation {
 
     virtual unique_ptr<Cell> run() const { return nullptr; }
     virtual double runn(double a) const { return 0; }
-    virtual unique_ptr<Cell> runl(shared_ptr<Grid> l) const { return nullptr; }
-    virtual void rung(shared_ptr<Grid> g) const {}
+    virtual unique_ptr<Cell> runl(const shared_ptr<Grid> &l) const { return nullptr; }
+    virtual void rung(const shared_ptr<Grid> &g) const {}
     virtual unique_ptr<Cell> runc(unique_ptr<Cell> c) const { return nullptr; }
     virtual double runnn(double a, double b) const { return 0; }
 };
@@ -43,8 +43,8 @@ struct Evaluator {
     #define OPN(_n, _c) OP(_n, _c, "n", double runn(double a))
     #define OPT(_n, _c) OP(_n, _c, "t", unique_ptr<Cell> runc(unique_ptr<Cell> c))
     #define OPC(_n, _c) OP(_n, _c, "c", unique_ptr<Cell> runc(unique_ptr<Cell> c))
-    #define OPL(_n, _c) OP(_n, _c, "l", unique_ptr<Cell> runl(shared_ptr<Grid> a))
-    #define OPG(_n, _c) OP(_n, _c, "g", void rung(shared_ptr<Grid> a))
+    #define OPL(_n, _c) OP(_n, _c, "l", unique_ptr<Cell> runl(const shared_ptr<Grid> &a))
+    #define OPG(_n, _c) OP(_n, _c, "g", void rung(const shared_ptr<Grid> &a))
 
     void Init() {
         OPNN(+, a + b);
@@ -95,7 +95,7 @@ struct Evaluator {
         if (sym->grid && val->grid) { this->DestructuringAssign(sym->grid, val->Clone(nullptr)); }
     }
 
-    void DestructuringAssign(shared_ptr<Grid> names, unique_ptr<Cell> val) {
+    void DestructuringAssign(const shared_ptr<Grid> &names, unique_ptr<Cell> val) {
         Grid const *ng = names.get();
         Grid const *vg = val->grid.get();
         if (ng->xs == vg->xs && ng->ys == vg->ys) {

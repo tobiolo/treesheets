@@ -89,7 +89,7 @@ struct Grid {
     }
 
     /* Clones g into this grid. This mutates the grid this function is called on. */
-    void Clone(shared_ptr<Grid> g) {
+    void Clone(const shared_ptr<Grid> &g) {
         g->bordercolor = bordercolor;
         g->user_grid_outer_spacing = user_grid_outer_spacing;
         g->folded = folded;
@@ -656,7 +656,7 @@ struct Grid {
         }
     }
 
-    void MergeWithParent(shared_ptr<Grid> p, Selection &sel, Document *doc) {
+    void MergeWithParent(const shared_ptr<Grid> &p, Selection &sel, Document *doc) {
         shared_ptr<Grid> keepalive = cell->grid;
         int nxs = sel.x + xs - p->xs;
         int nys = sel.y + ys - p->ys;

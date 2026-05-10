@@ -823,7 +823,7 @@ struct TSFrame : wxFrame {
         for (const auto &name : GetToolbarPaneNames()) { DestroyToolbarPane(name); }
         auto iconpath = app->GetDataPath("images/material/toolbar/");
         auto AddToolbarIcon = [&](wxAuiToolBar *tb, const wxChar *name, int action,
-                                  wxString iconpath, wxString lighticon, wxString darkicon) {
+                                  const wxString &iconpath, const wxString &lighticon, const wxString &darkicon) {
             tb->AddTool(
                 action, name,
                 wxBitmapBundle::FromSVGFile(
@@ -1591,7 +1591,7 @@ struct TSFrame : wxFrame {
         #endif
     }
 
-    void SetPageTitle(const wxString &filename, wxString mods, int page = -1) {
+    void SetPageTitle(const wxString &filename, const wxString &mods, int page = -1) {
         if (page < 0) { page = notebook->GetSelection(); }
         if (page < 0) { return; }
         if (page == notebook->GetSelection()) { SetTitle("TreeSheets - " + filename + mods); }

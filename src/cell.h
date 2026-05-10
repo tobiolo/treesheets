@@ -42,7 +42,7 @@ struct Cell {
     wxString note;
 
     Cell(Cell *_p = nullptr, const Cell *_clonefrom = nullptr, int _ct = CT_DATA,
-         shared_ptr<Grid> _g = nullptr)
+         const shared_ptr<Grid> &_g = nullptr)
         : parent(_p), celltype(_ct), grid(_g) {
         text.cell = this;
         if (_g != nullptr) { _g->cell = this; }
