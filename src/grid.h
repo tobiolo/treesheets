@@ -522,8 +522,8 @@ struct Grid {
         dos.Write32(ys);
         dos.Write32(bordercolor);
         dos.Write32(user_grid_outer_spacing);
-        dos.Write8(cell->verticaltextandgrid);
-        dos.Write8(folded);
+        dos.Write8(static_cast<wxUint8>(cell->verticaltextandgrid));
+        dos.Write8(static_cast<wxUint8>(folded));
         loop(x, xs) dos.Write32(colwidths[x]);
         foreachcellconst(c) c->Save(dos, ocs);
     }
