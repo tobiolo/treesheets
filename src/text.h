@@ -262,7 +262,7 @@ struct Text {
         return max(lines * h, iys);
     }
 
-    void FindCursor(Document *doc, int bx, int by, wxReadOnlyDC &dc, Selection &s, int maxcolwidth) {
+    void FindCursor(Document *doc, int bx, int by, wxReadOnlyDC &dc, Selection &s, int maxcolwidth) const {
         bx -= g_margin_extra;
         by -= g_margin_extra;
 

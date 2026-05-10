@@ -147,7 +147,7 @@ struct TSApp : wxApp {
         return executablepath;
     }
 
-    void SetupInternationalization() {
+    void SetupInternationalization() const {
         wxUILocale::UseDefault();
 
         #ifdef __WXGTK__
