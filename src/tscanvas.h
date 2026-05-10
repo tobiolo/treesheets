@@ -84,7 +84,7 @@ struct TSCanvas : public wxScrolledCanvas {
         #ifndef __WXMSW__
         // seems to not want to give the canvas focus otherwise (thinks its already in focus
         // when its not?)
-        if (frame->filter) frame->filter->SetFocus();
+        if (frame->filter != nullptr) frame->filter->SetFocus();
         #endif
         SetFocus();
         if (me.ShiftDown())

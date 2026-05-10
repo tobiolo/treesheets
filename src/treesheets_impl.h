@@ -12,10 +12,10 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
     }
 
     void AddUndoIfNecessary() {
-        if (!lowestcommonancestor) {
+        if (lowestcommonancestor == nullptr) {
             UpdateLowestCommonAncestor(true);
         } else {
-            for (auto *p = current; p; p = p->parent) {
+            for (auto *p = current; p != nullptr; p = p->parent) {
                 if (p == lowestcommonancestor) {
                     // There is no need to add current to the undo stack as
                     // lowestcommonancestor including subordinated current
@@ -62,14 +62,14 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
 
     void GoToRoot() override { current = document->root.get(); }
     void GoToView() override { current = document->currentdrawroot; }
-    bool HasSelection() override { return document->selected.grid.get(); }
+    bool HasSelection() override { return document->selected.grid.get() != nullptr; }
     void GoToSelection() override {
         auto *cell = document->selected.GetFirst();
-        if (cell) current = cell;
+        if (cell != nullptr) current = cell;
     }
-    bool HasParent() override { return current->parent; }
+    bool HasParent() override { return current->parent != nullptr; }
     void GoToParent() override {
-        if (current->parent) current = current->parent;
+        if (current->parent != nullptr) current = current->parent;
     }
     int NumChildren() override { return current->grid ? current->grid->xs * current->grid->ys : 0; }
 
@@ -78,11 +78,11 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
     }
 
     int GetColWidth() override {
-        return current->parent ? current->parent->grid->GetColWidth(current) : 0;
+        return current->parent != nullptr ? current->parent->grid->GetColWidth(current) : 0;
     }
 
     void SetColWidth(int w) override {
-        if (current->parent) { current->parent->grid->SetColWidth(current, w); }
+        if (current->parent != nullptr) { current->parent->grid->SetColWidth(current, w); }
     }
 
     ibox SelectionBox() override {
@@ -106,14 +106,14 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
     std::string GetNote() override { return current->note.utf8_string(); }
 
     void SetText(std::string_view t) override {
-        if (current->parent) {
+        if (current->parent != nullptr) {
             AddUndoIfNecessary();
             current->text.t = wxString::FromUTF8(t.data(), t.size());
         }
     }
 
     void SetNote(std::string_view t) override {
-        if (current->parent) {
+        if (current->parent != nullptr) {
             AddUndoIfNecessary();
             current->note = wxString::FromUTF8(t.data(), t.size());
         }
@@ -162,7 +162,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
     }
 
     void SetTextFiltered(bool filtered) override {
-        if (current->parent) {
+        if (current->parent != nullptr) {
             AddUndoIfNecessary();
             current->text.filtered = filtered;
         }
@@ -219,7 +219,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
 
     bool IsTag() override { return current->IsTag(document); }
 
-    bool HasImage() override { return current->text.image; }
+    bool HasImage() override { return current->text.image != nullptr; }
     bool SetImage(std::string_view fn) override {
         AddUndoIfNecessary();
         return document->LoadImageIntoCell(wxString::FromUTF8(fn.data(), fn.size()), current,
@@ -231,7 +231,7 @@ static int64_t TreeSheetsLoader(string_view_nt absfilename, std::string *dest, i
                                 int64_t len) {
     size_t l = 0;
     auto *buf = (char *)loadfile(absfilename.c_str(), &l);
-    if (!buf) return -1;
+    if (buf == nullptr) return -1;
     dest->assign(buf, l);
     free(buf);
     return l;

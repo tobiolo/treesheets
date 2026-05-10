@@ -813,7 +813,7 @@ struct TSFrame : wxFrame {
         if (pane.IsOk()) {
             wxWindow *wnd = pane.window;
             aui.DetachPane(wnd);
-            if (wnd) { wnd->Destroy(); }
+            if (wnd != nullptr) { wnd->Destroy(); }
         }
     }
 
@@ -1040,8 +1040,8 @@ struct TSFrame : wxFrame {
     void OnMenu(wxCommandEvent &ce) {
         wxTextCtrl *tc;
         auto *canvas = GetCurrentTab();
-        if ((tc = filter) && filter == wxWindow::FindFocus() ||
-            (tc = replaces) && replaces == wxWindow::FindFocus()) {
+        if ((tc = filter) != nullptr && filter == wxWindow::FindFocus() ||
+            (tc = replaces) != nullptr && replaces == wxWindow::FindFocus()) {
             long from, to;
             tc->GetSelection(&from, &to);
             switch (ce.GetId()) {
@@ -1221,7 +1221,7 @@ struct TSFrame : wxFrame {
                 if (IsFullScreen()) SetStatus(_("Press F11 to exit fullscreen mode."));
                 break;
             case wxID_FIND:
-                if (filter) {
+                if (filter != nullptr) {
                     filter->SetFocus();
                     filter->SetSelection(0, 1000);
                 } else {
@@ -1229,7 +1229,7 @@ struct TSFrame : wxFrame {
                 }
                 break;
             case wxID_REPLACE:
-                if (replaces) {
+                if (replaces != nullptr) {
                     replaces->SetFocus();
                     replaces->SetSelection(0, 1000);
                 } else {
@@ -1416,7 +1416,8 @@ struct TSFrame : wxFrame {
 
     void OnFileSystemEvent(wxFileSystemWatcherEvent &event) {
         // 0xF == create/delete/rename/modify
-        if ((event.GetChangeType() & 0xF) == 0 || watcherwaitingforuser || !notebook) return;
+        if ((event.GetChangeType() & 0xF) == 0 || watcherwaitingforuser || notebook == nullptr)
+            return;
         const auto &modfile = event.GetPath().GetFullPath();
         loop(i, notebook->GetPageCount()) {
             Document *doc = static_cast<TSCanvas *>(notebook->GetPage(i))->doc.get();
@@ -1512,7 +1513,7 @@ struct TSFrame : wxFrame {
     }
 
     TSCanvas *GetTabByFileName(const wxString &filename) {
-        if (notebook) loop(i, notebook->GetPageCount()) {
+        if (notebook != nullptr) loop(i, notebook->GetPageCount()) {
                 auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 if (canvas->doc->filename == filename) {
                     notebook->SetSelection(i);
@@ -1607,7 +1608,7 @@ struct TSFrame : wxFrame {
     }
 
     void TabsReset() {
-        if (notebook) loop(i, notebook->GetPageCount()) {
+        if (notebook != nullptr) loop(i, notebook->GetPageCount()) {
                 auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 canvas->doc->root->ResetChildren();
             }
@@ -1615,7 +1616,7 @@ struct TSFrame : wxFrame {
 
     void UpdateStatus(const Selection &s, bool updateamount) {
         if (GetStatusBar()) {
-            if (Cell *c = s.GetCell(); c && s.xs) {
+            if (Cell *c = s.GetCell(); c != nullptr && s.xs != 0) {
                 SetStatusText(wxString::Format(_("Size %d"), -c->text.relsize), 3);
                 SetStatusText(wxString::Format(_("Width %d"), s.grid->colwidths[s.x]), 2);
                 SetStatusText(wxString::Format(_("Edited %s %s"), c->text.lastedit.FormatDate(),

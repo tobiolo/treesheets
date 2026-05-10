@@ -45,12 +45,12 @@ struct Cell {
          shared_ptr<Grid> _g = nullptr)
         : parent(_p), celltype(_ct), grid(_g) {
         text.cell = this;
-        if (_g) _g->cell = this;
+        if (_g != nullptr) _g->cell = this;
         if (_p) {
             text.relsize = _p->text.relsize;
             verticaltextandgrid = _p->verticaltextandgrid;
         }
-        if (_clonefrom) CloneStyleFrom(_clonefrom);
+        if (_clonefrom != nullptr) CloneStyleFrom(_clonefrom);
     }
 
     void Clear() {
@@ -61,9 +61,9 @@ struct Cell {
     }
 
     bool HasText() const { return !text.t.empty(); }
-    bool HasTextSize() const { return HasText() || text.relsize; }
-    bool HasTextState() const { return HasTextSize() || text.image; }
-    bool HasHeader() const { return HasText() || text.image; }
+    bool HasTextSize() const { return HasText() || text.relsize != 0; }
+    bool HasTextState() const { return HasTextSize() || text.image != nullptr; }
+    bool HasHeader() const { return HasText() || text.image != nullptr; }
     bool HasContent() const { return HasHeader() || grid; }
     bool GridShown(Document *doc) const {
         return grid && (!grid->folded || this == doc->currentdrawroot);
@@ -142,11 +142,11 @@ struct Cell {
             default: actualcellcolor = cellcolor; break;
         }
         uint parentcolor = doc->Background();
-        if (parent && this != doc->currentdrawroot) {
+        if (parent != nullptr && this != doc->currentdrawroot) {
             Cell *p = parent;
-            while (p && p->drawstyle == DS_BLOBLINE)
+            while (p != nullptr && p->drawstyle == DS_BLOBLINE)
                 p = p == doc->currentdrawroot ? nullptr : p->parent;
-            if (p) parentcolor = p->actualcellcolor;
+            if (p != nullptr) parentcolor = p->actualcellcolor;
         }
 
         if (sys->darkennonmatchingcells && !text.IsInSearch()) {
@@ -214,16 +214,20 @@ struct Cell {
     }
 
     bool IsInside(int x, int y) const { return x >= 0 && y >= 0 && x < sx && y < sy; }
-    int GetX(Document *doc) const { return ox + (parent ? parent->GetX(doc) : doc->hierarchysize); }
-    int GetY(Document *doc) const { return oy + (parent ? parent->GetY(doc) : doc->hierarchysize); }
-    int Depth() const { return parent ? parent->Depth() + 1 : 0; }
+    int GetX(Document *doc) const {
+        return ox + (parent != nullptr ? parent->GetX(doc) : doc->hierarchysize);
+    }
+    int GetY(Document *doc) const {
+        return oy + (parent != nullptr ? parent->GetY(doc) : doc->hierarchysize);
+    }
+    int Depth() const { return parent != nullptr ? parent->Depth() + 1 : 0; }
     Cell *Parent(int i) { return i ? parent->Parent(i - 1) : this; }
     Cell *SetParent(Cell *g) {
         parent = g;
         return this;
     }
     bool IsParentOf(const Cell *c) {
-        return c->parent == this || (c->parent && IsParentOf(c->parent));
+        return c->parent == this || (c->parent != nullptr && IsParentOf(c->parent));
     }
 
     wxString ToText(int indent, const Selection &sel, int format, Document *doc, bool inheritstyle,
@@ -280,26 +284,28 @@ struct Cell {
         } else if ((format == A_EXPHTMLT || format == A_EXPHTMLTI || format == A_EXPHTMLTE) &&
                    this != root) {
             wxString style;
-            if (!inheritstyle || !parent ||
+            if (!inheritstyle || parent == nullptr ||
                 (text.stylebits & STYLE_BOLD) != (parent->text.stylebits & STYLE_BOLD))
                 style +=
                     text.stylebits & STYLE_BOLD ? "font-weight: bold;" : "font-weight: normal;";
-            if (!inheritstyle || !parent ||
+            if (!inheritstyle || parent == nullptr ||
                 (text.stylebits & STYLE_ITALIC) != (parent->text.stylebits & STYLE_ITALIC))
                 style +=
                     text.stylebits & STYLE_ITALIC ? "font-style: italic;" : "font-style: normal;";
-            if (!inheritstyle || !parent ||
+            if (!inheritstyle || parent == nullptr ||
                 (text.stylebits & STYLE_FIXED) != (parent->text.stylebits & STYLE_FIXED)) {
                 style += "font-family: '";
                 style += text.stylebits & STYLE_FIXED ? sys->defaultfixedfont + "', monospace;"
                                                       : sys->defaultfont + "', sans-serif;";
             }
-            if (!inheritstyle || cellcolor != (parent ? parent->cellcolor : doc->Background()))
+            if (!inheritstyle ||
+                cellcolor != (parent != nullptr ? parent->cellcolor : doc->Background()))
                 style += wxString::Format("background-color: #%06X;", SwapColor(cellcolor));
             auto exporttextcolor = IsTag(doc) ? doc->tags[text.t] : textcolor;
             auto parenttextcolor =
-                parent ? parent->IsTag(doc) ? doc->tags[parent->text.t] : parent->textcolor
-                       : 0x000000;
+                parent != nullptr
+                    ? parent->IsTag(doc) ? doc->tags[parent->text.t] : parent->textcolor
+                    : 0x000000;
             if (!inheritstyle || exporttextcolor != parenttextcolor)
                 style += wxString::Format("color: #%06X;", SwapColor(exporttextcolor));
             str.Prepend(style.IsEmpty() ? wxString("<td>")
@@ -333,7 +339,7 @@ struct Cell {
 
     void ResetLayout() {
         Reset();
-        if (parent) parent->ResetLayout();
+        if (parent != nullptr) parent->ResetLayout();
     }
 
     void LazyLayout(Document *doc, wxReadOnlyDC &dc, int depth, int maxcolwidth, bool forcetiny) {
@@ -378,7 +384,7 @@ struct Cell {
         if (!grid) {
             grid = make_shared<Grid>(x, y, this);
             grid->InitCells(this);
-            if (parent) grid->CloneStyleFrom(parent->grid);
+            if (parent != nullptr) grid->CloneStyleFrom(parent->grid);
         }
         return grid.get();
     }
@@ -435,7 +441,7 @@ struct Cell {
             }
             text.Insert(document, original->text.t, selection, false);
         }
-        if (original->text.image) text.image = original->text.image;
+        if (original->text.image != nullptr) text.image = original->text.image;
         if (original->grid) {
             shared_ptr<Grid> gridclone = make_shared<Grid>(original->grid->xs, original->grid->ys);
             gridclone->cell = this;
@@ -488,7 +494,7 @@ struct Cell {
             } else if (stylematch) {
                 return best;
             }
-            if (!best || lastthis) {
+            if (best == nullptr || lastthis) {
                 lastthis = false;
                 return this;
             }
@@ -507,7 +513,7 @@ struct Cell {
 
     void ImageRefCount(bool includefolded) {
         if (grid) grid->ImageRefCount(includefolded);
-        if (text.image) text.image->trefc++;
+        if (text.image != nullptr) text.image->trefc++;
     }
 
     void ColorChange(Document *doc, int which, uint color) {
@@ -521,7 +527,7 @@ struct Cell {
                 }
                 break;
             case A_BORDCOLOR:
-                if (parent && parent->grid) parent->grid->bordercolor = color;
+                if (parent != nullptr && parent->grid) parent->grid->bordercolor = color;
                 break;
         }
         text.WasEdited();
@@ -543,8 +549,8 @@ struct Cell {
     }
 
     int ColWidth() {
-        return parent ? parent->grid->colwidths[parent->grid->FindCell(this).x]
-                      : sys->defaultmaxcolwidth;
+        return parent != nullptr ? parent->grid->colwidths[parent->grid->FindCell(this).x]
+                                 : sys->defaultmaxcolwidth;
     }
 
     void CollectCells(auto &itercells, bool recurse = true) {

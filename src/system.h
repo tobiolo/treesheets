@@ -145,7 +145,7 @@ struct System {
 
     void LoadTutorial() {
         auto *trans = wxTranslations::Get();
-        auto language = trans ? trans->GetBestTranslation("ts") : wxString("");
+        auto language = trans != nullptr ? trans->GetBestTranslation("ts") : wxString("");
 
         if (language.Len() == 5 &&
             !LoadDB(frame->app->GetDocPath("examples/tutorial-" + language + ".cts"))[0]) {
@@ -185,7 +185,7 @@ struct System {
         auto loadedfromtmp = false;
 
         if (!fromreload) {
-            if (frame->GetTabByFileName(filename))
+            if (frame->GetTabByFileName(filename) != nullptr)
                 return wxEmptyString;  //"this file is already loaded";
 
             if (::wxFileExists(TmpName(filename))) {
@@ -453,11 +453,11 @@ struct System {
 
     int GetXMLNodes(wxXmlNode *node, auto &nodes, vector<wxXmlAttribute *> *attributes = nullptr,
                     bool attributestoo = false) {
-        for (auto *child = node->GetChildren(); child; child = child->GetNext()) {
+        for (auto *child = node->GetChildren(); child != nullptr; child = child->GetNext()) {
             if (child->GetType() == wxXML_ELEMENT_NODE) nodes.push_back(child);
         }
         if (attributestoo && attributes)
-            for (auto *attribute = node->GetAttributes(); attribute;
+            for (auto *attribute = node->GetAttributes(); attribute != nullptr;
                  attribute = attribute->GetNext()) {
                 attributes->push_back(attribute);
             }
@@ -544,7 +544,9 @@ struct System {
             if (col > column) {
                 auto *c = g->C(0, y - 1).get();
                 auto *sg = c->grid.get();
-                i = FillRows(sg ? sg : c->AddGrid(), as, col, i, sg ? sg->ys : 0) - 1;
+                i = FillRows(sg != nullptr ? sg : c->AddGrid(), as, col, i,
+                             sg != nullptr ? sg->ys : 0) -
+                    1;
             } else {
                 if (g->ys <= y) g->InsertCells(-1, y, 0, 1);
                 auto &t = g->C(0, y)->text;
@@ -565,7 +567,7 @@ struct System {
     }
 
     void ImageSize(wxBitmap *bm, int &xs, int &ys) {
-        if (!bm) return;
+        if (bm == nullptr) return;
         xs = bm->GetWidth();
         ys = bm->GetHeight();
     }

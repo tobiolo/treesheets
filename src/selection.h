@@ -67,14 +67,16 @@ class Selection {
     bool IsInside(Selection &o) {
         if (!o.grid || !grid) return false;
         if (grid != o.grid)
-            return grid->cell->parent && grid->cell->parent->grid->FindCell(grid->cell).IsInside(o);
+            return grid->cell->parent != nullptr &&
+                   grid->cell->parent->grid->FindCell(grid->cell).IsInside(o);
         return x >= o.x && y >= o.y && x + xs <= o.x + o.xs && y + ys <= o.y + o.ys;
     }
 
     void Merge(const Selection &a, const Selection &b) {
         textedit = false;
         if (a.grid == b.grid) {
-            if (a.GetCell() == b.GetCell() && a.GetCell() && (a.textedit || b.textedit)) {
+            if (a.GetCell() != nullptr && a.GetCell() == b.GetCell() &&
+                (a.textedit || b.textedit)) {
                 if (a.cursor != a.cursorend) {
                     Selection c = b;
                     a.GetCell()->text.SelectWord(c);
@@ -205,7 +207,7 @@ class Selection {
                     if (ovs)  // (multi) cell selection
                     {
                         bool intracell = true;
-                        if (textedit && !exitedit && GetCell()) {
+                        if (GetCell() != nullptr && textedit && !exitedit) {
                             if (dy) {
                                 cursorend = cursor;
                                 auto &text = GetCell()->text;

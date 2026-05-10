@@ -85,7 +85,7 @@ struct Grid {
 
     void InitColWidths() {
         colwidths.clear();
-        colwidths.resize(xs, cell ? cell->ColWidth() : sys->defaultmaxcolwidth);
+        colwidths.resize(xs, cell != nullptr ? cell->ColWidth() : sys->defaultmaxcolwidth);
     }
 
     /* Clones g into this grid. This mutates the grid this function is called on. */
@@ -347,7 +347,7 @@ struct Grid {
     }
 
     void DrawCursor(Document *doc, wxDC &dc, Selection &sel, bool full, uint color) {
-        if (auto *c = sel.GetCell(); c && !c->tiny && (c->HasText() || !c->grid))
+        if (auto *c = sel.GetCell(); c != nullptr && !c->tiny && (c->HasText() || !c->grid))
             c->text.DrawCursor(doc, dc, sel, full, color, colwidths[sel.x]);
     }
 
@@ -473,8 +473,7 @@ struct Grid {
                 sel.ys = 1;
             }
         } else {
-            auto *c = sel.GetCell();
-            if (c) sel.EnterEdit(doc);
+            if (sel.GetCell() != nullptr) sel.EnterEdit(doc);
         }
     }
 
@@ -483,7 +482,7 @@ struct Grid {
             doc->drawpath.pop_back();
             doc->currentdrawroot = doc->WalkPath(doc->drawpath);
         }
-        if (!cell->parent) return;  // FIXME: deletion of root cell, what would be better?
+        if (cell->parent == nullptr) return;  // FIXME: deletion of root cell, what would be better?
         s = cell->parent->grid->FindCell(cell);
         cell->grid = nullptr;
     }
@@ -506,7 +505,7 @@ struct Grid {
                     int sy = nys ? max(0, min(dy - 1, ys - 1)) : y;
                     Cell *colcell = C(sx, sy).get();
                     c = make_unique<Cell>(cell, colcell);
-                    if (colcell) c->text.relsize = colcell->text.relsize;
+                    if (colcell != nullptr) c->text.relsize = colcell->text.relsize;
                 }
             } else {
                 c = std::move(ocells[opos++]);
@@ -547,7 +546,7 @@ struct Grid {
         }
         foreachcell(c) {
             Cell *rc = Cell::LoadWhich(dis, cell, numcells, textbytes, ics);
-            if (!rc) return false;
+            if (rc == nullptr) return false;
             c.reset(rc);
         }
         return true;
@@ -964,7 +963,7 @@ struct Grid {
 
     void MergeTagCell(unique_ptr<Cell> f, Cell *&selcell) {
         foreachcell(c) if (c->text.t == f->text.t) {
-            if (!selcell) selcell = c.get();
+            if (selcell == nullptr) selcell = c.get();
 
             if (f->grid) {
                 if (c->grid) {
@@ -977,7 +976,7 @@ struct Grid {
             }
             return;
         }
-        if (!selcell) selcell = f.get();
+        if (selcell == nullptr) selcell = f.get();
         Add(std::move(f));
     }
 

@@ -14,7 +14,7 @@ struct Text {
 
     wxBitmap *DisplayImage() {
         return cell->grid && cell->grid->folded ? &sys->frame->foldicon
-                                                : (image ? &image->Display() : nullptr);
+                                                : (image != nullptr ? &image->Display() : nullptr);
     }
 
     size_t EstimatedMemoryUse() {
@@ -70,10 +70,10 @@ struct Text {
         if (format == A_EXPXML || format == A_EXPHTMLT || format == A_EXPHTMLTI ||
             format == A_EXPHTMLTE || format == A_EXPHTMLO || format == A_EXPHTMLB)
             str = htmlify(str);
-        if (format == A_EXPHTMLTI && image)
+        if (format == A_EXPHTMLTI && image != nullptr)
             str.Prepend("<img src=\"data:" + imagetypes.at(image->type).second + ";base64," +
                         wxBase64Encode(image->data.data(), image->data.size()) + "\" />");
-        else if (format == A_EXPHTMLTE && image) {
+        else if (format == A_EXPHTMLTE && image != nullptr) {
             wxString relsize = wxString::Format(
                 "%d%%", static_cast<int>(100.0 * sys->frame->FromDIP(1.0) / image->display_scale));
             str.Prepend("<img src=\"" + wxString::Format("%llu", image->hash) +
@@ -89,7 +89,9 @@ struct Text {
                       g_deftextsize - g_maxtextsize() - zoomdepth);
     }
 
-    auto IsWord(wxChar c) { return wxIsalnum(c) || wxStrchr(L"_\"\'()", c) || wxIspunct(c); }
+    auto IsWord(wxChar c) {
+        return wxIsalnum(c) || wxStrchr(L"_\"\'()", c) != nullptr || wxIspunct(c);
+    }
     auto GetLinePart(int &currentpos, int breakpos, int limitpos) {
         auto startpos = currentpos;
         currentpos = breakpos;
@@ -449,7 +451,7 @@ struct Text {
     void Save(wxDataOutputStream &dos) const {
         dos.WriteString(t.wx_str());
         dos.Write32(relsize);
-        dos.Write32(image ? image->savedindex : -1);
+        dos.Write32(image != nullptr ? image->savedindex : -1);
         dos.Write32(stylebits);
         wxLongLong le = lastedit.GetValue();
         dos.Write64(&le, 1);
