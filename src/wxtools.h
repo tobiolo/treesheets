@@ -210,7 +210,7 @@ static void ScaleBitmap(const wxBitmap &source, double scale, wxBitmap &destinat
 }
 
 static vector<uint8_t> ConvertWxImageToBuffer(const wxImage &image, wxBitmapType bitmaptype) {
-    wxMemoryOutputStream imageoutputstream(NULL, 0);
+    wxMemoryOutputStream imageoutputstream(nullptr, 0);
     image.SaveFile(imageoutputstream, bitmaptype);
     auto size = imageoutputstream.TellO();
     vector<uint8_t> buffer(size);
