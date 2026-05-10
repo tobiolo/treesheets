@@ -13,8 +13,8 @@ struct Operation {
     virtual double runnn(double a, double b) const { return 0; }
 };
 
-typedef std::unordered_map<wxString, unique_ptr<Operation>> OperationMap;
-typedef std::unordered_map<wxString, unique_ptr<Cell>> VariableMap;
+using OperationMap = std::unordered_map<wxString, unique_ptr<Operation>>;
+using VariableMap = std::unordered_map<wxString, unique_ptr<Cell>>;
 
 /*
     Provides running evaluation of a grid.

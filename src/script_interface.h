@@ -1,7 +1,7 @@
 namespace script {
 
-typedef std::pair<int, int> icoord;
-typedef std::pair<icoord, icoord> ibox;
+using icoord = std::pair<int, int>;
+using ibox = std::pair<icoord, icoord>;
 
 struct ScriptInterface {
     virtual bool LoadDocument(const char *filename) = 0;
