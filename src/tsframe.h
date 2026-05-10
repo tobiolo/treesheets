@@ -35,7 +35,7 @@ struct TSFrame : wxFrame {
 
         class MyLog : public wxLog {
             void DoLogString(const wxChar *message, time_t timestamp) { DoLogText(*message); }
-            void DoLogText(const wxString &message) {
+            void DoLogText(const wxString &message) override {
                 #ifdef WIN32
                 OutputDebugString(message.c_str());
                 OutputDebugString(L"\n");

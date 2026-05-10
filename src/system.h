@@ -48,7 +48,7 @@ struct System {
     std::set<wxString> watchedpaths;
     bool insidefiledialog {false};
     struct TimerStruct : wxTimer {
-        void Notify() {
+        void Notify() override {
             sys->SaveCheck();
             sys->cfg->Flush();
         }

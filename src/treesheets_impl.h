@@ -52,7 +52,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
         return errormessage;
     }
 
-    bool LoadDocument(const char *filename) {
+    bool LoadDocument(const char *filename) override {
         auto message = sys->LoadDB(filename);
         if (message.IsEmpty()) return false;
 
@@ -60,85 +60,87 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
         return true;
     }
 
-    void GoToRoot() { current = document->root.get(); }
-    void GoToView() { current = document->currentdrawroot; }
-    bool HasSelection() { return document->selected.grid.get(); }
-    void GoToSelection() {
+    void GoToRoot() override { current = document->root.get(); }
+    void GoToView() override { current = document->currentdrawroot; }
+    bool HasSelection() override { return document->selected.grid.get(); }
+    void GoToSelection() override {
         auto *cell = document->selected.GetFirst();
         if (cell) current = cell;
     }
-    bool HasParent() { return current->parent; }
-    void GoToParent() {
+    bool HasParent() override { return current->parent; }
+    void GoToParent() override {
         if (current->parent) current = current->parent;
     }
-    int NumChildren() { return current->grid ? current->grid->xs * current->grid->ys : 0; }
+    int NumChildren() override { return current->grid ? current->grid->xs * current->grid->ys : 0; }
 
-    icoord NumColumnsRows() {
+    icoord NumColumnsRows() override {
         return current->grid ? icoord(current->grid->xs, current->grid->ys) : icoord(0, 0);
     }
 
-    int GetColWidth() { return current->parent ? current->parent->grid->GetColWidth(current) : 0; }
+    int GetColWidth() override {
+        return current->parent ? current->parent->grid->GetColWidth(current) : 0;
+    }
 
-    void SetColWidth(int w) {
+    void SetColWidth(int w) override {
         if (current->parent) { current->parent->grid->SetColWidth(current, w); }
     }
 
-    ibox SelectionBox() {
+    ibox SelectionBox() override {
         auto &selection = document->selected;
         return selection.grid ? ibox(icoord(selection.x, selection.y), icoord(selection.xs, selection.ys))
                       : ibox(icoord(0, 0), icoord(0, 0));
     }
 
-    void GoToChild(int n) {
+    void GoToChild(int n) override {
         if (current->grid && n < current->grid->xs * current->grid->ys)
             current = current->grid->cells[n].get();
     }
 
-    void GoToColumnRow(int x, int y) {
+    void GoToColumnRow(int x, int y) override {
         if (current->grid && x < current->grid->xs && y < current->grid->ys)
             current = current->grid->C(x, y).get();
     }
 
-    std::string GetText() { return current->text.t.utf8_string(); }
+    std::string GetText() override { return current->text.t.utf8_string(); }
 
-    std::string GetNote() { return current->note.utf8_string(); }
+    std::string GetNote() override { return current->note.utf8_string(); }
 
-    void SetText(std::string_view t) {
+    void SetText(std::string_view t) override {
         if (current->parent) {
             AddUndoIfNecessary();
             current->text.t = wxString::FromUTF8(t.data(), t.size());
         }
     }
 
-    void SetNote(std::string_view t) {
+    void SetNote(std::string_view t) override {
         if (current->parent) {
             AddUndoIfNecessary();
             current->note = wxString::FromUTF8(t.data(), t.size());
         }
     }
 
-    void CreateGrid(int x, int y) {
+    void CreateGrid(int x, int y) override {
         if (x > 0 && y > 0 && x * y < max_new_grid_cells) {
             AddUndoIfNecessary();
             current->AddGrid(x, y);
         }
     }
 
-    void InsertColumn(int x) {
+    void InsertColumn(int x) override {
         if (current->grid && x >= 0 && x <= current->grid->xs) {
             AddUndoIfNecessary();
             current->grid->InsertCells(x, -1, 1, 0);
         }
     }
 
-    void InsertRow(int y) {
+    void InsertRow(int y) override {
         if (current->grid && y >= 0 && y <= current->grid->ys) {
             AddUndoIfNecessary();
             current->grid->InsertCells(-1, y, 0, 1);
         }
     }
 
-    void Delete(int x, int y, int xs, int ys) {
+    void Delete(int x, int y, int xs, int ys) override {
         if (current->grid && x >= 0 && x + xs <= current->grid->xs && y >= 0 &&
             y + ys <= current->grid->ys) {
             AddUndoIfNecessary();
@@ -149,59 +151,59 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
         }
     }
 
-    void SetBackgroundColor(uint color) {
+    void SetBackgroundColor(uint color) override {
         AddUndoIfNecessary();
         current->cellcolor = color;
     }
 
-    void SetTextColor(uint color) {
+    void SetTextColor(uint color) override {
         AddUndoIfNecessary();
         current->textcolor = color;
     }
 
-    void SetTextFiltered(bool filtered) {
+    void SetTextFiltered(bool filtered) override {
         if (current->parent) {
             AddUndoIfNecessary();
             current->text.filtered = filtered;
         }
     }
 
-    bool IsTextFiltered() { return current->text.filtered; }
+    bool IsTextFiltered() override { return current->text.filtered; }
 
-    void SetBorderColor(uint color) {
+    void SetBorderColor(uint color) override {
         if (current->grid) {
             AddUndoIfNecessary();
             current->grid->bordercolor = color;
         }
     }
 
-    int GetRelativeSize() { return -current->text.relsize; }
+    int GetRelativeSize() override { return -current->text.relsize; }
 
-    void SetRelativeSize(int relsize) {
+    void SetRelativeSize(int relsize) override {
         AddUndoIfNecessary();
         current->text.relsize = -relsize;
     }
 
-    void SetStyle(int stylebits) {
+    void SetStyle(int stylebits) override {
         AddUndoIfNecessary();
         current->text.stylebits = stylebits;
     }
 
-    int GetStyle() { return current->text.stylebits; }
+    int GetStyle() override { return current->text.stylebits; }
 
-    void RemoveImage() {
+    void RemoveImage() override {
         AddUndoIfNecessary();
         current->text.image = nullptr;
     }
 
-    void SetStatusMessage(std::string_view message) {
+    void SetStatusMessage(std::string_view message) override {
         auto ws = wxString(message.data(), message.size());
         sys->frame->SetStatus(ws);
     }
 
-    void SetWindowSize(int width, int height) { sys->frame->SetSize(width, height); }
+    void SetWindowSize(int width, int height) override { sys->frame->SetSize(width, height); }
 
-    std::string GetFileNameFromUser(bool is_save) {
+    std::string GetFileNameFromUser(bool is_save) override {
         int flags = wxFD_CHANGE_DIR;
         if (is_save)
             flags |= wxFD_OVERWRITE_PROMPT | wxFD_SAVE;
@@ -211,14 +213,14 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
         return fn.utf8_string();
     }
 
-    std::string GetFileName() { return document->filename.utf8_string(); }
+    std::string GetFileName() override { return document->filename.utf8_string(); }
 
-    int64_t GetLastEdit() { return current->text.lastedit.GetValue().GetValue(); }
+    int64_t GetLastEdit() override { return current->text.lastedit.GetValue().GetValue(); }
 
-    bool IsTag() { return current->IsTag(document); }
+    bool IsTag() override { return current->IsTag(document); }
 
-    bool HasImage() { return current->text.image; }
-    bool SetImage(std::string_view fn) {
+    bool HasImage() override { return current->text.image; }
+    bool SetImage(std::string_view fn) override {
         AddUndoIfNecessary();
         return document->LoadImageIntoCell(wxString::FromUTF8(fn.data(), fn.size()), current,
                                            sys->frame->FromDIP(1.0));

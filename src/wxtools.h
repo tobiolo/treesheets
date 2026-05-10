@@ -13,17 +13,17 @@ static uint SwapColor(uint c) { return ((c & 0xFF) << 16) | (c & 0xFF00) | ((c &
 struct DropTarget : wxDropTarget {
     DropTarget(wxDataObject *data) : wxDropTarget(data) {};
 
-    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) {
+    wxDragResult OnDragOver(wxCoord x, wxCoord y, wxDragResult def) override {
         auto *canvas = sys->frame->GetCurrentTab();
         wxInfoDC dc(canvas);
         canvas->doc->UpdateHover(dc, x, y);
         return canvas->doc->hover.grid ? wxDragCopy : wxDragNone;
     }
 
-    bool OnDrop(wxCoord x, wxCoord y) {
+    bool OnDrop(wxCoord x, wxCoord y) override {
         return sys->frame->GetCurrentTab()->doc->hover.grid != nullptr;
     }
-    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) {
+    wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) override {
         GetData();
         auto *canvas = sys->frame->GetCurrentTab();
         wxInfoDC dc(canvas);
@@ -110,7 +110,7 @@ struct DateTimeRangeDialog : public wxDialog {
 struct ColorPopup : wxVListBoxComboPopup {
     ColorPopup(wxWindow *parent) {}
 
-    void OnComboDoubleClick() {
+    void OnComboDoubleClick() override {
         sys->frame->GetCurrentTab()->doc->ColorChange(m_combo->GetId(), GetSelection());
     }
 };
@@ -126,14 +126,14 @@ struct ColorDropdown : wxOwnerDrawnComboBox {
         SetPopupMaxHeight(wxDisplay().GetGeometry().GetHeight() * 3 / 4);
     }
 
-    wxCoord OnMeasureItem(size_t item) const { return FromDIP(22); }
-    wxCoord OnMeasureItemWidth(size_t item) const { return FromDIP(40); }
-    void OnDrawBackground(wxDC &dc, const wxRect &rect, int item, int flags) const {
+    wxCoord OnMeasureItem(size_t item) const override { return FromDIP(22); }
+    wxCoord OnMeasureItemWidth(size_t item) const override { return FromDIP(40); }
+    void OnDrawBackground(wxDC &dc, const wxRect &rect, int item, int flags) const override {
         DrawRectangle(dc, flags & wxODCB_PAINTING_SELECTED ? 0xA9A9A9 : 0xFFFFFF, rect.x, rect.y,
                       rect.width, rect.height);
     }
 
-    void OnDrawItem(wxDC &dc, const wxRect &rect, int item, int flags) const {
+    void OnDrawItem(wxDC &dc, const wxRect &rect, int item, int flags) const override {
         DrawRectangle(dc, item == CUSTOMCOLORIDX ? sys->customcolor : celltextcolors[item],
                       rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2);
         if (item == CUSTOMCOLORIDX) {
@@ -156,7 +156,7 @@ inline static uint LightColor(uint color) { return color ^ sys->colormask; }
 #define dd_icon_res_scale 3.0
 
 struct ImagePopup : wxVListBoxComboPopup {
-    void OnComboDoubleClick() {
+    void OnComboDoubleClick() override {
         auto filename = GetString(GetSelection());
         sys->frame->GetCurrentTab()->doc->ImageChange(filename, dd_icon_res_scale);
     }
@@ -177,13 +177,13 @@ struct ImageDropdown : wxOwnerDrawnComboBox {
         SetPopupMaxHeight(wxDisplay().GetGeometry().GetHeight() * 3 / 4);
     }
 
-    wxCoord OnMeasureItem(size_t item) const { return FromDIP(image_space); }
-    wxCoord OnMeasureItemWidth(size_t item) const { return FromDIP(image_space); }
-    void OnDrawBackground(wxDC &dc, const wxRect &rect, int item, int flags) const {
+    wxCoord OnMeasureItem(size_t item) const override { return FromDIP(image_space); }
+    wxCoord OnMeasureItemWidth(size_t item) const override { return FromDIP(image_space); }
+    void OnDrawBackground(wxDC &dc, const wxRect &rect, int item, int flags) const override {
         DrawRectangle(dc, 0xFFFFFF, rect.x, rect.y, rect.width, rect.height);
     }
 
-    void OnDrawItem(wxDC &dc, const wxRect &rect, int item, int flags) const {
+    void OnDrawItem(wxDC &dc, const wxRect &rect, int item, int flags) const override {
         sys->ImageDraw(bitmaps_display[item].get(), dc, rect.x + FromDIP(3), rect.y + FromDIP(3));
     }
 

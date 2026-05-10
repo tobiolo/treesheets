@@ -48,25 +48,25 @@ struct Document {
         Document *doc;
         Printout(Document *d) : wxPrintout("printout"), doc(d) {}
 
-        bool OnPrintPage(int page) {
+        bool OnPrintPage(int page) override {
             auto *dc = GetDC();
             if (!dc) return false;
             doc->Print(*dc, *this);
             return true;
         }
 
-        bool OnBeginDocument(int startPage, int endPage) {
+        bool OnBeginDocument(int startPage, int endPage) override {
             return wxPrintout::OnBeginDocument(startPage, endPage);
         }
 
-        void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo) {
+        void GetPageInfo(int *minPage, int *maxPage, int *selPageFrom, int *selPageTo) override {
             *minPage = 1;
             *maxPage = 1;
             *selPageFrom = 1;
             *selPageTo = 1;
         }
 
-        bool HasPage(int pageNum) { return pageNum == 1; }
+        bool HasPage(int pageNum) override { return pageNum == 1; }
     };
 
     bool while_printing {false};

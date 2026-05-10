@@ -17,7 +17,7 @@ struct TSCanvas : public wxScrolledCanvas {
         EnableScrolling(false, false);
     }
 
-    ~TSCanvas() { frame = nullptr; }
+    ~TSCanvas() override { frame = nullptr; }
 
     void OnPaint(wxPaintEvent &event) {
         #ifdef __WXMSW__

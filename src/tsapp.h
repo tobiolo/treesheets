@@ -1,5 +1,5 @@
 struct IPCServer : wxServer {
-    wxConnectionBase *OnAcceptConnection(const wxString &topic) {
+    wxConnectionBase *OnAcceptConnection(const wxString &topic) override {
         sys->frame->DeIconize();
         if (topic.Len() && topic != "*") sys->Open(topic);
         return new wxConnection();
