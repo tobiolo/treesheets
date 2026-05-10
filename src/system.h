@@ -164,7 +164,8 @@ struct System {
     void LoadOpRef() { LoadDB(frame->app->GetDocPath("examples/operation-reference.cts")); }
 
     unique_ptr<Cell> &InitDB(int sizex, int sizey = 0) {
-        unique_ptr<Cell> c = make_unique<Cell>(nullptr, nullptr, CT_DATA, make_shared<Grid>(sizex, sizey ? sizey : sizex));
+        unique_ptr<Cell> c = make_unique<Cell>(
+            nullptr, nullptr, CT_DATA, make_shared<Grid>(sizex, sizey != 0 ? sizey : sizex));
         c->cellcolor = 0xCCDCE2;
         c->grid->InitCells();
         auto *doc = NewTabDoc();
@@ -218,7 +219,7 @@ struct System {
 
             char buf[4];
             fis.Read(buf, 4);
-            if (strncmp(buf, "TSFF", 4)) return _("Not a TreeSheets file.");
+            if (strncmp(buf, "TSFF", 4) != 0) return _("Not a TreeSheets file.");
             fis.Read(&versionlastloaded, 1);
             if (versionlastloaded > TS_VERSION) return _("File of newer version.");
             auto xs = versionlastloaded >= 21 ? dis.Read8() : 1;
@@ -250,7 +251,8 @@ struct System {
                                 uchar header[8];
                                 fis.Read(header, 8);
                                 uchar expected[] = {0x89, 'P', 'N', 'G', '\r', '\n', 0x1A, '\n'};
-                                if (memcmp(header, expected, 8)) return _("Corrupt PNG header.");
+                                if (memcmp(header, expected, 8) != 0)
+                                    return _("Corrupt PNG header.");
                                 dis.BigEndianOrdered(true);
                                 for (;;) {  // Skip all chunks.
                                     wxInt32 len = dis.Read32();
@@ -502,7 +504,7 @@ struct System {
                 loopv(i, nodes) {
                     vector<wxXmlNode *> ins;
                     auto xs = GetXMLNodes(nodes[i], ins);
-                    if (!i) {
+                    if (i == 0) {
                         desiredxs = xs ? xs : 1;
                         c->AddGrid(desiredxs, nodes.size());
                         SetGridSettingsFromXML(c, node);
@@ -521,7 +523,7 @@ struct System {
     }
 
     void SetGridSettingsFromXML(Cell *c, wxXmlNode *node) {
-        c->grid->folded = wxAtoi(node->GetAttribute("folded", "0"));
+        c->grid->folded = wxAtoi(node->GetAttribute("folded", "0")) != 0;
         c->grid->bordercolor = std::stoi(
             node->GetAttribute("bordercolor", wxString() << g_bordercolor_default).ToStdString(),
             nullptr, 0);

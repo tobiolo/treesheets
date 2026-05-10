@@ -192,13 +192,13 @@ struct Grid {
                         }
                 }
             };
-            if (!sys->fastrender && view_grid_outer_spacing && cell->cellcolor != 0xFFFFFF) {
+            if (!sys->fastrender && view_grid_outer_spacing != 0 && cell->cellcolor != 0xFFFFFF) {
                 dc.SetPen(wxPen(LightColor(0xFFFFFF)));
                 drawlines();
             }
             // dotted lines result in very expensive drawline calls
-            dc.SetPen(view_grid_outer_spacing && !sys->fastrender ? sys->pen_gridlines
-                                                                  : sys->pen_tinygridlines);
+            dc.SetPen(view_grid_outer_spacing != 0 && !sys->fastrender ? sys->pen_gridlines
+                                                                       : sys->pen_tinygridlines);
             drawlines();
         }
 
@@ -254,7 +254,7 @@ struct Grid {
                 }
             }
         }
-        if (view_grid_outer_spacing && cell->drawstyle == DS_GRID) {
+        if (view_grid_outer_spacing != 0 && cell->drawstyle == DS_GRID) {
             dc.SetBrush(*wxTRANSPARENT_BRUSH);
             dc.SetPen(wxPen(LightColor(bordercolor)));
             loop(i, view_grid_outer_spacing - 1) {
@@ -353,7 +353,7 @@ struct Grid {
 
     void DrawInsert(Document *doc, wxDC &dc, Selection &sel, uint colour) {
         dc.SetPen(sys->pen_thinselect);
-        if (!sel.xs) {
+        if (sel.xs == 0) {
             auto *c = C(sel.x - (sel.x == xs), sel.y).get();
             int x = c->GetX(doc) + (c->sx + g_line_width + cell_margin) * (sel.x == xs) -
                     g_line_width - cell_margin;
@@ -374,7 +374,7 @@ struct Grid {
 
     wxRect GetRect(Document *doc, const Selection &sel, bool minimal = false) {
         if (sel.Thin()) {
-            if (sel.xs) {
+            if (sel.xs != 0) {
                 if (sel.y < ys) {
                     auto *tl = C(sel.x, sel.y).get();
                     return wxRect(tl->GetX(doc), tl->GetY(doc), tl->sx, 0);
@@ -501,8 +501,8 @@ struct Grid {
                 if (nc) {
                     c = std::move(nc);
                 } else {
-                    int sx = nxs ? max(0, min(dx - 1, xs - 1)) : x;
-                    int sy = nys ? max(0, min(dy - 1, ys - 1)) : y;
+                    int sx = nxs != 0 ? max(0, min(dx - 1, xs - 1)) : x;
+                    int sy = nys != 0 ? max(0, min(dy - 1, ys - 1)) : y;
                     Cell *colcell = C(sx, sy).get();
                     c = make_unique<Cell>(cell, colcell);
                     if (colcell != nullptr) c->text.relsize = colcell->text.relsize;

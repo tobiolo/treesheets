@@ -34,7 +34,7 @@ class Selection {
     bool operator==(Selection &s) {
         return EqLoc(s) && cursor == s.cursor && cursorend == s.cursorend;
     }
-    bool Thin() const { return !(xs * ys); }
+    bool Thin() const { return (xs * ys) == 0; }
     bool IsAll() const { return xs == grid->xs && ys == grid->ys; }
     void SetCursorEdit(Document *doc, bool edit) {
         wxCursor c(edit ? wxCURSOR_IBEAM : wxCURSOR_ARROW);
@@ -138,7 +138,7 @@ class Selection {
             doc->paintscrolltoselection = true;
             doc->canvas->Refresh();
         } else {
-            if (ctrl && dx)  // implies textedit
+            if (ctrl && dx != 0)  // implies textedit
             {
                 if (cursor == cursorend) firstdx = dx;
                 int &curs = firstdx < 0 ? cursor : cursorend;
@@ -174,10 +174,10 @@ class Selection {
                     if (cursor < 0) cursor = 0;
                     if (cursorend > MaxCursor()) cursorend = MaxCursor();
                 } else {
-                    if (!xs) firstdx = 0;  // redundant: just in case someone else changed it
-                    if (!ys) firstdy = 0;
-                    if (!firstdx) firstdx = dx;
-                    if (!firstdy) firstdy = dy;
+                    if (xs == 0) firstdx = 0;  // redundant: just in case someone else changed it
+                    if (ys == 0) firstdy = 0;
+                    if (firstdx == 0) firstdx = dx;
+                    if (firstdy == 0) firstdy = dy;
                     if (firstdx < 0) {
                         x += dx;
                         xs += -dx;
@@ -198,17 +198,17 @@ class Selection {
                     }
                     if (x + xs > grid->xs) xs--;
                     if (y + ys > grid->ys) ys--;
-                    if (!xs) firstdx = 0;
-                    if (!ys) firstdy = 0;
-                    if (!xs && !ys) grid = nullptr;
+                    if (xs == 0) firstdx = 0;
+                    if (ys == 0) firstdy = 0;
+                    if (xs == 0 && ys == 0) grid = nullptr;
                 }
             } else {
-                if (vs) {
-                    if (ovs)  // (multi) cell selection
+                if (vs != 0) {
+                    if (ovs != 0)  // (multi) cell selection
                     {
                         bool intracell = true;
                         if (GetCell() != nullptr && textedit && !exitedit) {
-                            if (dy) {
+                            if (dy != 0) {
                                 cursorend = cursor;
                                 auto &text = GetCell()->text;
                                 int maxcolwidth = GetCell()->parent->grid->colwidths[x];
@@ -257,7 +257,7 @@ class Selection {
                                     else
                                         cursor = cursorend;
                                 } else {
-                                    if ((dx < 0 && cursor) || (dx > 0 && MaxCursor() > cursor))
+                                    if ((dx < 0 && cursor != 0) || (dx > 0 && MaxCursor() > cursor))
                                         cursorend = cursor += dx;
                                 }
                             }
@@ -372,7 +372,7 @@ class Selection {
 
     Cell *ThinExpand(Document *doc, bool jumptofirst = false) {
         if (Thin()) {
-            if (xs) {
+            if (xs != 0) {
                 grid->cell->AddUndo(doc);
                 grid->InsertCells(-1, y, 0, 1);
                 ys = 1;

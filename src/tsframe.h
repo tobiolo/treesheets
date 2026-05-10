@@ -468,7 +468,7 @@ struct TSFrame : wxFrame {
             editmenu->AppendSubMenu(bordmenu, _("Set Grid Border Width"));
             editmenu->AppendSubMenu(tagmenu, _("Tag"));
 
-            if (!twoeditmenus) editmenupopup = editmenu;
+            if (twoeditmenus == 0) editmenupopup = editmenu;
         }
 
         auto *semenu = new wxMenu();

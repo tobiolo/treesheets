@@ -159,7 +159,7 @@ struct Text {
             auto curl = GetLine(i, maxcolwidth);
             if (!curl.Len()) break;
             int x, y;
-            if (tiny) {
+            if (tiny != 0) {
                 x = static_cast<int>(curl.Len());
                 y = 1;
             } else
@@ -168,7 +168,7 @@ struct Text {
             sy += y;
             leftoffset = y;
         }
-        if (!tiny) sx += 4;
+        if (tiny == 0) sx += 4;
     }
 
     bool IsInSearch() {
@@ -180,9 +180,9 @@ struct Text {
     int Render(Document *doc, int bx, int by, int depth, wxDC &dc, int &leftoffset,
                int maxcolwidth) {
         auto ixs = 0, iys = 0;
-        if (!cell->tiny) sys->ImageSize(DisplayImage(), ixs, iys);
+        if (cell->tiny == 0) sys->ImageSize(DisplayImage(), ixs, iys);
 
-        if (ixs && iys) {
+        if (ixs != 0 && iys != 0) {
             sys->ImageDraw(DisplayImage(), dc, bx + 1 + g_margin_extra,
                            by + (cell->tys - iys) / 2 + g_margin_extra);
             ixs += 2;
@@ -224,7 +224,7 @@ struct Text {
                     auto word = 0;
                     loop(p, static_cast<int>(curl.Len()) + 1) {
                         if (static_cast<int>(curl.Len()) <= p || curl[p] == ' ') {
-                            if (word)
+                            if (word != 0)
                                 dc.DrawLine(bx + p - word + ixs, by + lines * h, bx + p,
                                             by + lines * h);
                             word = 0;
@@ -259,7 +259,7 @@ struct Text {
 
         auto ixs = 0, iys = 0;
         if (!cell->tiny) sys->ImageSize(DisplayImage(), ixs, iys);
-        if (ixs) ixs += 2;
+        if (ixs != 0) ixs += 2;
 
         doc->PickFont(dc, cell->Depth() - doc->drawpath.size(), relsize, stylebits);
 
@@ -275,7 +275,7 @@ struct Text {
         for (;;) {
             auto x = 0, y = 0;
             dc.GetTextExtent(ls, &x, &y);  // FIXME: can we do this more intelligently?
-            if (x <= bx - ixs + 2 || !x) break;
+            if (x <= bx - ixs + 2 || x == 0) break;
             ls.Truncate(ls.Len() - 1);
         }
 
@@ -286,7 +286,7 @@ struct Text {
     void DrawCursor(Document *doc, wxDC &dc, Selection &s, bool full, uint color, int maxcolwidth) {
         auto ixs = 0, iys = 0;
         if (!cell->tiny) sys->ImageSize(DisplayImage(), ixs, iys);
-        if (ixs) ixs += 2;
+        if (ixs != 0) ixs += 2;
         doc->PickFont(dc, cell->Depth() - doc->drawpath.size(), relsize, stylebits);
         auto h = dc.GetCharHeight();
         {

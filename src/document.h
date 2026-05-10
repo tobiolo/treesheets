@@ -211,7 +211,7 @@ struct Document {
             sys->FileUsed(filename, this);
             if (::wxFileExists(sys->TmpName(filename))) ::wxRemoveFile(sys->TmpName(filename));
         }
-        if (sys->autohtmlexport) {
+        if (sys->autohtmlexport != 0) {
             ExportFile(sys->ExtName(filename, ".html"),
                        sys->autohtmlexport == A_AUTOEXPORT_HTML_WITH_IMAGES - A_AUTOEXPORT_HTML_NONE
                            ? A_EXPHTMLTE
@@ -304,7 +304,7 @@ struct Document {
     }
 
     void SelectUp() {
-        if (!isctrlshiftdrag || isctrlshiftdrag == 3 || begindrag.EqLoc(selected)) return;
+        if (isctrlshiftdrag == 0 || isctrlshiftdrag == 3 || begindrag.EqLoc(selected)) return;
         auto *cell = selected.GetCell();
         if (cell == nullptr) return;
         auto *targetcell = begindrag.ThinExpand(this);
@@ -434,7 +434,7 @@ struct Document {
     bool ZoomSetDrawPath(int dir, bool fromroot = true) {
         int oldlen = drawpath.size();
         int targetlen = max(0, (fromroot ? 0 : oldlen) + dir);
-        if (!targetlen && drawpath.empty()) return false;
+        if (targetlen == 0 && drawpath.empty()) return false;
         if (dir > 0) {
             if (!selected.grid) return false;
             auto *c = selected.GetCell();
@@ -468,7 +468,7 @@ struct Document {
     wxString NoGrid() { return _("This operation requires a cell that contains a grid."); }
 
     wxString Wheel(int dir, bool alt, bool ctrl, bool shift, bool hierarchical = true) {
-        if (!dir) return wxEmptyString;
+        if (dir == 0) return wxEmptyString;
         if (alt) {
             if (!selected.grid) return NoSel();
             if (selected.xs > 0) {
@@ -586,10 +586,10 @@ struct Document {
             maxx += scrollx;
             maxy += scrolly;
         }
-        centerx = sys->centered && !scrollx && maxx > layoutxs
+        centerx = sys->centered && scrollx == 0 && maxx > layoutxs
                       ? (maxx - layoutxs) / 2 * currentviewscale
                       : 0;
-        centery = sys->centered && !scrolly && maxy > layoutys
+        centery = sys->centered && scrolly == 0 && maxy > layoutys
                       ? (maxy - layoutys) / 2 * currentviewscale
                       : 0;
         ShiftToCenter(dc);
@@ -631,13 +631,14 @@ struct Document {
     bool PickFont(wxReadOnlyDC &dc, int depth, int relsize, int stylebits) {
         int textsize = TextSize(depth, relsize);
         if (textsize != lasttextsize || stylebits != laststylebits) {
-            wxFont font(textsize - (while_printing || scaledviewingmode),
-                        stylebits & STYLE_FIXED ? wxFONTFAMILY_TELETYPE : wxFONTFAMILY_DEFAULT,
-                        stylebits & STYLE_ITALIC ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
-                        stylebits & STYLE_BOLD ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
-                        (stylebits & STYLE_UNDERLINE) != 0,
-                        stylebits & STYLE_FIXED ? sys->defaultfixedfont : sys->defaultfont);
-            if (stylebits & STYLE_STRIKETHRU) font.SetStrikethrough(true);
+            wxFont font(
+                textsize - (while_printing || scaledviewingmode),
+                (stylebits & STYLE_FIXED) != 0 ? wxFONTFAMILY_TELETYPE : wxFONTFAMILY_DEFAULT,
+                (stylebits & STYLE_ITALIC) != 0 ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
+                (stylebits & STYLE_BOLD) != 0 ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL,
+                (stylebits & STYLE_UNDERLINE) != 0,
+                (stylebits & STYLE_FIXED) != 0 ? sys->defaultfixedfont : sys->defaultfont);
+            if ((stylebits & STYLE_STRIKETHRU) != 0) font.SetStrikethrough(true);
             dc.SetFont(font);
             lasttextsize = textsize;
             laststylebits = stylebits;
@@ -810,7 +811,7 @@ struct Document {
     }
 
     wxString Key(int uk, int k, bool alt, bool ctrl, bool shift, bool &unprocessed) {
-        if (uk == WXK_NONE || k < ' ' && k || k == WXK_DELETE) {
+        if (uk == WXK_NONE || k < ' ' && k != 0 || k == WXK_DELETE) {
             switch (k) {
                 case WXK_BACK:  // no menu shortcut available in wxwidgets
                     if (!ctrl) return Action(A_BACKSPACE);
@@ -1327,7 +1328,7 @@ struct Document {
         switch (action) {
             case A_BACKSPACE:
                 if (selected.Thin()) {
-                    if (selected.xs)
+                    if (selected.xs != 0)
                         DelRowCol(selected.y, 0, selected.grid->ys, 1, -1, selected.y - 1, 0, -1);
                     else
                         DelRowCol(selected.x, 0, selected.grid->xs, 1, selected.x - 1, -1, -1, 0);
@@ -1345,7 +1346,7 @@ struct Document {
 
             case A_DELETE:
                 if (selected.Thin()) {
-                    if (selected.xs)
+                    if (selected.xs != 0)
                         DelRowCol(selected.y, selected.grid->ys, selected.grid->ys, 0, -1,
                                   selected.y, 0, -1);
                     else
@@ -2122,7 +2123,7 @@ struct Document {
         if (fileinputstream.IsOk()) {
             char buffer[4];
             fileinputstream.Read(buffer, 4);
-            if (!strncmp(buffer, "TSFF", 4)) {
+            if (strncmp(buffer, "TSFF", 4) == 0) {
                 ThreeChoiceDialog askuser(
                     sys->frame, filename,
                     _("It seems that you are about to paste or drop a TreeSheets file. "

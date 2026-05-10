@@ -92,7 +92,7 @@ struct Cell {
         if (!tiny) sys->ImageSize(text.DisplayImage(), ixs, iys);
         int leftoffset = 0;
         if (!HasText()) {
-            if (!ixs || !iys) {
+            if (ixs == 0 || iys == 0) {
                 sx = sy = tiny ? 1 : dc.GetCharHeight();
             } else {
                 leftoffset = dc.GetCharHeight();
@@ -100,7 +100,7 @@ struct Cell {
         } else {
             text.TextSize(dc, sx, sy, tiny, leftoffset, maxcolwidth);
         }
-        if (ixs && iys) {
+        if (ixs != 0 && iys != 0) {
             sx += ixs + 2;
             sy = max(iys + 2, sy);
         }
@@ -221,7 +221,7 @@ struct Cell {
         return oy + (parent != nullptr ? parent->GetY(doc) : doc->hierarchysize);
     }
     int Depth() const { return parent != nullptr ? parent->Depth() + 1 : 0; }
-    Cell *Parent(int i) { return i ? parent->Parent(i - 1) : this; }
+    Cell *Parent(int i) { return i != 0 ? parent->Parent(i - 1) : this; }
     Cell *SetParent(Cell *g) {
         parent = g;
         return this;
@@ -234,11 +234,11 @@ struct Cell {
                     Cell *root) {
         wxString str = text.ToText(indent, sel, format);
         if ((format == A_EXPHTMLT || format == A_EXPHTMLTI || format == A_EXPHTMLTE) &&
-            (text.stylebits & (STYLE_UNDERLINE | STYLE_STRIKETHRU)) && this != root &&
+            (text.stylebits & (STYLE_UNDERLINE | STYLE_STRIKETHRU)) != 0 && this != root &&
             !str.IsEmpty()) {
             wxString spanstyle = "text-decoration:";
-            spanstyle += (text.stylebits & STYLE_UNDERLINE) ? " underline" : "";
-            spanstyle += (text.stylebits & STYLE_STRIKETHRU) ? " line-through" : "";
+            spanstyle += (text.stylebits & STYLE_UNDERLINE) != 0 ? " underline" : "";
+            spanstyle += (text.stylebits & STYLE_STRIKETHRU) != 0 ? " line-through" : "";
             spanstyle += ";";
             str.Prepend("<span style=\"" + spanstyle + "\">");
             str.Append("</span>");
@@ -253,12 +253,12 @@ struct Cell {
         if (grid) str.Append(grid->ToText(indent, sel, format, doc, inheritstyle, root));
         if (format == A_EXPXML) {
             str.Prepend(">");
-            if (text.relsize) {
+            if (text.relsize != 0) {
                 str.Prepend("\"");
                 str.Prepend(wxString() << -text.relsize);
                 str.Prepend(" relsize=\"");
             }
-            if (text.stylebits) {
+            if (text.stylebits != 0) {
                 str.Prepend("\"");
                 str.Prepend(wxString() << text.stylebits);
                 str.Prepend(" stylebits=\"");
@@ -286,17 +286,18 @@ struct Cell {
             wxString style;
             if (!inheritstyle || parent == nullptr ||
                 (text.stylebits & STYLE_BOLD) != (parent->text.stylebits & STYLE_BOLD))
-                style +=
-                    text.stylebits & STYLE_BOLD ? "font-weight: bold;" : "font-weight: normal;";
+                style += (text.stylebits & STYLE_BOLD) != 0 ? "font-weight: bold;"
+                                                            : "font-weight: normal;";
             if (!inheritstyle || parent == nullptr ||
                 (text.stylebits & STYLE_ITALIC) != (parent->text.stylebits & STYLE_ITALIC))
-                style +=
-                    text.stylebits & STYLE_ITALIC ? "font-style: italic;" : "font-style: normal;";
+                style += (text.stylebits & STYLE_ITALIC) != 0 ? "font-style: italic;"
+                                                              : "font-style: normal;";
             if (!inheritstyle || parent == nullptr ||
                 (text.stylebits & STYLE_FIXED) != (parent->text.stylebits & STYLE_FIXED)) {
                 style += "font-family: '";
-                style += text.stylebits & STYLE_FIXED ? sys->defaultfixedfont + "', monospace;"
-                                                      : sys->defaultfont + "', sans-serif;";
+                style += (text.stylebits & STYLE_FIXED) != 0
+                             ? sys->defaultfixedfont + "', monospace;"
+                             : sys->defaultfont + "', sans-serif;";
             }
             if (!inheritstyle ||
                 cellcolor != (parent != nullptr ? parent->cellcolor : doc->Background()))
@@ -408,7 +409,7 @@ struct Cell {
         if (sys->versionlastloaded >= 15) c->drawstyle = dis.Read8();
         if (sys->versionlastloaded >= 25) c->note = dis.ReadString();
         int ts = dis.Read8();
-        if (ts & TS_SELECTION_MASK) {
+        if ((ts & TS_SELECTION_MASK) != 0) {
             ics = c;
             ts &= ~TS_SELECTION_MASK;
         }
