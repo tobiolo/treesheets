@@ -418,7 +418,7 @@ struct System {
                     if (!file.ReadAll(&content)) goto problem;
                     const auto &lines = wxStringTokenize(content, LINE_SEPARATOR);
 
-                    if (lines.size()) switch (action) {
+                    if (!lines.empty()) switch (action) {
                             case A_IMPTXTI: {
                                 FillRows(InitDB(1)->grid.get(), lines, CountCol(lines[0]), 0, 0);
                             }; break;

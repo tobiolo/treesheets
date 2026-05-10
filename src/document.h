@@ -904,7 +904,7 @@ struct Document {
                 return _("Evaluation finished.");
 
             case wxID_UNDO:
-                if (undolist.size()) {
+                if (!undolist.empty()) {
                     Undo(undolist, redolist);
                     return wxEmptyString;
                 } else {
@@ -912,7 +912,7 @@ struct Document {
                 }
 
             case wxID_REDO:
-                if (redolist.size()) {
+                if (!redolist.empty()) {
                     Undo(redolist, undolist, true);
                     return wxEmptyString;
                 } else {
@@ -2366,7 +2366,7 @@ struct Document {
     void RecreateTagMenu(wxMenu &menu) {
         int i = A_TAGSET;
         for (auto &[tag, color] : tags) { menu.Append(i++, tag); }
-        if (tags.size()) menu.AppendSeparator();
+        if (!tags.empty()) menu.AppendSeparator();
         menu.Append(A_TAGADD, _("&Add Cell Text as Tag"));
         menu.Append(A_TAGREMOVE, _("&Remove Cell Text from Tags"));
     }
