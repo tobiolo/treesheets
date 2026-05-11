@@ -2342,7 +2342,9 @@ struct Document {
                   bool redo = false) {
         auto beforesel = selected;
         vector<Selection> beforepath;
-        if (beforesel.grid) CreatePath(beforesel.grid->cell, beforepath);
+        if (beforesel.grid) {
+            CreatePath(beforesel.grid->cell, beforepath);
+        }
 
         auto ui = std::move(fromlist.back());
         fromlist.pop_back();
