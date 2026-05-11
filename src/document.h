@@ -2286,7 +2286,7 @@ struct Document {
         ui->estimated_size = c->EstimatedMemoryUse();
         ui->sel = selected;
         ui->cloned_from = (uintptr_t)c;
-        if (undolist.size()) {
+        if (!undolist.empty()) {
             ui->generation = undolist.back()->generation + (newgeneration ? 1 : 0);
         }
         CreatePath(c, ui->path);
