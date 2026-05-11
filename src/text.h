@@ -184,7 +184,7 @@ struct Text {
     int Render(Document *doc, int bx, int by, int depth, wxDC &dc, int &leftoffset,
                int maxcolwidth) {
         auto ixs = 0, iys = 0;
-        if (cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
+        if (!cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
 
         if (ixs != 0 && iys != 0) {
             sys->ImageDraw(DisplayImage(), dc, bx + 1 + g_margin_extra,
