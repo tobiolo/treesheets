@@ -176,7 +176,7 @@ struct System {
     static wxString BakName(const wxString &filename) { return ExtName(filename, ".bak"); }
     static wxString TmpName(const wxString &filename) { return ExtName(filename, ".tmp"); }
     static wxString NewName(const wxString &filename) { return filename + ".new"; }
-    static wxString ExtName(const wxString &filename, auto ext) {
+    static wxString ExtName(const wxString &filename, const wxString &ext) {
         wxFileName fn(filename);
         return fn.GetPathWithSep() + fn.GetName() + ext;
     }
@@ -461,7 +461,7 @@ struct System {
         return _("File load error.");
     }
 
-    static int GetXMLNodes(wxXmlNode *node, auto &nodes,
+    static int GetXMLNodes(wxXmlNode *node, vector<wxXmlNode *> &nodes,
                            vector<wxXmlAttribute *> *const attributes = nullptr,
                            bool attributestoo = false) {
         for (auto *child = node->GetChildren(); child != nullptr; child = child->GetNext()) {
@@ -542,7 +542,7 @@ struct System {
             node->GetAttribute("outerspacing", wxString() << g_usergridouterspacing_default));
     }
 
-    static int CountCol(const auto &s) {
+    static int CountCol(const wxString &s) {
         auto col = 0;
         while (s[col] == ' ' || s[col] == '\t') { col++; }
         return col;
@@ -570,7 +570,7 @@ struct System {
         return static_cast<int>(as.size());
     }
 
-    int AddImageToList(double scale, auto &&data, char type) {
+    int AddImageToList(double scale, vector<uint8_t> &&data, char type) {
         auto hash = CalculateHash(data);
         loopv(i, imagelist) {
             if (imagelist[i]->hash == hash && imagelist[i]->type == type) { return i; }

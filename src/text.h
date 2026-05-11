@@ -128,7 +128,7 @@ struct Text {
         return t.Mid(startpos, breakpos - startpos);
     }
 
-    wxString GetLine(auto &i, auto maxcolwidth) const {
+    wxString GetLine(int &i, int maxcolwidth) const {
         auto l = static_cast<int>(t.Len());
 
         if (i >= l) { return wxEmptyString; }
@@ -389,7 +389,7 @@ struct Text {
         }
     }
 
-    auto Insert(Document *doc, const auto &ins, Selection &s, bool keeprelsize) {
+    auto Insert(Document *doc, const wxString &ins, Selection &s, bool keeprelsize) {
         auto prevl = t.Len();
         if (!s.TextEdit()) { Clear(doc, s); }
         RangeSelRemove(s);
@@ -505,7 +505,7 @@ struct Text {
         lastedit = wxDateTime(time);
     }
 
-    auto Eval(auto &ev) const {
+    auto Eval(Evaluator &ev) const {
         switch (cell->celltype) {
             // Load variable's data.
             case CT_VARU: {

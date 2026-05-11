@@ -13,7 +13,7 @@ struct Image {
     double display_scale;
     int pixel_width {0};
 
-    Image(auto _hash, auto _sc, auto &&_data, auto _type)
+    Image(uint64_t _hash, double _sc, vector<uint8_t> &&_data, char _type)
         : hash(_hash), display_scale(_sc), data(std::move(_data)), type(_type) {}
 
     void ImageRescale(double scale) {

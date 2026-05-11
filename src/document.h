@@ -2250,7 +2250,7 @@ struct Document {
         }
     }
 
-    static void CreatePath(Cell *c, auto &path) {
+    static void CreatePath(Cell *c, vector<Selection> &path) {
         path.clear();
         while (c->parent != nullptr) {
             const Selection &s = c->parent->grid->FindCell(c);
@@ -2260,7 +2260,7 @@ struct Document {
         }
     }
 
-    Cell *WalkPath(auto &path) {
+    Cell *WalkPath(vector<Selection> &path) {
         Cell *c = root.get();
         loopvrev(i, path) {
             Selection &s = path[i];
@@ -2387,7 +2387,7 @@ struct Document {
         selected.grid->ColorChange(this, which, col, selected);
     }
 
-    static void SetImageBM(Cell *c, auto &&data, char type, double scale) {
+    static void SetImageBM(Cell *c, vector<uint8_t> &&data, char type, double scale) {
         c->text.image = sys->lastimage =
             sys->imagelist[sys->AddImageToList(scale, std::move(data), type)].get();
     }

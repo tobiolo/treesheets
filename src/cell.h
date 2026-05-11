@@ -397,7 +397,7 @@ struct Cell {
         if (!grid) {
             grid = make_shared<Grid>(x, y, this);
             grid->InitCells(this);
-            if (parent != nullptr) { grid->CloneStyleFrom(parent->grid); }
+            if (parent != nullptr) { grid->CloneStyleFrom(parent->grid.get()); }
         }
         return grid.get();
     }
@@ -437,7 +437,7 @@ struct Cell {
         }
     }
 
-    unique_ptr<Cell> Eval(auto &ev) const {
+    unique_ptr<Cell> Eval(Evaluator &ev) const {
         // Evaluates the internal grid if it exists, otherwise, evaluate the text.
         return grid ? grid->Eval(ev) : text.Eval(ev);
     }
@@ -570,7 +570,7 @@ struct Cell {
                                  : sys->defaultmaxcolwidth;
     }
 
-    void CollectCells(auto &itercells, bool recurse = true) {
+    void CollectCells(vector<Cell *> &itercells, bool recurse = true) {
         itercells.push_back(this);
         if (grid && recurse) { grid->CollectCells(itercells); }
     }

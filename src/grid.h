@@ -78,7 +78,7 @@ struct Grid {
     void InitCells(Cell *clonestylefrom = nullptr) {
         foreachcell(c) c = make_unique<Cell>(cell, clonestylefrom);
     }
-    void CloneStyleFrom(auto o) {
+    void CloneStyleFrom(Grid *o) {
         bordercolor = o->bordercolor;
         // TODO: what others?
     }
@@ -748,7 +748,7 @@ struct Grid {
         ys = cy;  // throws memory away, but doesn't matter
     }
 
-    unique_ptr<Cell> EvalGridCell(auto &ev, unique_ptr<Cell> &c, unique_ptr<Cell> acc, int &x,
+    unique_ptr<Cell> EvalGridCell(Evaluator &ev, unique_ptr<Cell> &c, unique_ptr<Cell> acc, int &x,
                                   int &y, bool &alldata, bool vert) {
         int ct = c->celltype;  // Type of subcell being evaluated
         // Update alldata condition (variable reads act like data)
@@ -824,7 +824,7 @@ struct Grid {
         }
     }
 
-    unique_ptr<Cell> Eval(auto &ev) {
+    unique_ptr<Cell> Eval(Evaluator &ev) {
         unique_ptr<Cell> acc;  // Actual/Accumulating data temporary
         bool alldata = true;   // Is the grid all data?
         // Do left to right processing
@@ -951,7 +951,7 @@ struct Grid {
         return FindCell(selcell);
     }
 
-    void ReParent(auto p) {
+    void ReParent(Cell *p) {
         cell = p;
         foreachcell(c) c->parent = p;
     }
@@ -1113,8 +1113,8 @@ struct Grid {
         }
     }
 
-    void CollectCells(auto &itercells) { foreachcell(c) c->CollectCells(itercells); }
-    void CollectCellsSel(auto &itercells, const Selection &sel, bool recurse) {
+    void CollectCells(vector<Cell *> &itercells) { foreachcell(c) c->CollectCells(itercells); }
+    void CollectCellsSel(vector<Cell *> &itercells, const Selection &sel, bool recurse) {
         foreachcellinsel(c, sel) c->CollectCells(itercells, recurse);
     }
 
