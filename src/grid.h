@@ -780,7 +780,7 @@ struct Grid {
                 return acc;
             // Operation
             case CT_CODE: {
-                auto op = ev.FindOp(c->text.t);
+                auto *op = ev.FindOp(c->text.t);
                 switch (op != nullptr ? strlen(op->args) : -1) {
                     default: return nullptr;
                     case 0: return treesheets::Evaluator::Execute(op);
@@ -853,7 +853,7 @@ struct Grid {
     void Split(vector<shared_ptr<Grid>> &gs, bool vert) {
         loop(i, vert ? xs : ys) gs.push_back(make_unique<Grid>(vert ? 1 : xs, vert ? ys : 1));
         foreachcell(c) {
-            auto g = gs[vert ? x : y].get();
+            auto *g = gs[vert ? x : y].get();
             c->SetParent(g->cell);
             g->cells[vert ? y : x] = std::move(c);
         }
@@ -906,7 +906,7 @@ struct Grid {
 
     Cell *FindExact(const wxString &s) {
         foreachcell(c) {
-            auto f = c->FindExact(s);
+            auto *f = c->FindExact(s);
             if (f != nullptr) { return f; }
         }
         return nullptr;
@@ -917,10 +917,10 @@ struct Grid {
         bool done = false;
     lookformore:
         foreachcell(c) if (c->grid && !done) {
-            auto f = c->grid->FindExact(tag);
+            auto *f = c->grid->FindExact(tag);
             if (f != nullptr) {
                 // add all parent tags as extra hierarchy inside the cell
-                for (auto p = f->parent; p != cell; p = p->parent) {
+                for (auto *p = f->parent; p != cell; p = p->parent) {
                     // Special case check: if parents have same name, this would cause infinite
                     // swapping.
                     if (p->text.t == tag) { done = true; }
@@ -935,7 +935,7 @@ struct Grid {
                     f->grid->cells[0] = std::move(t);
                 }
                 // remove cell from parent, recursively if parent becomes empty
-                for (auto r = f; r != nullptr && r != cell;
+                for (auto *r = f; r != nullptr && r != cell;
                      r = r->parent->grid->DeleteTagParent(r, cell, f)) {};
                 // merge newly constructed hierarchy at this level
                 if (!cells[0]) {

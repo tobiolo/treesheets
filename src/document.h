@@ -240,7 +240,7 @@ struct Document {
         canvas->CalcUnscrolledPosition(mx, my, &x, &y);
         prev = hover;
         hover = Selection();
-        auto drawroot = WalkPath(drawpath);
+        auto *drawroot = WalkPath(drawpath);
         if (drawroot->grid) {
             drawroot->grid->FindXY(
                 this, x / currentviewscale - centerx / currentviewscale - hierarchysize,
@@ -270,7 +270,7 @@ struct Document {
 
     void ScrollOrZoom(bool zoomiftiny = false) {
         if (!selected.grid) { return; }
-        auto drawroot = WalkPath(drawpath);
+        auto *drawroot = WalkPath(drawpath);
         // If we jumped to a cell which may be insided a folded cell, we have to unfold it
         // because the rest of the code doesn't deal with a selection that is invisible :)
         for (auto *cg = selected.grid->cell; cg != nullptr; cg = cg->parent) {
@@ -446,7 +446,7 @@ struct Document {
             auto *c = selected.GetCell();
             CreatePath(c != nullptr && c->grid ? c : selected.grid->cell, drawpath);
         } else if (dir < 0) {
-            auto drawroot = WalkPath(drawpath);
+            auto *drawroot = WalkPath(drawpath);
             if (drawroot->grid && drawroot->grid->folded) {
                 SetSelect(drawroot->parent->grid->FindCell(drawroot));
             }
@@ -458,7 +458,7 @@ struct Document {
 
     void Zoom(int dir, bool fromroot = false) {
         if (!ZoomSetDrawPath(dir, fromroot)) { return; }
-        auto drawroot = WalkPath(drawpath);
+        auto *drawroot = WalkPath(drawpath);
         if (selected.GetCell() == drawroot && drawroot->grid) {
             // We can't have the drawroot selected, so we must move the selection to the children.
             SetSelect(Selection(drawroot->grid, 0, 0, drawroot->grid->xs, drawroot->grid->ys));
@@ -1135,8 +1135,8 @@ struct Document {
                 wxPrintDialogData printDialogData(printData);
                 auto *preview =
                     new wxPrintPreview(new Printout(this), new Printout(this), &printDialogData);
-                auto pframe = new wxPreviewFrame(preview, sys->frame, _("Print Preview"),
-                                                 wxPoint(100, 100), wxSize(600, 650));
+                auto *pframe = new wxPreviewFrame(preview, sys->frame, _("Print Preview"),
+                                                  wxPoint(100, 100), wxSize(600, 650));
                 pframe->Centre(wxBOTH);
                 pframe->Initialize();
                 pframe->Show(true);
@@ -1774,7 +1774,7 @@ struct Document {
                 CollectCellsSel(false);
                 vector<Cell *> outer;
                 outer.insert(outer.end(), itercells.begin(), itercells.end());
-                for (auto o : outer) {
+                for (auto *o : outer) {
                     if (o->grid) {
                         loopcellsin(o, c) if (_i != 0) {
                             c->text.relsize = g_deftextsize - g_mintextsize() - c->Depth();
@@ -1824,7 +1824,7 @@ struct Document {
                         _("Image Resize"), 50, 5, 400, sys->frame);
                 }
                 if (v < 0) { return wxEmptyString; }
-                for (auto image : imagestomanipulate) {
+                for (auto *image : imagestomanipulate) {
                     if (action == A_IMAGESCW) {
                         int pw = image->pixel_width;
                         if (pw != 0)
@@ -1853,7 +1853,7 @@ struct Document {
 
             case A_IMAGESVA: {
                 set<Image *> imagestosave;
-                loopallcellssel(c, true) if (auto image = c->text.image)
+                loopallcellssel(c, true) if (auto *image = c->text.image)
                     imagestosave.insert(image);
                 if (imagestosave.empty()) { return _("There are no images in the selection."); }
                 wxString filename = ::wxFileSelector(
@@ -1862,7 +1862,7 @@ struct Document {
                     wxFD_SAVE | wxFD_OVERWRITE_PROMPT | wxFD_CHANGE_DIR);
                 if (filename.empty()) { return _("Save cancelled."); }
                 auto i = 0;
-                for (auto image : imagestosave) {
+                for (auto *image : imagestosave) {
                     wxFileName fn(filename);
                     wxString finalfilename = fn.GetPathWithSep() + fn.GetName() +
                                              (i == 0 ? wxString() : wxString::Format("%d", i)) +
@@ -1884,7 +1884,7 @@ struct Document {
             case A_SAVE_AS_PNG: {
                 wxString returnmessage = _("No image found to convert");
                 loopallcellssel(c, true) {
-                    auto image = c->text.image;
+                    auto *image = c->text.image;
                     if (action == A_SAVE_AS_JPEG && image != nullptr && image->type == 'I') {
                         auto transferimage = ConvertBufferToWxImage(image->data, wxBITMAP_TYPE_PNG);
                         image->data = ConvertWxImageToBuffer(transferimage, wxBITMAP_TYPE_JPEG);
@@ -2028,9 +2028,9 @@ struct Document {
                 }
                 bool t1 = false;
                 bool t2 = false;
-                auto link = root->FindLink(selected, cell, nullptr, t1, t2,
-                                           action == A_LINK || action == A_LINKIMG,
-                                           action == A_LINKIMG || action == A_LINKIMGREV);
+                auto *link = root->FindLink(selected, cell, nullptr, t1, t2,
+                                            action == A_LINK || action == A_LINKIMG,
+                                            action == A_LINKIMG || action == A_LINKIMGREV);
                 if (link == nullptr || link->parent == nullptr) {
                     return _("No matching cell found!");
                 }
@@ -2430,7 +2430,7 @@ struct Document {
 
     void RecreateTagMenu(wxMenu &menu) const {
         int i = A_TAGSET;
-        for (auto &[tag, color] : tags) { menu.Append(i++, tag); }
+        for (const auto &[tag, color] : tags) { menu.Append(i++, tag); }
         if (!tags.empty()) { menu.AppendSeparator(); }
         menu.Append(A_TAGADD, _("&Add Cell Text as Tag"));
         menu.Append(A_TAGREMOVE, _("&Remove Cell Text from Tags"));
@@ -2482,7 +2482,7 @@ struct Document {
         searchfilter = false;
         paintscrolltoselection = true;
         CollectCells(root.get());
-        for (auto c : itercells) {
+        for (auto *c : itercells) {
             c->text.filtered = !c->text.lastedit.IsBetween(rangebegin, rangeend);
         }
         root->ResetChildren();
@@ -2507,11 +2507,11 @@ struct Document {
     void ExportAllImages(const wxString &filename, Cell *exportroot) {
         std::set<Image *> exportimages;
         CollectCells(exportroot);
-        for (auto c : itercells)
+        for (auto *c : itercells)
             if (c->text.image != nullptr) exportimages.insert(c->text.image);
         wxFileName fn(filename);
         auto directory = fn.GetPathWithSep();
-        for (auto image : exportimages)
+        for (auto *image : exportimages)
             if (!image->ExportToDirectory(directory)) break;
     }
 };

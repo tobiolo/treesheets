@@ -107,7 +107,7 @@ struct System {
 
     Document *NewTabDoc(bool append = false, int insert_at = -1) const {
         auto doc = make_unique<Document>();
-        auto canvas = frame->NewTab(std::move(doc), append, insert_at);
+        auto *canvas = frame->NewTab(std::move(doc), append, insert_at);
         return canvas->doc.get();
     }
 
@@ -373,7 +373,7 @@ struct System {
         cfg->Write("lastopenfile", frame->GetCurrentTab()->doc->filename);
         auto namedfiles = 0;
         for(auto i: frame->notebook->GetPagesInDisplayOrder(frame->notebook->GetActiveTabCtrl())) {
-            auto canvas = static_cast<TSCanvas *>(frame->notebook->GetPage(i));
+            auto *canvas = static_cast<TSCanvas *>(frame->notebook->GetPage(i));
             if (!canvas->doc->filename.IsEmpty()) {
                 cfg->Write(wxString::Format("lastopenfile_%d", namedfiles), canvas->doc->filename);
                 namedfiles++;
@@ -504,7 +504,7 @@ struct System {
             FillXML(c, nodes[0], attributestoo);
         } else {
             auto allrow = node->GetName() == "grid";
-            for (auto node : nodes)
+            for (auto *node : nodes)
                 if (node->GetName() != "row") {
                     allrow = false;
                     break;

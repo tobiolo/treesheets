@@ -735,7 +735,7 @@ struct TSFrame : wxFrame {
 
         RefreshToolBar();
 
-        auto sb = CreateStatusBar(5);
+        auto *sb = CreateStatusBar(5);
         SetStatusBarPane(0);
         SetDPIAwareStatusWidths();
         sb->Show(sys->showstatusbar);
@@ -837,8 +837,8 @@ struct TSFrame : wxFrame {
                 name, wxITEM_NORMAL);
         };
 
-        auto filetb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                       wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *filetb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                        wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         AddToolbarIcon(filetb, _("New (CTRL+n)"), wxID_NEW, iconpath, "filenew.svg",
                        "filenew_dark.svg");
         AddToolbarIcon(filetb, _("Open (CTRL+o)"), wxID_OPEN, iconpath, "fileopen.svg",
@@ -849,8 +849,8 @@ struct TSFrame : wxFrame {
                        "filesaveas_dark.svg");
         filetb->Realize();
 
-        auto edittb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                       wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *edittb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                        wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         AddToolbarIcon(edittb, _("Undo (CTRL+z)"), wxID_UNDO, iconpath, "undo.svg",
                        "undo_dark.svg");
         AddToolbarIcon(edittb, _("Copy (CTRL+c)"), wxID_COPY, iconpath, "editcopy.svg",
@@ -859,24 +859,24 @@ struct TSFrame : wxFrame {
                        "editpaste_dark.svg");
         edittb->Realize();
 
-        auto zoomtb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                       wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *zoomtb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                        wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         AddToolbarIcon(zoomtb, _("Zoom In (CTRL+mousewheel)"), A_ZOOMIN, iconpath, "zoomin.svg",
                        "zoomin_dark.svg");
         AddToolbarIcon(zoomtb, _("Zoom Out (CTRL+mousewheel)"), A_ZOOMOUT, iconpath, "zoomout.svg",
                        "zoomout_dark.svg");
         zoomtb->Realize();
 
-        auto celltb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                       wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *celltb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                        wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         AddToolbarIcon(celltb, _("New Grid (INS)"), A_ENTERGRID, iconpath, "newgrid.svg",
                        "newgrid_dark.svg");
         AddToolbarIcon(celltb, _("Add Image"), A_IMAGE, iconpath, "image.svg", "image_dark.svg");
         AddToolbarIcon(celltb, _("Run"), wxID_EXECUTE, iconpath, "run.svg", "run_dark.svg");
         celltb->Realize();
 
-        auto findtb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                       wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *findtb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                        wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         findtb->AddControl(new wxStaticText(findtb, wxID_ANY, _("Search ")));
         findtb->AddControl(filter = new wxTextCtrl(findtb, A_SEARCH, "", wxDefaultPosition,
                                                    FromDIP(wxSize(80, 22)),
@@ -887,8 +887,8 @@ struct TSFrame : wxFrame {
                        "search_dark.svg");
         findtb->Realize();
 
-        auto repltb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                       wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *repltb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                        wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         repltb->AddControl(new wxStaticText(repltb, wxID_ANY, _("Replace ")));
         repltb->AddControl(replaces = new wxTextCtrl(repltb, A_REPLACE, "", wxDefaultPosition,
                                                      FromDIP(wxSize(80, 22)),
@@ -909,8 +909,8 @@ struct TSFrame : wxFrame {
             return defaultindex;
         };
 
-        auto cellcolortb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                            wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *cellcolortb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                             wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         cellcolortb->AddControl(new wxStaticText(cellcolortb, wxID_ANY, _("Cell ")));
 
         cellcolordropdown =
@@ -918,24 +918,24 @@ struct TSFrame : wxFrame {
         cellcolortb->AddControl(cellcolordropdown);
         cellcolortb->Realize();
 
-        auto textcolortb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                            wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *textcolortb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                             wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         textcolortb->AddControl(new wxStaticText(textcolortb, wxID_ANY, _("Text ")));
         textcolordropdown =
             new ColorDropdown(textcolortb, A_TEXTCOLOR, GetColorIndex(sys->lasttextcolor, 2));
         textcolortb->AddControl(textcolordropdown);
         textcolortb->Realize();
 
-        auto bordercolortb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                              wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *bordercolortb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                               wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         bordercolortb->AddControl(new wxStaticText(bordercolortb, wxID_ANY, _("Border ")));
         bordercolordropdown =
             new ColorDropdown(bordercolortb, A_BORDCOLOR, GetColorIndex(sys->lastbordcolor, 7));
         bordercolortb->AddControl(bordercolordropdown);
         bordercolortb->Realize();
 
-        auto imagetb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                        wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
+        auto *imagetb = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+                                         wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_PLAIN_BACKGROUND);
         imagetb->AddControl(new wxStaticText(imagetb, wxID_ANY, _("Image ")));
         imagedropdown = new ImageDropdown(imagetb, imagepath);
         imagetb->AddControl(imagedropdown);
@@ -1031,7 +1031,7 @@ struct TSFrame : wxFrame {
                                  .LeftDockable(false)
                                  .RightDockable(false)
                                  .Gripper(true));
-        auto artprovider = aui.GetArtProvider();
+        auto *artprovider = aui.GetArtProvider();
         artprovider->SetColour(wxAUI_DOCKART_BACKGROUND_COLOUR, wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
         artprovider->SetMetric(wxAUI_DOCKART_PANE_BORDER_SIZE, 0);
     }
@@ -1131,7 +1131,7 @@ struct TSFrame : wxFrame {
             case A_SHOWSBAR:
                 if (!IsFullScreen()) {
                     sys->cfg->Write("showstatusbar", sys->showstatusbar = ce.IsChecked());
-                    auto wsb = GetStatusBar();
+                    auto *wsb = GetStatusBar();
                     wsb->Show(sys->showstatusbar);
                     SendSizeEvent();
                     Refresh();
@@ -1284,14 +1284,14 @@ struct TSFrame : wxFrame {
     }
 
     void OnTabChange(wxAuiNotebookEvent &nbe) {
-        auto canvas = static_cast<TSCanvas *>(notebook->GetPage(nbe.GetSelection()));
+        auto *canvas = static_cast<TSCanvas *>(notebook->GetPage(nbe.GetSelection()));
         ClearStatus();
         treesheets::System::TabChange(canvas->doc.get());
         nbe.Skip();
     }
 
     void OnTabClose(wxAuiNotebookEvent &nbe) {
-        auto canvas = static_cast<TSCanvas *>(notebook->GetPage(nbe.GetSelection()));
+        auto *canvas = static_cast<TSCanvas *>(notebook->GetPage(nbe.GetSelection()));
         if (notebook->GetPageCount() <= 1) {
             nbe.Veto();
             Close();
@@ -1380,7 +1380,7 @@ struct TSFrame : wxFrame {
         if (ce.CanVeto()) {
             // ask to save/discard all files before closing any
             loop(i, notebook->GetPageCount()) {
-                auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
+                auto *canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 if (canvas->doc->modified) {
                     notebook->SetSelection(i);
                     if (canvas->doc->CheckForChanges()) {
@@ -1527,7 +1527,7 @@ struct TSFrame : wxFrame {
     TSCanvas *GetTabByFileName(const wxString &filename) const {
         if (notebook != nullptr) {
             loop(i, notebook->GetPageCount()) {
-                auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
+                auto *canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 if (canvas->doc->filename == filename) {
                     notebook->SetSelection(i);
                     return canvas;
@@ -1625,7 +1625,7 @@ struct TSFrame : wxFrame {
     void TabsReset() const {
         if (notebook != nullptr) {
             loop(i, notebook->GetPageCount()) {
-                auto canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
+                auto *canvas = static_cast<TSCanvas *>(notebook->GetPage(i));
                 canvas->doc->root->ResetChildren();
             }
         }
