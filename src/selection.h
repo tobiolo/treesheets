@@ -1,7 +1,4 @@
-class Selection {
-    bool textedit {false};
-
-    public:
+struct Selection {
     shared_ptr<Grid> grid;
     int x;
     int y;
@@ -11,6 +8,7 @@ class Selection {
     int cursorend {0};
     int firstdx {0};
     int firstdy {0};
+    bool textedit {false};
 
     Selection(shared_ptr<Grid> _grid = nullptr, int _x = 0, int _y = 0, int _xs = 0, int _ys = 0)
         : grid(std::move(_grid)), x(_x), y(_y), xs(_xs), ys(_ys) {}
