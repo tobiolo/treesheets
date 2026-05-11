@@ -117,10 +117,8 @@ struct Grid {
 
     bool Layout(Document *doc, wxReadOnlyDC &dc, int depth, int &sx, int &sy, int startx, int starty,
                 bool forcetiny) {
-        auto *xa = new int[xs];
-        auto *ya = new int[ys];
-        loop(i, xs) xa[i] = 0;
-        loop(i, ys) ya[i] = 0;
+        vector<int> xa(xs, 0);
+        vector<int> ya(ys, 0);
         tinyborder = true;
         foreachcell(c) {
             c->LazyLayout(doc, dc, depth + 1, colwidths[x], forcetiny);
@@ -160,8 +158,6 @@ struct Grid {
                 if (!cell->tiny) { cx += g_margin_extra; }
             }
         }
-        delete[] xa;
-        delete[] ya;
         return tinyborder;
     }
 
