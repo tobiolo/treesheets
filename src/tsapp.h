@@ -178,7 +178,7 @@ struct TSApp : wxApp {
             #endif
         };
         std::filesystem::path relativePath;
-        for (auto path : candidatePaths) {
+        for (const auto &path : candidatePaths) {
             relativePath = path;
             if (std::filesystem::exists(relativePath)) { break; }
         }
@@ -196,7 +196,7 @@ struct TSApp : wxApp {
             #endif
         };
         std::filesystem::path relativePath;
-        for (auto path : candidatePaths) {
+        for (const auto &path : candidatePaths) {
             relativePath = path;
             if (std::filesystem::exists(relativePath)) { break; }
         }
