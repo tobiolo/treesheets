@@ -444,7 +444,7 @@ struct Grid {
     void DeleteCells(int dx, int dy, int nxs, int nys) {
         vector<unique_ptr<Cell>> ncells;
         ncells.reserve((xs + nxs) * (ys + nys));
-        foreachcell(c) if (!(x == dx || y == dy)) { ncells.push_back(std::move(c)); }
+        foreachcell(c) if (x != dx && y != dy) { ncells.push_back(std::move(c)); }
         cells = std::move(ncells);
         xs += nxs;
         ys += nys;
