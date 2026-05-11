@@ -122,7 +122,7 @@ struct Document {
     }
 
     void UpdateFileName(int page = -1) const {
-        sys->frame->SetPageTitle(filename, modified ? (lastmodsinceautosave ? "*" : "+") : "",
+        sys->frame->SetPageTitle(filename, modified ? (lastmodsinceautosave != 0 ? "*" : "+") : "",
                                  page);
     }
 
@@ -817,7 +817,7 @@ struct Document {
     }
 
     void AutoSave(bool minimized, int page) {
-        if (sys->autosave && tmpsavesuccess && !filename.empty() && lastmodsinceautosave &&
+        if (sys->autosave && tmpsavesuccess && !filename.empty() && lastmodsinceautosave != 0 &&
             (lastmodsinceautosave + 60 < wxGetLocalTime() || lastsave + 300 < wxGetLocalTime() ||
              minimized)) {
             tmpsavesuccess = false;

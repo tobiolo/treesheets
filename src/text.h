@@ -184,7 +184,7 @@ struct Text {
     int Render(Document *doc, int bx, int by, int depth, wxDC &dc, int &leftoffset,
                int maxcolwidth) {
         auto ixs = 0, iys = 0;
-        if (cell->tiny == 0) { sys->ImageSize(DisplayImage(), ixs, iys); }
+        if (cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
 
         if (ixs != 0 && iys != 0) {
             sys->ImageDraw(DisplayImage(), dc, bx + 1 + g_margin_extra,
@@ -368,7 +368,7 @@ struct Text {
     }
 
     void SetRelSize(Selection &s) {
-        if (!t.IsEmpty() || !cell->parent) { return; }
+        if (!t.IsEmpty() || cell->parent == nullptr) { return; }
         int dd[] = {0, 1, 1, 0, 0, -1, -1, 0};
         for (auto i = 0; i < 4; i++) {
             auto x = max(0, min(s.x + dd[i * 2], s.grid->xs - 1));

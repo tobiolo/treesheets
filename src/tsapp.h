@@ -170,7 +170,7 @@ struct TSApp : wxApp {
 
     wxString GetDataPath(const wxString &relpath) const {
         std::filesystem::path candidatePaths[] = {
-            std::filesystem::path(exepath.Length()
+            std::filesystem::path(!exepath.IsEmpty()
                                       ? exepath.ToStdString() + "/" + relpath.ToStdString()
                                       : relpath.ToStdString()),
             #ifdef TREESHEETS_DATADIR

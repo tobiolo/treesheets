@@ -46,7 +46,7 @@ struct Cell {
         : parent(_p), celltype(_ct), grid(_g) {
         text.cell = this;
         if (_g != nullptr) { _g->cell = this; }
-        if (_p) {
+        if (_p != nullptr) {
             text.relsize = _p->text.relsize;
             verticaltextandgrid = _p->verticaltextandgrid;
         }
