@@ -224,7 +224,8 @@ struct Grid {
                        (cell->verticaltextandgrid ? cell->tys + 2 : cell->tys / 2) + g_margin_extra;
             // fixme: the 8 is chosen to fit the smallest text size, not very portable
             int srcx = bx + (cell->verticaltextandgrid ? 8 : cell->txs + 4) + g_margin_extra;
-            int destyfirst = -1, destylast = -1;
+            int destyfirst = -1;
+            int destylast = -1;
             dc.SetPen(*wxGREY_PEN);
             foreachcelly(c) if (c->HasContent() && !c->tiny) {
                 int desty = c->ycenteroff + by + c->oy + c->tys / 2 + g_margin_extra;
@@ -460,7 +461,8 @@ struct Grid {
 
     void MultiCellDeleteSub(Document *doc, Selection &sel) {
         foreachcellinsel(c, sel) c->Clear();
-        bool delhoriz = true, delvert = true;
+        bool delhoriz = true;
+        bool delvert = true;
         foreachcell(c) {
             if (c->HasContent()) {
                 if (y >= sel.y && y < sel.y + sel.ys) { delhoriz = false; }
@@ -962,7 +964,8 @@ struct Grid {
         shared_ptr<Grid> keepalive = cell->grid;
         Cell *next = tag->parent;
         unique_ptr<Cell> detached_tag;
-        int found_x = -1, found_y = -1;
+        int found_x = -1;
+        int found_y = -1;
         foreachcell(c) if (c.get() == tag) {
             detached_tag = std::move(c);
             found_x = x;

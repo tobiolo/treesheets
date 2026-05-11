@@ -184,7 +184,8 @@ struct TSCanvas : public wxScrolledCanvas {
     }
 
     void CursorScroll(int dx, int dy) {
-        int x, y;
+        int x;
+        int y;
         GetViewStart(&x, &y);
         x += dx;
         y += dy;

@@ -93,10 +93,14 @@ struct DateTimeRangeDialog : public wxDialog {
     }
     void OnButton(wxCommandEvent &ce) {
         if (ce.GetId() == wxID_OK) {
-            int starthour, startmin, startsec;
+            int starthour;
+            int startmin;
+            int startsec;
             starttime.GetTime(&starthour, &startmin, &startsec);
             wxTimeSpan starttimespan(starthour, startmin, startsec);
-            int endhour, endmin, endsec;
+            int endhour;
+            int endmin;
+            int endsec;
             endtime.GetTime(&endhour, &endmin, &endsec);
             wxTimeSpan endtimespan(endhour, endmin, endsec);
             begin = startdate.GetValue().Add(starttimespan);

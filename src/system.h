@@ -289,7 +289,8 @@ struct System {
                         wxZlibInputStream zis(fis);
                         if (!zis.IsOk()) { return _("Cannot decompress file."); }
                         wxDataInputStream dis(zis);
-                        auto numcells = 0, textbytes = 0;
+                        auto numcells = 0;
+                        auto textbytes = 0;
                         unique_ptr<Cell> root(Cell::LoadWhich(dis, nullptr, numcells, textbytes, ics));
                         if (!root) { return _("File corrupted!"); }
 

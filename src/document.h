@@ -234,7 +234,8 @@ struct Document {
 
     void UpdateHover(wxReadOnlyDC &dc, int mx, int my) {
         ResetFont();
-        int x, y;
+        int x;
+        int y;
         canvas->CalcUnscrolledPosition(mx, my, &x, &y);
         prev = hover;
         hover = Selection();
@@ -249,7 +250,8 @@ struct Document {
     void ScrollIfSelectionOutOfView(const Selection &sel, int sx, int sy, int mx, int my) {
         if (!scaledviewingmode) {
             // required, since sizes of things may have been reset by the last editing operation
-            int canvasw, canvash;
+            int canvasw;
+            int canvash;
             canvas->GetClientSize(&canvasw, &canvash);
             if ((layoutys > canvash || layoutxs > canvasw) && sel.grid) {
                 wxRect r = sel.grid->GetRect(this, sel);
@@ -952,7 +954,8 @@ struct Document {
             case A_EXPIMAGE: return Export("png", "*.png", _("Choose PNG file to write"), action);
             case A_EXPSVG: return Export("svg", "*.svg", _("Choose SVG file to write"), action);
             case A_EXPCSV: {
-                int maxdepth = 0, leaves = 0;
+                int maxdepth = 0;
+                int leaves = 0;
                 currentdrawroot->MaxDepthLeaves(0, maxdepth, leaves);
                 if (maxdepth > 1) {
                     return _(
@@ -1303,7 +1306,8 @@ struct Document {
             case A_FILTEROFF: SetSearchFilter(false); return wxEmptyString;
 
             case A_CUSTKEY: {
-                wxArrayString strs, keys;
+                wxArrayString strs;
+                wxArrayString keys;
                 for (auto &[s, k] : sys->frame->menustrings) {
                     strs.push_back(s);
                     keys.push_back(k);
@@ -1985,7 +1989,8 @@ struct Document {
                 case A_FLATTEN: {
                     if (!ac->grid) { return NoGrid(); }
                     ac->AddUndo(this);
-                    int maxdepth = 0, leaves = 0;
+                    int maxdepth = 0;
+                    int leaves = 0;
                     ac->MaxDepthLeaves(0, maxdepth, leaves);
                     auto g = make_shared<Grid>(maxdepth, leaves);
                     g->InitCells();
@@ -2018,7 +2023,8 @@ struct Document {
                     cell->text.image == nullptr) {
                     return _("No image in this cell.");
                 }
-                bool t1 = false, t2 = false;
+                bool t1 = false;
+                bool t2 = false;
                 auto link = root->FindLink(selected, cell, nullptr, t1, t2,
                                            action == A_LINK || action == A_LINKIMG,
                                            action == A_LINKIMG || action == A_LINKIMGREV);

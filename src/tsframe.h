@@ -93,7 +93,9 @@ struct TSFrame : wxFrame {
                         wxTaskBarIconEventHandler(TSFrame::OnTBIDBLClick), nullptr, this);
         }
 
-        bool showtbar, showsbar, lefttabs;
+        bool showtbar;
+        bool showsbar;
+        bool lefttabs;
 
         sys->cfg->Read("showtbar", &showtbar, true);
         sys->cfg->Read("showsbar", &showsbar, true);
@@ -749,7 +751,10 @@ struct TSFrame : wxFrame {
         const int boundary = 64;
         const int defx = disprect.width - 2 * boundary;
         const int defy = disprect.height - 2 * boundary;
-        int resx, resy, posx, posy;
+        int resx;
+        int resy;
+        int posx;
+        int posy;
         sys->cfg->Read("resx", &resx, defx);
         sys->cfg->Read("resy", &resy, defy);
         sys->cfg->Read("posx", &posx, boundary + disprect.x);
@@ -1044,7 +1049,8 @@ struct TSFrame : wxFrame {
         auto *canvas = GetCurrentTab();
         if ((tc = filter) != nullptr && filter == wxWindow::FindFocus() ||
             (tc = replaces) != nullptr && replaces == wxWindow::FindFocus()) {
-            long from, to;
+            long from;
+            long to;
             tc->GetSelection(&from, &to);
             switch (ce.GetId()) {
                 #if defined(__WXMSW__) || defined(__WXMAC__)

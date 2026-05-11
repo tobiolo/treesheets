@@ -161,7 +161,8 @@ struct Text {
         for (;;) {
             auto curl = GetLine(i, maxcolwidth);
             if (!curl.Len()) { break; }
-            int x, y;
+            int x;
+            int y;
             if (tiny != 0) {
                 x = static_cast<int>(curl.Len());
                 y = 1;
@@ -183,7 +184,8 @@ struct Text {
 
     int Render(Document *doc, int bx, int by, int depth, wxDC &dc, int &leftoffset,
                int maxcolwidth) {
-        auto ixs = 0, iys = 0;
+        auto ixs = 0;
+        auto iys = 0;
         if (!cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
 
         if (ixs != 0 && iys != 0) {
@@ -266,13 +268,15 @@ struct Text {
         bx -= g_margin_extra;
         by -= g_margin_extra;
 
-        auto ixs = 0, iys = 0;
+        auto ixs = 0;
+        auto iys = 0;
         if (!cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
         if (ixs != 0) { ixs += 2; }
 
         doc->PickFont(dc, cell->Depth() - doc->drawpath.size(), relsize, stylebits);
 
-        auto i = 0, linestart = 0;
+        auto i = 0;
+        auto linestart = 0;
         auto line = by / dc.GetCharHeight();
         wxString ls;
 
@@ -282,7 +286,8 @@ struct Text {
         }
 
         for (;;) {
-            auto x = 0, y = 0;
+            auto x = 0;
+            auto y = 0;
             dc.GetTextExtent(ls, &x, &y);  // FIXME: can we do this more intelligently?
             if (x <= bx - ixs + 2 || x == 0) { break; }
             ls.Truncate(ls.Len() - 1);
@@ -293,7 +298,8 @@ struct Text {
     }
 
     void DrawCursor(Document *doc, wxDC &dc, Selection &s, bool full, uint color, int maxcolwidth) {
-        auto ixs = 0, iys = 0;
+        auto ixs = 0;
+        auto iys = 0;
         if (!cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
         if (ixs != 0) { ixs += 2; }
         doc->PickFont(dc, cell->Depth() - doc->drawpath.size(), relsize, stylebits);
@@ -309,7 +315,8 @@ struct Text {
                 if (s.cursor != s.cursorend) {
                     if (s.cursor <= end && s.cursorend >= start) {
                         ls.Truncate(min(s.cursorend, end) - start);
-                        auto x1 = 0, x2 = 0;
+                        auto x1 = 0;
+                        auto x2 = 0;
                         dc.GetTextExtent(ls, &x2, nullptr);
                         ls.Truncate(max(s.cursor, start) - start);
                         dc.GetTextExtent(ls, &x1, nullptr);

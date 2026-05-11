@@ -220,7 +220,8 @@ class Selection {
                                 int maxcolwidth = GetCell()->parent->grid->colwidths[x];
 
                                 int i = 0;
-                                int laststart, lastlen;
+                                int laststart;
+                                int lastlen;
                                 int nextoffset = -1;
                                 for (int l = 0;; l++) {
                                     int start = i;

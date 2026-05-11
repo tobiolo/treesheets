@@ -88,7 +88,8 @@ struct Cell {
     void Layout(Document *doc, wxReadOnlyDC &dc, int depth, int maxcolwidth, bool forcetiny) {
         tiny = text.filtered && !grid || forcetiny ||
                doc->PickFont(dc, depth, text.relsize, text.stylebits);
-        int ixs = 0, iys = 0;
+        int ixs = 0;
+        int iys = 0;
         if (!tiny) { sys->ImageSize(text.DisplayImage(), ixs, iys); }
         int leftoffset = 0;
         if (!HasText()) {
