@@ -30,13 +30,6 @@ typedef unsigned int uint;
             p = nullptr; \
         }                \
     }
-#define DELETEA(a)       \
-    {                    \
-        if (a) {         \
-            delete[] a;  \
-            a = nullptr; \
-        }                \
-    }
 
 #define bound(v, a, s, e)     \
     {                         \
