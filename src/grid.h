@@ -912,7 +912,7 @@ struct Grid {
         return nullptr;
     }
 
-    Selection HierarchySwap(wxString tag) {
+    Selection HierarchySwap(const wxString &tag) {
         Cell *selcell = nullptr;
         bool done = false;
     lookformore:
