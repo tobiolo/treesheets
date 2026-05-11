@@ -726,8 +726,9 @@ struct Grid {
                                 s = s.size() == i + 1 ? wxString(L"") : s.Mid(i + 2);
                                 break;
                             }
-                        } else
+                        } else {
                             word += s[i];
+                        }
                     }
                 } else {
                     int pos = s.Find(sep);
@@ -936,7 +937,7 @@ struct Grid {
                     f->grid->cells[0] = std::move(t);
                 }
                 // remove cell from parent, recursively if parent becomes empty
-                for (auto r = f; r && r != cell; r = r->parent->grid->DeleteTagParent(r, cell, f));
+                for (auto r = f; r && r != cell; r = r->parent->grid->DeleteTagParent(r, cell, f)) {};
                 // merge newly constructed hierarchy at this level
                 if (!cells[0]) {
                     cells[0].reset(f);
@@ -976,10 +977,11 @@ struct Grid {
             if (tag == found) { detached_tag.release(); }
             return next;
         } else {
-            if (ys > 1)
+            if (ys > 1) {
                 DeleteCells(-1, found_y, 0, -1);
-            else
+            } else {
                 DeleteCells(found_x, -1, -1, 0);
+            }
             if (tag == found) { detached_tag.release(); }
             return nullptr;
         }
@@ -1084,7 +1086,9 @@ struct Grid {
     void ResizeColWidths(int dir, const Selection &sel, bool hierarchical) {
         for (int x = sel.x; x < sel.x + sel.xs; x++) {
             colwidths[x] += dir * 5;
-            if (colwidths[x] < 5) colwidths[x] = 5;
+            if (colwidths[x] < 5) {
+                colwidths[x] = 5;
+            }
             loop(y, ys) {
                 if (C(x, y)->grid && hierarchical) {
                     C(x, y)->grid->ResizeColWidths(dir, C(x, y)->grid->SelectAll(), hierarchical);

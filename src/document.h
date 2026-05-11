@@ -153,10 +153,11 @@ struct Document {
             wxBusyCursor wait;
             wxFFileOutputStream fos(savefilename);
             if (!fos.IsOk()) {
-                if (!istempfile)
+                if (!istempfile) {
                     wxMessageBox(
                         _("Error writing TreeSheets file! (try saving under new filename)."),
                         savefilename.wx_str(), wxOK, sys->frame);
+                }
                 return _("Error writing to file.");
             }
 
@@ -278,13 +279,14 @@ struct Document {
                 cg->ResetChildren();
             }
         }
-        for (auto *cg = selected.grid->cell; cg != nullptr; cg = cg->parent)
+        for (auto *cg = selected.grid->cell; cg != nullptr; cg = cg->parent) {
             if (cg == drawroot) {
                 if (zoomiftiny) { ZoomTiny(); }
                 paintscrolltoselection = true;
                 canvas->Refresh();
                 return;
             }
+        }
         Zoom(-100, false);
         if (zoomiftiny) { ZoomTiny(); }
     }
@@ -488,7 +490,9 @@ struct Document {
             }
             return _("nothing to resize");
         } else if (shift) {
-            if (!selected.grid) return NoSel();
+            if (!selected.grid) {
+                return NoSel();
+            }
             selected.grid->cell->AddUndo(this);
             selected.grid->ResetChildren();
             selected.grid->RelSize(-dir, selected, pathscalebias);
@@ -1399,7 +1403,9 @@ struct Document {
             case wxID_COPY:
             case A_COPYWI:
             case A_COPYCT:
-                if (selected.Thin()) return NoThin();
+                if (selected.Thin()) {
+                    return NoThin();
+                }
                 if (selected.TextEdit()) {
                     if (selected.cursor == selected.cursorend) { return _("No text selected."); }
                 }
@@ -2318,10 +2324,11 @@ struct Document {
                        ? true
                        : false;
         }
-        if (selected.grid)
+        if (selected.grid) {
             ScrollOrZoom();
-        else
+        } else {
             canvas->Refresh();
+        }
         UpdateFileName();
     }
 

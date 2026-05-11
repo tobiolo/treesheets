@@ -401,11 +401,12 @@ struct Text {
         }
     }
     void Backspace(Selection &s) {
-        if (!RangeSelRemove(s))
+        if (!RangeSelRemove(s)) {
             if (s.cursor > 0) {
                 t.Remove(--s.cursor, 1);
                 --s.cursorend;
-            };
+            }
+        }
     }
     void DeleteWord(Selection &s) {
         SelectWord(s);

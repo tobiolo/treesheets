@@ -185,13 +185,15 @@ class Selection {
                     if (firstdx < 0) {
                         x += dx;
                         xs += -dx;
-                    } else
+                    } else {
                         xs += dx;
+                    }
                     if (firstdy < 0) {
                         y += dy;
                         ys += -dy;
-                    } else
+                    } else {
                         ys += dy;
+                    }
                     if (x < 0) {
                         x = 0;
                         xs--;

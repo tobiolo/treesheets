@@ -349,7 +349,9 @@ struct Cell {
 
     void ResetLayout() {
         Reset();
-        if (parent != nullptr) parent->ResetLayout();
+        if (parent != nullptr) {
+            parent->ResetLayout();
+        }
     }
 
     void LazyLayout(Document *doc, wxReadOnlyDC &dc, int depth, int maxcolwidth, bool forcetiny) {
