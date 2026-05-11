@@ -2164,7 +2164,7 @@ struct Document {
             return;
         }
         Cell *cell = selected.ThinExpand(this);
-        wxString filename = filenames[0];
+        const wxString &filename = filenames[0];
         wxFFileInputStream fileinputstream(filename);
         if (fileinputstream.IsOk()) {
             char buffer[4];
