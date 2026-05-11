@@ -345,11 +345,11 @@ struct Grid {
         foreachcell(c) if (c.get() == o) { c.reset(n); }
     }
     Selection FindCell(Cell *o) {
-        foreachcell(c) if (c.get() == o) { return Selection(cell->grid, x, y, 1, 1); }
-        return Selection();
+        foreachcell(c) if (c.get() == o) { return {cell->grid, x, y, 1, 1}; }
+        return {};
     }
 
-    Selection SelectAll() const { return Selection(cell->grid, 0, 0, xs, ys); }
+    Selection SelectAll() const { return {cell->grid, 0, 0, xs, ys}; }
     void ImageRefCount(bool includefolded) {
         if (includefolded || !folded) { foreachcell(c) c->ImageRefCount(includefolded); }
     }
@@ -388,18 +388,18 @@ struct Grid {
             if (sel.xs != 0) {
                 if (sel.y < ys) {
                     auto *tl = C(sel.x, sel.y).get();
-                    return wxRect(tl->GetX(doc), tl->GetY(doc), tl->sx, 0);
+                    return {tl->GetX(doc), tl->GetY(doc), tl->sx, 0};
                 } else {
                     auto *br = C(sel.x, ys - 1).get();
-                    return wxRect(br->GetX(doc), br->GetY(doc) + br->sy, br->sx, 0);
+                    return {br->GetX(doc), br->GetY(doc) + br->sy, br->sx, 0};
                 }
             } else {
                 if (sel.x < xs) {
                     auto *tl = C(sel.x, sel.y).get();
-                    return wxRect(tl->GetX(doc), tl->GetY(doc), 0, tl->sy);
+                    return {tl->GetX(doc), tl->GetY(doc), 0, tl->sy};
                 } else {
                     auto *br = C(xs - 1, sel.y).get();
-                    return wxRect(br->GetX(doc) + br->sx, br->GetY(doc), 0, br->sy);
+                    return {br->GetX(doc) + br->sx, br->GetY(doc), 0, br->sy};
                 }
             }
         } else {
