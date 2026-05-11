@@ -130,7 +130,7 @@ struct TSApp : wxApp {
 
     wxString GetExecutablePath() {
         wxString executablepath = argv[0];
-        #if defined(__WXMAC__)
+        #ifdef __WXMAC__
             char path[PATH_MAX];
             uint32_t size = sizeof(path);
             if(_NSGetExecutablePath(path, &size) == 0) executablepath = path;
