@@ -173,8 +173,8 @@ class Selection {
                 if (textedit) {
                     if (cursor == cursorend) { firstdx = dx; }
                     (firstdx < 0 ? cursor : cursorend) += dx;
-                    if (cursor < 0) { cursor = 0; }
-                    if (cursorend > MaxCursor()) { cursorend = MaxCursor(); }
+                    cursor = std::max(cursor, 0);
+                    cursorend = std::min(cursorend, MaxCursor());
                 } else {
                     if (xs == 0) {
                         firstdx = 0;  // redundant: just in case someone else changed it

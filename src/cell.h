@@ -557,7 +557,7 @@ struct Cell {
 
     bool IsTag(Document *doc) { return doc->tags.contains(text.t); }
     void MaxDepthLeaves(int curdepth, int &maxdepth, int &leaves) {
-        if (curdepth > maxdepth) { maxdepth = curdepth; }
+        maxdepth = std::max(curdepth, maxdepth);
         if (grid) {
             grid->MaxDepthLeaves(curdepth + 1, maxdepth, leaves);
         } else {

@@ -1089,9 +1089,7 @@ struct Grid {
     void ResizeColWidths(int dir, const Selection &sel, bool hierarchical) {
         for (int x = sel.x; x < sel.x + sel.xs; x++) {
             colwidths[x] += dir * 5;
-            if (colwidths[x] < 5) {
-                colwidths[x] = 5;
-            }
+            colwidths[x] = std::max(colwidths[x], 5);
             loop(y, ys) {
                 if (C(x, y)->grid && hierarchical) {
                     C(x, y)->grid->ResizeColWidths(dir, C(x, y)->grid->SelectAll(), hierarchical);
