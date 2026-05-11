@@ -285,7 +285,7 @@ enum { TEXT_SPACE = 3, TEXT_SEP = 2, TEXT_CHAR = 1 };
         string_view_nt(const string &s) : sv(s) {}
         explicit string_view_nt(const char *s) : sv(s) {}
         explicit string_view_nt(string_view osv) : sv(osv) { check_null_terminated(); }
-        void check_null_terminated() const { assert(!sv.data()[sv.size()]); }
+        static void check_null_terminated() { assert(!sv.data()[sv.size()]); }
         size_t size() const { return sv.size(); }
         const char *data() const { return sv.data(); }
         const char *c_str() const {

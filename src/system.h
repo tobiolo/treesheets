@@ -111,7 +111,7 @@ struct System {
         return canvas->doc.get();
     }
 
-    void TabChange(Document *newdoc) {
+    static void TabChange(Document *newdoc) {
         // SetSelect(hover = Selection());
         newdoc->canvas->SetFocus();
         newdoc->UpdateFileName();
@@ -173,10 +173,10 @@ struct System {
         return doc->root;
     }
 
-    wxString BakName(const wxString &filename) { return ExtName(filename, ".bak"); }
-    wxString TmpName(const wxString &filename) { return ExtName(filename, ".tmp"); }
-    wxString NewName(const wxString &filename) { return filename + ".new"; }
-    wxString ExtName(const wxString &filename, auto ext) {
+    static wxString BakName(const wxString &filename) { return ExtName(filename, ".bak"); }
+    static wxString TmpName(const wxString &filename) { return ExtName(filename, ".tmp"); }
+    static wxString NewName(const wxString &filename) { return filename + ".new"; }
+    static wxString ExtName(const wxString &filename, auto ext) {
         wxFileName fn(filename);
         return fn.GetPathWithSep() + fn.GetName() + ext;
     }
@@ -461,9 +461,9 @@ struct System {
         return _("File load error.");
     }
 
-    int GetXMLNodes(wxXmlNode *node, auto &nodes,
-                    vector<wxXmlAttribute *> *const attributes = nullptr,
-                    bool attributestoo = false) {
+    static int GetXMLNodes(wxXmlNode *node, auto &nodes,
+                           vector<wxXmlAttribute *> *const attributes = nullptr,
+                           bool attributestoo = false) {
         for (auto *child = node->GetChildren(); child != nullptr; child = child->GetNext()) {
             if (child->GetType() == wxXML_ELEMENT_NODE) { nodes.push_back(child); }
         }
@@ -533,7 +533,7 @@ struct System {
         }
     }
 
-    void SetGridSettingsFromXML(Cell *c, wxXmlNode *node) {
+    static void SetGridSettingsFromXML(Cell *c, wxXmlNode *node) {
         c->grid->folded = wxAtoi(node->GetAttribute("folded", "0")) != 0;
         c->grid->bordercolor = std::stoi(
             node->GetAttribute("bordercolor", wxString() << g_bordercolor_default).ToStdString(),
@@ -542,7 +542,7 @@ struct System {
             node->GetAttribute("outerspacing", wxString() << g_usergridouterspacing_default));
     }
 
-    int CountCol(const auto &s) {
+    static int CountCol(const auto &s) {
         auto col = 0;
         while (s[col] == ' ' || s[col] == '\t') { col++; }
         return col;
@@ -579,11 +579,11 @@ struct System {
         return imagelist.size() - 1;
     }
 
-    void ImageSize(wxBitmap *bm, int &xs, int &ys) {
+    static void ImageSize(wxBitmap *bm, int &xs, int &ys) {
         if (bm == nullptr) { return; }
         xs = bm->GetWidth();
         ys = bm->GetHeight();
     }
 
-    void ImageDraw(wxBitmap *bm, wxDC &dc, int x, int y) { dc.DrawBitmap(*bm, x, y); }
+    static void ImageDraw(wxBitmap *bm, wxDC &dc, int x, int y) { dc.DrawBitmap(*bm, x, y); }
 };

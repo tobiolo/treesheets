@@ -563,8 +563,8 @@ struct Grid {
         return true;
     }
 
-    void Formatter(wxString &r, int format, int indent, const wxString &xml, const wxString &html,
-                   const wxString &htmlb) {
+    static void Formatter(wxString &r, int format, int indent, const wxString &xml,
+                          const wxString &html, const wxString &htmlb) {
         if (format == A_EXPXML) {
             r.Append(' ', indent);
             r.Append(xml);

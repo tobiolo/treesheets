@@ -84,9 +84,9 @@ struct Evaluator {
         return (it != vars.end()) ? it->second->Clone(nullptr) : nullptr;
     }
 
-    bool IsValidSymbol(wxString const &symbol) const { return !symbol.IsEmpty(); }
+    static bool IsValidSymbol(wxString const &symbol) { return !symbol.IsEmpty(); }
     void SetSymbol(wxString const &symbol, unique_ptr<Cell> val) {
-        if (!this->IsValidSymbol(symbol)) { return; }
+        if (!treesheets::Evaluator::IsValidSymbol(symbol)) { return; }
         vars[symbol] = std::move(val);
     }
 
@@ -107,7 +107,7 @@ struct Evaluator {
 
     Operation *FindOp(wxString &name) { return ops[name].get(); }
 
-    unique_ptr<Cell> Execute(const Operation *op) { return op->run(); }
+    static unique_ptr<Cell> Execute(const Operation *op) { return op->run(); }
 
     unique_ptr<Cell> Execute(const Operation *op, unique_ptr<Cell> left) {
         Text &t = left->text;

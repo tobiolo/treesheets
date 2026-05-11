@@ -111,13 +111,13 @@ class Selection {
 
     int MaxCursor() const { return int(GetCell()->text.t.Len()); }
 
-    inline bool IsWordSep(wxChar ch) {
+    static bool IsWordSep(wxChar ch) {
         // represents: !"#$%&'()*+,-./    :;<=>?@    [\]^    {|}~    `
         return 32 < ch && ch < 48 || 57 < ch && ch < 65 || 90 < ch && ch < 95 ||
                122 < ch && ch < 127 || ch == 96;
     }
 
-    inline int CharType(wxChar ch) {
+    static int CharType(wxChar ch) {
         if (wxIsspace(ch)) { return TEXT_SPACE; }
         if (IsWordSep(ch)) { return TEXT_SEP; }
         return TEXT_CHAR;
@@ -358,7 +358,7 @@ class Selection {
     }
 
     wxString Wrap(Document *doc) {
-        if (Thin()) { return doc->NoThin(); }
+        if (Thin()) { return treesheets::Document::NoThin(); }
         grid->cell->AddUndo(doc);
         Cell *np = grid->CloneSel(*this).release();
         grid->C(x, y)->text.t = ".";  // avoid this cell getting deleted

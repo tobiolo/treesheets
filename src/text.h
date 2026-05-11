@@ -52,7 +52,7 @@ struct Text {
         t = s;
     }
 
-    wxString htmlify(wxString &str) {
+    static wxString htmlify(wxString &str) {
         wxString r;
         for (auto cref : str) {
             switch (wxChar c = cref.GetValue()) {
@@ -90,9 +90,10 @@ struct Text {
                       g_deftextsize - g_maxtextsize() - zoomdepth);
     }
 
-    auto IsWord(wxChar c) const {
+    static auto IsWord(wxChar c) {
         return wxIsalnum(c) || wxStrchr(L"_\"\'()", c) != nullptr || wxIspunct(c);
     }
+
     auto GetLinePart(int &currentpos, int breakpos, int limitpos) const {
         auto startpos = currentpos;
         currentpos = breakpos;
@@ -186,11 +187,11 @@ struct Text {
                int maxcolwidth) {
         auto ixs = 0;
         auto iys = 0;
-        if (!cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
+        if (!cell->tiny) { treesheets::System::ImageSize(DisplayImage(), ixs, iys); }
 
         if (ixs != 0 && iys != 0) {
-            sys->ImageDraw(DisplayImage(), dc, bx + 1 + g_margin_extra,
-                           by + (cell->tys - iys) / 2 + g_margin_extra);
+            treesheets::System::ImageDraw(DisplayImage(), dc, bx + 1 + g_margin_extra,
+                                          by + (cell->tys - iys) / 2 + g_margin_extra);
             ixs += 2;
             iys += 2;
         }
@@ -270,7 +271,7 @@ struct Text {
 
         auto ixs = 0;
         auto iys = 0;
-        if (!cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
+        if (!cell->tiny) { treesheets::System::ImageSize(DisplayImage(), ixs, iys); }
         if (ixs != 0) { ixs += 2; }
 
         doc->PickFont(dc, cell->Depth() - doc->drawpath.size(), relsize, stylebits);
@@ -300,7 +301,7 @@ struct Text {
     void DrawCursor(Document *doc, wxDC &dc, Selection &s, bool full, uint color, int maxcolwidth) {
         auto ixs = 0;
         auto iys = 0;
-        if (!cell->tiny) { sys->ImageSize(DisplayImage(), ixs, iys); }
+        if (!cell->tiny) { treesheets::System::ImageSize(DisplayImage(), ixs, iys); }
         if (ixs != 0) { ixs += 2; }
         doc->PickFont(dc, cell->Depth() - doc->drawpath.size(), relsize, stylebits);
         auto h = dc.GetCharHeight();
@@ -396,6 +397,7 @@ struct Text {
         t.insert(s.cursor, ins);
         s.cursor = s.cursorend = s.cursor + static_cast<int>(ins.Len());
     }
+
     void Key(Document *doc, int k, Selection &s) {
         wxString ins;
         ins += k;

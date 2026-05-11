@@ -90,7 +90,7 @@ struct Cell {
                doc->PickFont(dc, depth, text.relsize, text.stylebits);
         int ixs = 0;
         int iys = 0;
-        if (!tiny) { sys->ImageSize(text.DisplayImage(), ixs, iys); }
+        if (!tiny) { treesheets::System::ImageSize(text.DisplayImage(), ixs, iys); }
         int leftoffset = 0;
         if (!HasText()) {
             if (ixs == 0 || iys == 0) {

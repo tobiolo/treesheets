@@ -225,8 +225,8 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
     bool HasImage() override { return current->text.image != nullptr; }
     bool SetImage(std::string_view fn) override {
         AddUndoIfNecessary();
-        return document->LoadImageIntoCell(wxString::FromUTF8(fn.data(), fn.size()), current,
-                                           sys->frame->FromDIP(1.0));
+        return treesheets::Document::LoadImageIntoCell(wxString::FromUTF8(fn.data(), fn.size()),
+                                                       current, sys->frame->FromDIP(1.0));
     }
 };
 

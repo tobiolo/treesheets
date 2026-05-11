@@ -146,8 +146,8 @@ struct Document {
         }
         auto start_saving_time = wxGetLocalTimeMillis();
 
-        auto targetfilename = istempfile ? sys->TmpName(filename) : filename;
-        auto savefilename = sys->NewName(targetfilename);
+        auto targetfilename = istempfile ? treesheets::System::TmpName(filename) : filename;
+        auto savefilename = treesheets::System::NewName(targetfilename);
 
         {  // limit destructors
             wxBusyCursor wait;
@@ -194,8 +194,8 @@ struct Document {
         }
 
         if (!istempfile && sys->makebaks && ::wxFileExists(filename)) {
-            ::wxRemoveFile(sys->BakName(filename));
-            ::wxRenameFile(filename, sys->BakName(filename));
+            ::wxRemoveFile(treesheets::System::BakName(filename));
+            ::wxRenameFile(filename, treesheets::System::BakName(filename));
         }
 
         if (!::wxRenameFile(savefilename, targetfilename, true)) {
@@ -211,7 +211,9 @@ struct Document {
             modified = false;
             tmpsavesuccess = true;
             sys->FileUsed(filename, this);
-            if (::wxFileExists(sys->TmpName(filename))) { ::wxRemoveFile(sys->TmpName(filename)); }
+            if (::wxFileExists(treesheets::System::TmpName(filename))) {
+                ::wxRemoveFile(treesheets::System::TmpName(filename));
+            }
         }
         if (sys->autohtmlexport != 0) {
             ExportFile(sys->ExtName(filename, ".html"),
@@ -468,10 +470,10 @@ struct Document {
         canvas->Refresh();
     }
 
-    wxString NoSel() { return _("This operation requires a selection."); }
-    wxString OneCell() { return _("This operation works on a single selected cell only."); }
-    wxString NoThin() { return _("This operation doesn't work on thin selections."); }
-    wxString NoGrid() { return _("This operation requires a cell that contains a grid."); }
+    static wxString NoSel() { return _("This operation requires a selection."); }
+    static wxString OneCell() { return _("This operation works on a single selected cell only."); }
+    static wxString NoThin() { return _("This operation doesn't work on thin selections."); }
+    static wxString NoGrid() { return _("This operation requires a cell that contains a grid."); }
 
     wxString Wheel(int dir, bool alt, bool ctrl, bool shift, bool hierarchical = true) {
         if (dir == 0) { return wxEmptyString; }
@@ -640,7 +642,7 @@ struct Document {
         return max(g_mintextsize(), g_deftextsize - depth - relsize + pathscalebias);
     }
 
-    bool FontIsMini(int textsize) { return textsize == g_mintextsize(); }
+    static bool FontIsMini(int textsize) { return textsize == g_mintextsize(); }
 
     bool PickFont(wxReadOnlyDC &dc, int depth, int relsize, int stylebits) {
         int textsize = TextSize(depth, relsize);
@@ -685,8 +687,8 @@ struct Document {
     }
 
     void RemoveTmpFile() const {
-        if (!filename.empty() && ::wxFileExists(sys->TmpName(filename))) {
-            ::wxRemoveFile(sys->TmpName(filename));
+        if (!filename.empty() && ::wxFileExists(treesheets::System::TmpName(filename))) {
+            ::wxRemoveFile(treesheets::System::TmpName(filename));
         }
     }
 
@@ -2249,7 +2251,7 @@ struct Document {
         }
     }
 
-    void CreatePath(Cell *c, auto &path) {
+    static void CreatePath(Cell *c, auto &path) {
         path.clear();
         while (c->parent != nullptr) {
             const Selection &s = c->parent->grid->FindCell(c);
@@ -2384,12 +2386,12 @@ struct Document {
         selected.grid->ColorChange(this, which, col, selected);
     }
 
-    void SetImageBM(Cell *c, auto &&data, char type, double scale) {
+    static void SetImageBM(Cell *c, auto &&data, char type, double scale) {
         c->text.image = sys->lastimage =
             sys->imagelist[sys->AddImageToList(scale, std::move(data), type)].get();
     }
 
-    bool LoadImageIntoCell(const wxString &filename, Cell *c, double scale) {
+    static bool LoadImageIntoCell(const wxString &filename, Cell *c, double scale) {
         if (filename.empty()) { return false; }
         auto *pnghandler = wxImage::FindHandler(wxBITMAP_TYPE_PNG);
         auto *jpghandler = wxImage::FindHandler(wxBITMAP_TYPE_JPEG);
@@ -2483,7 +2485,7 @@ struct Document {
         canvas->Refresh();
     }
 
-    wxDateTime ParseDateTimeString(const wxString &s) {
+    static wxDateTime ParseDateTimeString(const wxString &s) {
         wxDateTime dt;
         wxString::const_iterator end;
         if (!dt.ParseDateTime(s, &end)) { dt = wxInvalidDateTime; }

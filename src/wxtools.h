@@ -189,7 +189,8 @@ struct ImageDropdown : wxOwnerDrawnComboBox {
     }
 
     void OnDrawItem(wxDC &dc, const wxRect &rect, int item, int flags) const override {
-        sys->ImageDraw(bitmaps_display[item].get(), dc, rect.x + FromDIP(3), rect.y + FromDIP(3));
+        treesheets::System::ImageDraw(bitmaps_display[item].get(), dc, rect.x + FromDIP(3),
+                                      rect.y + FromDIP(3));
     }
 
     void FillBitmapVector(const wxString &directory) {

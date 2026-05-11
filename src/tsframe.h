@@ -1286,7 +1286,7 @@ struct TSFrame : wxFrame {
     void OnTabChange(wxAuiNotebookEvent &nbe) {
         auto canvas = static_cast<TSCanvas *>(notebook->GetPage(nbe.GetSelection()));
         ClearStatus();
-        sys->TabChange(canvas->doc.get());
+        treesheets::System::TabChange(canvas->doc.get());
         nbe.Skip();
     }
 
@@ -1464,7 +1464,7 @@ struct TSFrame : wxFrame {
                     SetStatus(message);
                 } else {
                     notebook->DeletePage(i + 1);
-                    ::wxRemoveFile(sys->TmpName(modfile));
+                    ::wxRemoveFile(treesheets::System::TmpName(modfile));
                     SetStatus(
                         _("File has been re-loaded because of modifications of another program / computer"));
                 }
