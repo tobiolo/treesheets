@@ -105,7 +105,7 @@ struct System {
         colormask = (followdarkmode && wxSystemSettings::GetAppearance().IsDark()) ? 0x00FFFFFF : 0;
     }
 
-    Document *NewTabDoc(bool append = false, int insert_at = -1) {
+    Document *NewTabDoc(bool append = false, int insert_at = -1) const {
         auto doc = make_unique<Document>();
         auto canvas = frame->NewTab(std::move(doc), append, insert_at);
         return canvas->doc.get();
@@ -163,7 +163,7 @@ struct System {
 
     void LoadOpRef() { LoadDB(frame->app->GetDocPath("examples/operation-reference.cts")); }
 
-    unique_ptr<Cell> &InitDB(int sizex, int sizey = 0) {
+    unique_ptr<Cell> &InitDB(int sizex, int sizey = 0) const {
         unique_ptr<Cell> c = make_unique<Cell>(
             nullptr, nullptr, CT_DATA, make_shared<Grid>(sizex, sizey != 0 ? sizey : sizex));
         c->cellcolor = 0xCCDCE2;
@@ -369,7 +369,7 @@ struct System {
         return _("Open file cancelled.");
     }
 
-    void RememberOpenFiles() {
+    void RememberOpenFiles() const {
         cfg->Write("lastopenfile", frame->GetCurrentTab()->doc->filename);
         auto namedfiles = 0;
         for(auto i: frame->notebook->GetPagesInDisplayOrder(frame->notebook->GetActiveTabCtrl())) {

@@ -1520,7 +1520,7 @@ struct TSFrame : wxFrame {
         taskbaricon.RemoveIcon();
     }
 
-    TSCanvas *GetCurrentTab() {
+    TSCanvas *GetCurrentTab() const {
         return notebook != nullptr ? static_cast<TSCanvas *>(notebook->GetCurrentPage()) : nullptr;
     }
 
@@ -1568,7 +1568,7 @@ struct TSFrame : wxFrame {
         return canvas;
     }
 
-    void ReFocus() {
+    void ReFocus() const {
         if (TSCanvas *canvas = GetCurrentTab()) { canvas->SetFocus(); }
     }
 
@@ -1615,7 +1615,7 @@ struct TSFrame : wxFrame {
     #endif
 
     void SetStatus(const wxString &message) {
-        if (GetStatusBar() && !message.IsEmpty()) { SetStatusText(message, 0); }
+        if (GetStatusBar() != nullptr && !message.IsEmpty()) { SetStatusText(message, 0); }
     }
 
     void ClearStatus() {

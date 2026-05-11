@@ -28,7 +28,7 @@ class Selection {
 
     Cell *GetCell() const { return grid && xs == 1 && ys == 1 ? grid->C(x, y).get() : nullptr; }
     Cell *GetFirst() const { return grid && xs >= 1 && ys >= 1 ? grid->C(x, y).get() : nullptr; }
-    bool EqLoc(const Selection &s) {
+    bool EqLoc(const Selection &s) const {
         return grid == s.grid && x == s.x && y == s.y && xs == s.xs && ys == s.ys;
     }
     bool operator==(Selection &s) {

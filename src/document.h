@@ -101,7 +101,7 @@ struct Document {
         dndobjc->Add(dndobjf);
     }
 
-    uint Background() { return root ? root->cellcolor : 0xFFFFFF; }
+    uint Background() const { return root ? root->cellcolor : 0xFFFFFF; }
 
     void InitCellSelect(Cell *initialselected, int xsize, int ysize) {
         if (initialselected == nullptr) {
@@ -741,7 +741,7 @@ struct Document {
         return GetBitmap().GetSubBitmap(r);
     }
 
-    void RefreshImageRefCount(bool includefolded) {
+    void RefreshImageRefCount(bool includefolded) const {
         loopv(i, sys->imagelist) sys->imagelist[i]->trefc = 0;
         root->ImageRefCount(includefolded);
     }
@@ -2265,7 +2265,7 @@ struct Document {
         }
     }
 
-    Cell *WalkPath(vector<Selection> &path) {
+    Cell *WalkPath(vector<Selection> &path) const {
         Cell *c = root.get();
         loopvrev(i, path) {
             Selection &s = path[i];

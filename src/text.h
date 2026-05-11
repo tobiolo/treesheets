@@ -65,7 +65,7 @@ struct Text {
         return r;
     }
 
-    wxString ToText(int indent, const Selection &s, int format) {
+    wxString ToText(int indent, const Selection &s, int format) const {
         wxString str = s.cursor != s.cursorend ? t.Mid(s.cursor, s.cursorend - s.cursor) : t;
         if (format == A_EXPXML || format == A_EXPHTMLT || format == A_EXPHTMLTI ||
             format == A_EXPHTMLTE || format == A_EXPHTMLO || format == A_EXPHTMLB) {
@@ -84,7 +84,7 @@ struct Text {
         return str;
     };
 
-    auto MinRelsize(int rs) { return min(relsize, rs); }
+    auto MinRelsize(int rs) const { return min(relsize, rs); }
     auto RelSize(int dir, int zoomdepth) {
         relsize = max(min(relsize + dir, g_deftextsize - g_mintextsize() + zoomdepth),
                       g_deftextsize - g_maxtextsize() - zoomdepth);
@@ -156,7 +156,8 @@ struct Text {
         // return GetLinePart(i, l, l);     // big word was the last one
     }
 
-    void TextSize(wxReadOnlyDC &dc, int &sx, int &sy, int tiny, int &leftoffset, int maxcolwidth) {
+    void TextSize(wxReadOnlyDC &dc, int &sx, int &sy, int tiny, int &leftoffset,
+                  int maxcolwidth) const {
         sx = sy = 0;
         auto i = 0;
         for (;;) {
@@ -184,7 +185,7 @@ struct Text {
     }
 
     int Render(Document *doc, int bx, int by, int depth, wxDC &dc, int &leftoffset,
-               int maxcolwidth) {
+               int maxcolwidth) const {
         auto ixs = 0;
         auto iys = 0;
         if (!cell->tiny) { treesheets::System::ImageSize(DisplayImage(), ixs, iys); }
@@ -298,7 +299,8 @@ struct Text {
         ASSERT(s.cursor >= 0 && s.cursor <= static_cast<int>(t.Len()));
     }
 
-    void DrawCursor(Document *doc, wxDC &dc, Selection &s, bool full, uint color, int maxcolwidth) {
+    void DrawCursor(Document *doc, wxDC &dc, Selection &s, bool full, uint color,
+                    int maxcolwidth) const {
         auto ixs = 0;
         auto iys = 0;
         if (!cell->tiny) { treesheets::System::ImageSize(DisplayImage(), ixs, iys); }
