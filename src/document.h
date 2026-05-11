@@ -432,7 +432,6 @@ struct Document {
                 break;
             }
         }
-        return;
     }
 
     bool ZoomSetDrawPath(int dir, bool fromroot = true) {
