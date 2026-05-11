@@ -215,7 +215,7 @@ struct Document {
             }
         }
         if (sys->autohtmlexport != 0) {
-            ExportFile(sys->ExtName(filename, ".html"),
+            ExportFile(treesheets::System::ExtName(filename, ".html"),
                        sys->autohtmlexport == A_AUTOEXPORT_HTML_WITH_IMAGES - A_AUTOEXPORT_HTML_NONE
                            ? A_EXPHTMLTE
                            : A_EXPHTMLT,
@@ -2206,7 +2206,8 @@ struct Document {
                     cell->parent->AddUndo(this);
                     cell->ResetLayout();
                     cell->grid = nullptr;
-                    sys->FillRows(cell->AddGrid(), lines, sys->CountCol(lines[0]), 0, 0);
+                    sys->FillRows(cell->AddGrid(), lines, treesheets::System::CountCol(lines[0]), 0,
+                                  0);
                     if (!cell->HasText()) {
                         cell->grid->MergeWithParent(cell->parent->grid, selected, this);
                     }

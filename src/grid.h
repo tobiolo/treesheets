@@ -783,7 +783,7 @@ struct Grid {
                 auto op = ev.FindOp(c->text.t);
                 switch (op ? strlen(op->args) : -1) {
                     default: return nullptr;
-                    case 0: return ev.Execute(op);
+                    case 0: return treesheets::Evaluator::Execute(op);
                     case 1: return acc ? ev.Execute(op, std::move(acc)) : nullptr;
                     case 2:
                         if (vert) {
