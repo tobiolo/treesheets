@@ -460,7 +460,8 @@ struct System {
         return _("File load error.");
     }
 
-    int GetXMLNodes(wxXmlNode *node, auto &nodes, vector<wxXmlAttribute *> *attributes = nullptr,
+    int GetXMLNodes(wxXmlNode *node, auto &nodes,
+                    vector<wxXmlAttribute *> *const attributes = nullptr,
                     bool attributestoo = false) {
         for (auto *child = node->GetChildren(); child != nullptr; child = child->GetNext()) {
             if (child->GetType() == wxXML_ELEMENT_NODE) { nodes.push_back(child); }
