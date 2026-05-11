@@ -42,7 +42,7 @@ struct TSCanvas : public wxScrolledCanvas {
                 doc->Copy(A_DRAGANDDROP);
                 Refresh();
             } else {
-                if (doc->isctrlshiftdrag) {
+                if (doc->isctrlshiftdrag != 0) {
                     doc->begindrag = doc->hover;
                 } else if (!doc->hover.Thin()) {
                     if (doc->begindrag.Thin() || doc->selected.Thin()) {

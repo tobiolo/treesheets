@@ -133,7 +133,7 @@ struct Text {
 
         if (i >= l) { return wxEmptyString; }
 
-        if (!i && l <= maxcolwidth) {
+        if (i == 0 && l <= maxcolwidth) {
             i = l;
             return t;
         }  // subsumed by the case below, but this case happens 90% of the time, so more optimal
@@ -161,7 +161,7 @@ struct Text {
         auto i = 0;
         for (;;) {
             auto curl = GetLine(i, maxcolwidth);
-            if (!curl.Len()) { break; }
+            if (curl.IsEmpty()) { break; }
             int x;
             int y;
             if (tiny != 0) {
@@ -219,7 +219,7 @@ struct Text {
         }
         for (;;) {
             auto curl = GetLine(i, maxcolwidth);
-            if (!curl.Len()) { break; }
+            if (curl.IsEmpty()) { break; }
             if (cell->tiny) {
                 if (sys->fastrender) {
                     dc.DrawLine(bx + ixs, by + lines * h, bx + ixs + static_cast<int>(curl.Len()),
@@ -340,7 +340,7 @@ struct Text {
                     break;
                 }
 
-                if (!len) { break; }
+                if (len == 0) { break; }
             }
         }
     }
@@ -461,7 +461,7 @@ struct Text {
         for (;;) {
             auto start = i;
             auto curl = GetLine(i, cw);
-            if (!curl.Len()) { break; }
+            if (curl.IsEmpty()) { break; }
             auto end = i == t.Len() ? i : i - 1;
             if (findwhere >= start && findwhere <= end) {
                 s.cursor = s.cursorend = home ? start : end;

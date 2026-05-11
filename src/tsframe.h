@@ -1521,7 +1521,7 @@ struct TSFrame : wxFrame {
     }
 
     TSCanvas *GetCurrentTab() {
-        return notebook ? static_cast<TSCanvas *>(notebook->GetCurrentPage()) : nullptr;
+        return notebook != nullptr ? static_cast<TSCanvas *>(notebook->GetCurrentPage()) : nullptr;
     }
 
     TSCanvas *GetTabByFileName(const wxString &filename) const {
@@ -1619,7 +1619,7 @@ struct TSFrame : wxFrame {
     }
 
     void ClearStatus() {
-        if (GetStatusBar()) { SetStatusText("", 0); }
+        if (GetStatusBar() != nullptr) { SetStatusText("", 0); }
     }
 
     void TabsReset() const {
@@ -1632,7 +1632,7 @@ struct TSFrame : wxFrame {
     }
 
     void UpdateStatus(const Selection &s, bool updateamount) {
-        if (GetStatusBar()) {
+        if (GetStatusBar() != nullptr) {
             if (Cell *c = s.GetCell(); c != nullptr && s.xs != 0) {
                 SetStatusText(wxString::Format(_("Size %d"), -c->text.relsize), 3);
                 SetStatusText(wxString::Format(_("Width %d"), s.grid->colwidths[s.x]), 2);

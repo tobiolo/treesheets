@@ -229,7 +229,7 @@ class Selection {
                                     auto len = static_cast<int>(ls.Len());
                                     int end = start + len;
 
-                                    if (len && nextoffset >= 0) {
+                                    if (len != 0 && nextoffset >= 0) {
                                         cursor = cursorend =
                                             start + (nextoffset > len ? len : nextoffset);
                                         intracell = false;
@@ -254,7 +254,7 @@ class Selection {
                                     laststart = start;
                                     lastlen = len;
 
-                                    if (!len) { break; }
+                                    if (len == 0) { break; }
                                 }
                             } else {
                                 intracell = false;

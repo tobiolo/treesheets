@@ -374,7 +374,7 @@ struct System {
         auto namedfiles = 0;
         for(auto i: frame->notebook->GetPagesInDisplayOrder(frame->notebook->GetActiveTabCtrl())) {
             auto canvas = static_cast<TSCanvas *>(frame->notebook->GetPage(i));
-            if (canvas->doc->filename.Len()) {
+            if (!canvas->doc->filename.IsEmpty()) {
                 cfg->Write(wxString::Format("lastopenfile_%d", namedfiles), canvas->doc->filename);
                 namedfiles++;
             }
@@ -467,13 +467,13 @@ struct System {
         for (auto *child = node->GetChildren(); child != nullptr; child = child->GetNext()) {
             if (child->GetType() == wxXML_ELEMENT_NODE) { nodes.push_back(child); }
         }
-        if (attributestoo && attributes) {
+        if (attributestoo && attributes != nullptr) {
             for (auto *attribute = node->GetAttributes(); attribute != nullptr;
                  attribute = attribute->GetNext()) {
                 attributes->push_back(attribute);
             }
         }
-        return nodes.size() + (attributes ? attributes->size() : 0);
+        return nodes.size() + (attributes != nullptr ? attributes->size() : 0);
     }
 
     void FillXML(Cell *c, wxXmlNode *node, bool attributestoo) {
@@ -497,7 +497,7 @@ struct System {
         vector<wxXmlNode *> nodes;
         vector<wxXmlAttribute *> attributes;
         auto numrows = GetXMLNodes(node, nodes, &attributes, attributestoo);
-        if (!numrows) { return; }
+        if (numrows == 0) { return; }
 
         if (nodes.size() == 1 && (c->text.t.IsEmpty() || nodes[0]->IsWhitespaceOnly()) &&
             nodes[0]->GetName() != "row") {
@@ -515,7 +515,7 @@ struct System {
                     vector<wxXmlNode *> ins;
                     auto xs = GetXMLNodes(nodes[i], ins);
                     if (i == 0) {
-                        desiredxs = xs ? xs : 1;
+                        desiredxs = xs != 0 ? xs : 1;
                         c->AddGrid(desiredxs, nodes.size());
                         SetGridSettingsFromXML(c, node);
                     }

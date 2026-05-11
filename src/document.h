@@ -396,7 +396,7 @@ struct Document {
                 sys->cellclipboard = nullptr;
                 auto *clipboardtextdata = new wxDataObjectComposite();
                 wxString s = "";
-                loopallcellssel(c, true) if (c->text.t.Len()) s += c->text.t + " ";
+                loopallcellssel(c, true) if (!c->text.t.IsEmpty()) s += c->text.t + " ";
                 if (!selected.TextEdit()) { sys->clipboardcopy = s; }
                 clipboardtextdata->Add(new wxTextDataObject(s));
                 if (wxTheClipboard->Open()) {
@@ -1160,7 +1160,8 @@ struct Document {
                 if (auto color = PickColor(sys->frame, oldbg); color != (uint)-1) {
                     root->AddUndo(this);
                     loopallcells(c) {
-                        if (c->cellcolor == oldbg && (!c->parent || c->parent->cellcolor == color))
+                        if (c->cellcolor == oldbg &&
+                            (c->parent == nullptr || c->parent->cellcolor == color))
                             c->cellcolor = color;
                     }
                     canvas->Refresh();
@@ -1442,7 +1443,8 @@ struct Document {
                 }
                 auto *fc = selected.GetFirst();
                 wxString ct = "";
-                loopallcellssel(ci, true) if (ci != fc && ci->text.t.Len()) ct += " " + ci->text.t;
+                loopallcellssel(ci, true) if (ci != fc && !ci->text.t.IsEmpty()) ct +=
+                    " " + ci->text.t;
                 if (!fc->HasContent() && ct.IsEmpty()) {
                     return _("There is no content to collapse.");
                 }
@@ -1755,11 +1757,11 @@ struct Document {
                     case A_LASTCELLCOLOR: c->cellcolor = sys->lastcellcolor; break;
                     case A_LASTTEXTCOLOR: c->textcolor = sys->lasttextcolor; break;
                     case A_LASTBORDCOLOR:
-                        if (c->parent && c->parent->grid)
+                        if (c->parent != nullptr && c->parent->grid)
                             c->parent->grid->bordercolor = sys->lastbordcolor;
                         break;
                     case A_LASTIMAGE:
-                        if (sys->lastimage) c->text.image = sys->lastimage;
+                        if (sys->lastimage != nullptr) c->text.image = sys->lastimage;
                         break;
                 }
                 selected.grid->cell->ResetChildren();
@@ -1774,7 +1776,7 @@ struct Document {
                 outer.insert(outer.end(), itercells.begin(), itercells.end());
                 for (auto o : outer) {
                     if (o->grid) {
-                        loopcellsin(o, c) if (_i) {
+                        loopcellsin(o, c) if (_i != 0) {
                             c->text.relsize = g_deftextsize - g_mintextsize() - c->Depth();
                         }
                     }
@@ -1810,7 +1812,7 @@ struct Document {
                 std::set<Image *> imagestomanipulate;
                 long v = 0.0;
                 loopallcellssel(c, true) {
-                    if (c->text.image) { imagestomanipulate.insert(c->text.image); }
+                    if (c->text.image != nullptr) { imagestomanipulate.insert(c->text.image); }
                 }
                 if (imagestomanipulate.empty()) { return wxEmptyString; }
                 if (action == A_IMAGESCW) {
@@ -1825,7 +1827,7 @@ struct Document {
                 for (auto image : imagestomanipulate) {
                     if (action == A_IMAGESCW) {
                         int pw = image->pixel_width;
-                        if (pw)
+                        if (pw != 0)
                             image->ImageRescale(static_cast<double>(v) / static_cast<double>(pw));
                     } else if (action == A_IMAGESCP) {
                         image->ImageRescale(v / 100.0);
@@ -1840,7 +1842,7 @@ struct Document {
             }
 
             case A_IMAGESCN: {
-                loopallcellssel(c, true) if (c->text.image) {
+                loopallcellssel(c, true) if (c->text.image != nullptr) {
                     c->text.image->ResetScale(sys->frame->FromDIP(1.0));
                 }
                 currentdrawroot->ResetChildren();
@@ -1883,14 +1885,14 @@ struct Document {
                 wxString returnmessage = _("No image found to convert");
                 loopallcellssel(c, true) {
                     auto image = c->text.image;
-                    if (action == A_SAVE_AS_JPEG && image && image->type == 'I') {
+                    if (action == A_SAVE_AS_JPEG && image != nullptr && image->type == 'I') {
                         auto transferimage = ConvertBufferToWxImage(image->data, wxBITMAP_TYPE_PNG);
                         image->data = ConvertWxImageToBuffer(transferimage, wxBITMAP_TYPE_JPEG);
                         image->type = 'J';
                         returnmessage =
                             _("Images in selected cells have been converted to JPEG format.");
                     }
-                    if (action == A_SAVE_AS_PNG && image && image->type == 'J') {
+                    if (action == A_SAVE_AS_PNG && image != nullptr && image->type == 'J') {
                         auto transferimage =
                             ConvertBufferToWxImage(image->data, wxBITMAP_TYPE_JPEG);
                         image->data = ConvertWxImageToBuffer(transferimage, wxBITMAP_TYPE_PNG);
@@ -1941,7 +1943,7 @@ struct Document {
 
             case A_TAGADD: {
                 loopallcellssel(c, false) {
-                    if (!c->text.t.Len()) continue;
+                    if (c->text.t.IsEmpty()) continue;
                     tags[c->text.t] = g_tagcolor_default;
                 }
                 canvas->Refresh();
@@ -2029,7 +2031,9 @@ struct Document {
                 auto link = root->FindLink(selected, cell, nullptr, t1, t2,
                                            action == A_LINK || action == A_LINKIMG,
                                            action == A_LINKIMG || action == A_LINKIMGREV);
-                if (!link || !link->parent) { return _("No matching cell found!"); }
+                if (link == nullptr || link->parent == nullptr) {
+                    return _("No matching cell found!");
+                }
                 SetSelect(link->parent->grid->FindCell(link));
                 ScrollOrZoom(true);
                 return wxEmptyString;
@@ -2274,14 +2278,14 @@ struct Document {
     }
 
     bool LastUndoSameCellAny(Cell *c) {
-        return undolist.size() && undolist.size() != undolistsizeatfullsave &&
+        return undolist.size() != 0U && undolist.size() != undolistsizeatfullsave &&
                undolist.back()->cloned_from == (uintptr_t)c;
     }
 
     bool LastUndoSameCellTextEdit(Cell *c) {
         // hacky way to detect word boundaries to stop coalescing, but works, and
         // not a big deal if selected is not actually related to this cell
-        return undolist.size() && !c->grid && undolist.size() != undolistsizeatfullsave &&
+        return undolist.size() != 0U && !c->grid && undolist.size() != undolistsizeatfullsave &&
                undolist.back()->sel.EqLoc(c->parent->grid->FindCell(c)) &&
                (!c->text.t.EndsWith(" ") || c->text.t.Len() != selected.cursor);
     }
@@ -2326,7 +2330,7 @@ struct Document {
               bool redo = false) {
         for (bool next = true; next; ) {
             UndoEach(fromlist, tolist, redo);
-            next = fromlist.size() && tolist.size() &&
+            next = fromlist.size() != 0U && tolist.size() != 0U &&
                    fromlist.back()->generation == tolist.back()->generation;
         }
         if (selected.grid) {
@@ -2504,7 +2508,7 @@ struct Document {
         std::set<Image *> exportimages;
         CollectCells(exportroot);
         for (auto c : itercells)
-            if (c->text.image) exportimages.insert(c->text.image);
+            if (c->text.image != nullptr) exportimages.insert(c->text.image);
         wxFileName fn(filename);
         auto directory = fn.GetPathWithSep();
         for (auto image : exportimages)
