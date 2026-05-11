@@ -156,7 +156,7 @@ static uint PickColor(wxWindow *parent, uint defaultcolor) {
     return -1;
 }
 
-inline static uint LightColor(uint color) { return color ^ sys->colormask; }
+static uint LightColor(uint color) { return color ^ sys->colormask; }
 
 #define dd_icon_res_scale 3.0
 
