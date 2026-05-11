@@ -2325,10 +2325,8 @@ struct Document {
               bool redo = false) {
         for (bool next = true; next; ) {
             UndoEach(fromlist, tolist, redo);
-            next = (fromlist.size() && tolist.size() &&
-                    fromlist.back()->generation == tolist.back()->generation)
-                       ? true
-                       : false;
+            next = fromlist.size() && tolist.size() &&
+                   fromlist.back()->generation == tolist.back()->generation;
         }
         if (selected.grid) {
             ScrollOrZoom();
