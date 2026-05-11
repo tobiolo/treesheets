@@ -2278,14 +2278,14 @@ struct Document {
     }
 
     bool LastUndoSameCellAny(Cell *c) {
-        return undolist.size() != 0U && undolist.size() != undolistsizeatfullsave &&
+        return !undolist.empty() && undolist.size() != undolistsizeatfullsave &&
                undolist.back()->cloned_from == (uintptr_t)c;
     }
 
     bool LastUndoSameCellTextEdit(Cell *c) {
         // hacky way to detect word boundaries to stop coalescing, but works, and
         // not a big deal if selected is not actually related to this cell
-        return undolist.size() != 0U && !c->grid && undolist.size() != undolistsizeatfullsave &&
+        return !undolist.empty() && !c->grid && undolist.size() != undolistsizeatfullsave &&
                undolist.back()->sel.EqLoc(c->parent->grid->FindCell(c)) &&
                (!c->text.t.EndsWith(" ") || c->text.t.Len() != selected.cursor);
     }
@@ -2330,7 +2330,7 @@ struct Document {
               bool redo = false) {
         for (bool next = true; next; ) {
             UndoEach(fromlist, tolist, redo);
-            next = fromlist.size() != 0U && tolist.size() != 0U &&
+            next = !fromlist.empty() && !tolist.empty() &&
                    fromlist.back()->generation == tolist.back()->generation;
         }
         if (selected.grid) {
