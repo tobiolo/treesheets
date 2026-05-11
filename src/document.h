@@ -92,9 +92,8 @@ struct Document {
         CollectCellsSel(rec);     \
         for (auto c : itercells)
 
-    Document() {
+    Document() : pageSetupData(printData) {
         ResetFont();
-        pageSetupData = printData;
         pageSetupData.SetMarginTopLeft(wxPoint(15, 15));
         pageSetupData.SetMarginBottomRight(wxPoint(15, 15));
         dndobjc->Add(dndobjt);
