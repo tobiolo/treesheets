@@ -176,7 +176,7 @@ struct Text {
     }
 
     bool IsInSearch() const {
-        return sys->searchstring.Len() != 0u &&
+        return !sys->searchstring.IsEmpty() &&
                (sys->casesensitivesearch ? t.Find(sys->searchstring)
                                          : t.Lower().Find(sys->searchstring)) >= 0;
     }
@@ -246,13 +246,13 @@ struct Text {
                     dc.SetTextForeground(*wxLIGHT_GREY);
                 } else if (istag) {
                     dc.SetTextForeground(LightColor(doc->tags[t]));
-                } else if (cell->textcolor != 0u) {
+                } else if (cell->textcolor != 0U) {
                     dc.SetTextForeground(LightColor(cell->textcolor));  // FIXME: clean up
                 }
                 auto tx = bx + 2 + ixs;
                 auto ty = by + lines * h;
                 dc.DrawText(curl, tx + g_margin_extra, ty + g_margin_extra);
-                if (searchfound || filtered || istag || cell->textcolor != 0u) {
+                if (searchfound || filtered || istag || cell->textcolor != 0U) {
                     dc.SetTextForeground(LightColor(0x000000));
                 }
             }
@@ -368,13 +368,13 @@ struct Text {
     }
 
     void SetRelSize(Selection &s) {
-        if (t.Len() != 0u || !cell->parent) { return; }
+        if (!t.IsEmpty() || !cell->parent) { return; }
         int dd[] = {0, 1, 1, 0, 0, -1, -1, 0};
         for (auto i = 0; i < 4; i++) {
             auto x = max(0, min(s.x + dd[i * 2], s.grid->xs - 1));
             auto y = max(0, min(s.y + dd[i * 2 + 1], s.grid->ys - 1));
             auto *c = s.grid->C(x, y).get();
-            if (c->text.t.Len() != 0u) {
+            if (!c->text.t.IsEmpty()) {
                 relsize = c->text.relsize;
                 break;
             }
@@ -385,7 +385,7 @@ struct Text {
         auto prevl = t.Len();
         if (!s.TextEdit()) { Clear(doc, s); }
         RangeSelRemove(s);
-        if (prevl == 0u && !keeprelsize) { SetRelSize(s); }
+        if (prevl == 0U && !keeprelsize) { SetRelSize(s); }
         t.insert(s.cursor, ins);
         s.cursor = s.cursorend = s.cursor + static_cast<int>(ins.Len());
     }

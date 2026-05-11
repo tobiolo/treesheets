@@ -160,7 +160,7 @@ struct TSCanvas : public wxScrolledCanvas {
             if (steps == 0) { return; }
             mousewheelaccum -= steps * me.GetWheelDelta();
             sys->frame->SetStatus(doc->Wheel(steps, me.AltDown(), ctrl, me.ShiftDown()));
-        } else if (me.GetWheelAxis() != 0u) {
+        } else if (me.GetWheelAxis() != 0U) {
             CursorScroll(me.GetWheelRotation() * g_scrollratewheel, 0);
         } else {
             CursorScroll(0, -me.GetWheelRotation() * g_scrollratewheel);

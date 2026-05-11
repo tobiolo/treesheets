@@ -522,7 +522,7 @@ struct Document {
         PickFont(dc, 0, 0, 0);
         hierarchysize = 0;
         for (Cell *p = currentdrawroot->parent; p != nullptr; p = p->parent) {
-            if (p->text.t.Len() != 0u) { hierarchysize += dc.GetCharHeight(); }
+            if (!p->text.t.IsEmpty()) { hierarchysize += dc.GetCharHeight(); }
         }
         hierarchysize += fgutter;
         layoutxs = currentdrawroot->sx + hierarchysize + fgutter;
@@ -542,7 +542,7 @@ struct Document {
         dc.SetTextForeground(*wxLIGHT_GREY);
         int i = 0;
         for (auto *p = currentdrawroot->parent; p != nullptr; p = p->parent) {
-            if (p->text.t.Len() != 0u) {
+            if (!p->text.t.IsEmpty()) {
                 int off = hierarchysize - dc.GetCharHeight() * ++i;
                 auto s = p->text.t;
                 if (static_cast<int>(s.Len()) > sys->defaultmaxcolwidth) {
@@ -624,7 +624,7 @@ struct Document {
         maxx = layoutxs;
         maxy = layoutys;
         scrollx = scrolly = 0;
-        po.FitThisSizeToPage(printscale != 0u ? wxSize(printscale, 1) : wxSize(maxx, maxy));
+        po.FitThisSizeToPage(printscale != 0U ? wxSize(printscale, 1) : wxSize(maxx, maxy));
         wxRect fitRect = po.GetLogicalPageRect();
         wxCoord xoff = (fitRect.width - maxx) / 2;
         wxCoord yoff = (fitRect.height - maxy) / 2;
@@ -1174,12 +1174,12 @@ struct Document {
 
             case A_SEARCHNEXT:
             case A_SEARCHPREV: {
-                if (sys->searchstring.Len() != 0u) {
+                if (!sys->searchstring.IsEmpty()) {
                     return SearchNext(false, true, action == A_SEARCHPREV);
                 }
                 if (auto *c = selected.GetCell()) {
                     auto s = c->text.ToText(0, selected, A_EXPTEXT);
-                    if (s.Len() == 0u) { return _("No text to search for."); }
+                    if (s.IsEmpty()) { return _("No text to search for."); }
                     sys->frame->filter->SetFocus();
                     sys->frame->filter->SetValue(s);
                     return wxEmptyString;
@@ -1233,7 +1233,7 @@ struct Document {
             case A_REPLACEONCE:
             case A_REPLACEONCEJ:
             case A_REPLACEALL: {
-                if (sys->searchstring.Len() == 0u) { return _("No search."); }
+                if (sys->searchstring.IsEmpty()) { return _("No search."); }
                 auto replaces = sys->frame->replaces->GetValue();
                 auto lreplaces =
                     sys->casesensitivesearch ? (wxString)wxEmptyString : replaces.Lower();
@@ -1438,7 +1438,7 @@ struct Document {
                 auto *fc = selected.GetFirst();
                 wxString ct = "";
                 loopallcellssel(ci, true) if (ci != fc && ci->text.t.Len()) ct += " " + ci->text.t;
-                if (!fc->HasContent() && !ct.Len() != 0u) {
+                if (!fc->HasContent() && ct.IsEmpty()) {
                     return _("There is no content to collapse.");
                 }
                 fc->parent->AddUndo(this);
@@ -2011,7 +2011,7 @@ struct Document {
             case A_LINKIMG:
             case A_LINKREV:
             case A_LINKIMGREV: {
-                if ((action == A_LINK || action == A_LINKREV) && cell->text.t.Len() != 0u) {
+                if ((action == A_LINK || action == A_LINKREV) && cell->text.t.IsEmpty()) {
                     return _("No text in this cell.");
                 }
                 if ((action == A_LINKIMG || action == A_LINKIMGREV) &&
@@ -2118,7 +2118,7 @@ struct Document {
         if (!root) {
             return wxEmptyString;  // fix crash when opening new doc
         }
-        if (sys->searchstring.Len() != 0u) { return _("No search string."); }
+        if (sys->searchstring.IsEmpty()) { return _("No search string."); }
         bool lastsel = true;
         Cell *next = root->FindNextSearchMatch(sys->searchstring, nullptr, selected.GetCell(),
                                                lastsel, reverse);

@@ -114,7 +114,7 @@ struct Evaluator {
         shared_ptr<Grid> g = left->grid;
         switch (op->args[0]) {
             case 'n':
-                if (t.t.Len() != 0u) {
+                if (!t.t.IsEmpty()) {
                     t.SetNum(op->runn(t.GetNum()));
                     return left;
                 } else if (g) {
@@ -126,7 +126,7 @@ struct Evaluator {
                 }
                 break;
             case 't':
-                if (t.t.Len() != 0u) {
+                if (!t.t.IsEmpty()) {
                     return op->runc(std::move(left));
                 } else if (g) {
                     foreachcellingrid(c, g) {
@@ -171,7 +171,7 @@ struct Evaluator {
         shared_ptr<Grid> g2 = right->grid;
         switch (op->args[0]) {
             case 'n':
-                if (t1.t.Len() != 0u && t2.t.Len() != 0u) {
+                if (!t1.t.IsEmpty() && !t2.t.IsEmpty()) {
                     t1.SetNum(op->runnn(t1.GetNum(), t2.GetNum()));
                 } else if (g1 && g2 && g1->xs == g2->xs && g1->ys == g2->ys) {
                     auto g = make_shared<Grid>(g1->xs, g1->ys);
@@ -184,7 +184,7 @@ struct Evaluator {
                         g->C(x, y) = std::move(res);
                     }
                     return c;
-                } else if (g1 && t2.t.Len() != 0u) {
+                } else if (g1 && !t2.t.IsEmpty()) {
                     foreachcellingrid(c, g1) {
                         unique_ptr<Cell> res = Execute(op, std::move(c), right.get());
                         res->SetParent(left.get());
@@ -200,7 +200,7 @@ struct Evaluator {
     unique_ptr<Cell> Execute(const Operation *op, unique_ptr<Cell> left, const Cell *a,
                              const Cell *b) {
         Text &l = left->text;
-        if (l.t.Len() == 0u) { return left; }
+        if (l.t.IsEmpty()) { return left; }
         bool cond = l.GetNum() != 0;
         return (cond ? a : b)->Eval(*this);
     }
