@@ -1068,16 +1068,19 @@ struct Grid {
     }
 
     int Flatten(int curdepth, int cury, Grid *g) {
-        foreachcell(c) if (c->grid) { cury = c->grid->Flatten(curdepth + 1, cury, g); }
-        else {
-            Cell *ic = c.get();
-            for (int i = curdepth; i >= 0; i--) {
-                Cell *dest = g->C(i, cury).get();
-                dest->text = ic->text;
-                dest->text.cell = dest;
-                ic = ic->parent;
+        foreachcell(c) {
+            if (c->grid) {
+                cury = c->grid->Flatten(curdepth + 1, cury, g);
+            } else {
+                Cell *ic = c.get();
+                for (int i = curdepth; i >= 0; i--) {
+                    Cell *dest = g->C(i, cury).get();
+                    dest->text = ic->text;
+                    dest->text.cell = dest;
+                    ic = ic->parent;
+                }
+                cury++;
             }
-            cury++;
         }
         return cury;
     }
