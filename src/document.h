@@ -445,7 +445,7 @@ struct Document {
         if (dir > 0) {
             if (!selected.grid) { return false; }
             auto *c = selected.GetCell();
-            CreatePath(c && c->grid ? c : selected.grid->cell, drawpath);
+            CreatePath(c != nullptr && c->grid ? c : selected.grid->cell, drawpath);
         } else if (dir < 0) {
             auto drawroot = WalkPath(drawpath);
             if (drawroot->grid && drawroot->grid->folded) {
