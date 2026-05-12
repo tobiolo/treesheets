@@ -1125,9 +1125,9 @@ struct Document {
             }
 
             case A_PRINTSCALE: {
-                printscale = (uint)::wxGetNumberFromUser(
+                printscale = static_cast<uint>(::wxGetNumberFromUser(
                     _("How many pixels wide should a page be? (0 for auto fit)"), _("scale:"),
-                    _("Set Print Scale"), 0, 0, 5000, sys->frame);
+                    _("Set Print Scale"), 0, 0, 5000, sys->frame));
                 return wxEmptyString;
             }
 
@@ -1157,7 +1157,7 @@ struct Document {
 
             case A_DEFBGCOL: {
                 auto oldbg = Background();
-                if (auto color = PickColor(sys->frame, oldbg); color != (uint)-1) {
+                if (auto color = PickColor(sys->frame, oldbg); color != static_cast<uint>(-1)) {
                     root->AddUndo(this);
                     loopallcells(c) {
                         if (c->cellcolor == oldbg &&
@@ -1171,7 +1171,8 @@ struct Document {
             }
 
             case A_DEFCURCOL: {
-                if (auto color = PickColor(sys->frame, sys->cursorcolor); color != (uint)-1) {
+                if (auto color = PickColor(sys->frame, sys->cursorcolor);
+                    color != static_cast<uint>(-1)) {
                     sys->cfg->Write("cursorcolor", sys->cursorcolor = color);
                     canvas->Refresh();
                 }
@@ -1212,7 +1213,7 @@ struct Document {
             case A_ROUND4:
             case A_ROUND5:
             case A_ROUND6:
-                sys->cfg->Write("roundness", long(sys->roundness = action - A_ROUND0));
+                sys->cfg->Write("roundness", static_cast<long>(sys->roundness = action - A_ROUND0));
                 canvas->Refresh();
                 return wxEmptyString;
 
@@ -1242,7 +1243,7 @@ struct Document {
                 if (sys->searchstring.IsEmpty()) { return _("No search."); }
                 auto replaces = sys->frame->replaces->GetValue();
                 auto lreplaces =
-                    sys->casesensitivesearch ? (wxString)wxEmptyString : replaces.Lower();
+                    sys->casesensitivesearch ? wxString(wxEmptyString) : replaces.Lower();
                 if (action == A_REPLACEALL) {
                     root->AddUndo(this);  // expensive?
                     root->FindReplaceAll(replaces, lreplaces);
@@ -1453,11 +1454,12 @@ struct Document {
                 fc->parent->AddUndo(this);
                 fc->text.t += ct;
                 loopallcellssel(ci, false) if (ci != fc) { ci->Clear(); }
-                Selection deletesel(selected.grid,
-                                    selected.x + int(selected.xs > 1),  // sidestep is possible?
-                                    selected.y + int(selected.ys > 1),
-                                    selected.xs - int(selected.xs > 1),
-                                    selected.ys - int(selected.ys > 1));
+                Selection deletesel(
+                    selected.grid,
+                    selected.x + static_cast<int>(selected.xs > 1),  // sidestep is possible?
+                    selected.y + static_cast<int>(selected.ys > 1),
+                    selected.xs - static_cast<int>(selected.xs > 1),
+                    selected.ys - static_cast<int>(selected.ys > 1));
                 selected.grid->MultiCellDeleteSub(this, deletesel);
                 SetSelect(Selection(selected.grid, selected.x, selected.y, 1, 1));
                 fc->ResetLayout();
@@ -1574,9 +1576,9 @@ struct Document {
                 }
                 int size = 1;
                 if (action == A_ENTERGRIDN &&
-                    (size = (int)::wxGetNumberFromUser(
-                         _("What subgrid size would you like to start with?"), _("size:"),
-                         _("New subgrid"), 10, 1, 25, sys->frame)) < 0) {
+                    (size = static_cast<int>(::wxGetNumberFromUser(
+                                _("What subgrid size would you like to start with?"), _("size:"),
+                                _("New subgrid"), 10, 1, 25, sys->frame)) < 0)) {
                     return _("No subgrid created.");
                 }
                 cell->AddUndo(this);
@@ -2381,8 +2383,10 @@ struct Document {
         ui->selpath = std::move(beforepath);
         tolist.push_back(std::move(ui));
 
-        if (undolistsizeatfullsave > (int)undolist.size()) { undolistsizeatfullsave = -1; }
-        modified = undolistsizeatfullsave != (int)undolist.size();
+        if (undolistsizeatfullsave > static_cast<int>(undolist.size())) {
+            undolistsizeatfullsave = -1;
+        }
+        modified = undolistsizeatfullsave != static_cast<int>(undolist.size());
     }
 
     void ColorChange(int which, int idx) {

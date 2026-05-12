@@ -61,9 +61,9 @@ struct System {
     int cursorcolor {0x00FF00};
 
     System(bool portable)
-        : cfg(portable
-                  ? (wxConfigBase *)new wxFileConfig("", "", wxGetCwd() + "/TreeSheets.ini", "", 0)
-                  : (wxConfigBase *)new wxConfig("TreeSheets")) {
+        : cfg(portable ? reinterpret_cast<wxConfigBase *>(
+                             new wxFileConfig("", "", wxGetCwd() + "/TreeSheets.ini", "", 0))
+                       : reinterpret_cast<wxConfigBase *>(new wxConfig("TreeSheets"))) {
         static const wxDash glpattern[] = {1, 3};
         pen_gridlines.SetDashes(2, glpattern);
         pen_gridlines.SetStyle(wxPENSTYLE_USER_DASH);
@@ -211,7 +211,7 @@ struct System {
             wxFFileInputStream fis(fn);
             wxDataInputStream dis(fis);
             if (!fis.IsOk()) {
-                for (int i = (int)frame->filehistory.GetCount() - 1; i >= 0; i--) {
+                for (int i = static_cast<int>(frame->filehistory.GetCount()) - 1; i >= 0; i--) {
                     if (frame->filehistory.GetHistoryFile(i) == filename) {
                         frame->filehistory.RemoveFileFromHistory(i);
                     }
@@ -244,7 +244,7 @@ struct System {
                         auto sc = versionlastloaded >= 19 ? dis.ReadDouble() : 1.0;
                         vector<uint8_t> image_data;
                         if (versionlastloaded >= 22) {
-                            auto imagelen = (size_t)dis.Read64();
+                            auto imagelen = static_cast<size_t>(dis.Read64());
                             image_data.resize(imagelen);
                             fis.Read(image_data.data(), imagelen);
                         } else {

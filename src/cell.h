@@ -153,7 +153,7 @@ struct Cell {
         }
 
         if (sys->darkennonmatchingcells && !text.IsInSearch()) {
-            auto *cp = (uchar *)&actualcellcolor;
+            auto *cp = reinterpret_cast<uchar *>(&actualcellcolor);
             loop(i, 4) cp[i] = cp[i] * 800 / 1000;
         }
 
@@ -162,7 +162,7 @@ struct Cell {
         }
         if (drawstyle != DS_GRID && HasContent() && !tiny) {
             if (actualcellcolor == parentcolor) {
-                auto *cp = (uchar *)&actualcellcolor;
+                auto *cp = reinterpret_cast<uchar *>(&actualcellcolor);
                 loop(i, 4) cp[i] = cp[i] * 850 / 1000;
             }
             dc.SetBrush(wxBrush(LightColor(actualcellcolor)));
@@ -328,7 +328,7 @@ struct Cell {
             str.Append(' ', indent);
             str.Append("</li>\n");
         } else if (format == A_EXPHTMLO && !text.t.IsEmpty()) {
-            wxString h = wxString("h") + wxChar('0' + indent / 2) + ">";
+            wxString h = wxString("h") + static_cast<wxChar>('0' + indent / 2) + ">";
             str.Prepend("<" + h);
             str.Append(' ', indent);
             str.Append("</" + h + "\n");

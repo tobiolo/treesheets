@@ -233,7 +233,7 @@ struct TreeSheetsScriptImpl : public ScriptInterface {
 static int64_t TreeSheetsLoader(string_view_nt absfilename, std::string *dest, int64_t start,
                                 int64_t len) {
     size_t l = 0;
-    auto *buf = (char *)loadfile(absfilename.c_str(), &l);
+    auto *buf = reinterpret_cast<char *>(loadfile(absfilename.c_str(), &l));
     if (buf == nullptr) { return -1; }
     dest->assign(buf, l);
     free(buf);

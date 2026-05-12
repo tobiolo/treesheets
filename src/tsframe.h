@@ -1152,7 +1152,8 @@ struct TSFrame : wxFrame {
                 }
                 break;
             case A_CUSTCOL: {
-                if (auto color = PickColor(sys->frame, sys->customcolor); color != (uint)-1) {
+                if (auto color = PickColor(sys->frame, sys->customcolor);
+                    color != static_cast<uint>(-1)) {
                     sys->cfg->Write("customcolor", sys->customcolor = color);
                 }
                 break;

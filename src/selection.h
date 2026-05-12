@@ -107,7 +107,7 @@ struct Selection {
         ys = abs(a.y - b.y) + 1;
     }
 
-    int MaxCursor() const { return int(GetCell()->text.t.Len()); }
+    int MaxCursor() const { return static_cast<int>(GetCell()->text.t.Len()); }
 
     static bool IsWordSep(wxChar ch) {
         // represents: !"#$%&'()*+,-./    :;<=>?@    [\]^    {|}~    `
