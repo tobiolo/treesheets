@@ -1575,11 +1575,11 @@ struct Document {
                     return wxEmptyString;
                 }
                 int size = 1;
-                if (action == A_ENTERGRIDN &&
-                    (size = static_cast<int>(::wxGetNumberFromUser(
-                                _("What subgrid size would you like to start with?"), _("size:"),
-                                _("New subgrid"), 10, 1, 25, sys->frame)) < 0) != 0) {
-                    return _("No subgrid created.");
+                if (action == A_ENTERGRIDN) {
+                    size = static_cast<int>(
+                        ::wxGetNumberFromUser(_("What subgrid size would you like to start with?"),
+                                              _("size:"), _("New subgrid"), 10, 1, 25, sys->frame));
+                    if (size == -1) { return _("No subgrid created."); }
                 }
                 cell->AddUndo(this);
                 cell->AddGrid(size, size);
