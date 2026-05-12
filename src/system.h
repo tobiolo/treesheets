@@ -61,9 +61,9 @@ struct System {
     int cursorcolor {0x00FF00};
 
     System(bool portable)
-        : cfg(portable ? reinterpret_cast<wxConfigBase *>(
+        : cfg(portable ? static_cast<wxConfigBase *>(
                              new wxFileConfig("", "", wxGetCwd() + "/TreeSheets.ini", "", 0))
-                       : reinterpret_cast<wxConfigBase *>(new wxConfig("TreeSheets"))) {
+                       : static_cast<wxConfigBase *>(new wxConfig("TreeSheets"))) {
         static const wxDash glpattern[] = {1, 3};
         pen_gridlines.SetDashes(2, glpattern);
         pen_gridlines.SetStyle(wxPENSTYLE_USER_DASH);
