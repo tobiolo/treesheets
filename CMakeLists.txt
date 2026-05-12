@@ -31,6 +31,8 @@ if(ENABLE_IPO)
         message(WARNING "IPO is not supported: ${output}")
     endif()
 endif()
+OPTION(ENABLE_CLANG_TIDY "Run clang-tidy linter" OFF)
+OPTION(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 
 ## Compiler-specific
 
@@ -83,12 +85,6 @@ if(ENABLE_LOBSTER)
     FetchContent_MakeAvailable(lobster)
 endif()
 
-### Options
-
-## Run clang-tidy linter
-
-OPTION(ENABLE_CLANG_TIDY "Run clang-tidy linter" OFF)
-
 ### Libraries (lobster, lobster-impl)
 
 ## lobster (script interpreter)
@@ -138,6 +134,15 @@ endif(ENABLE_LOBSTER)
 if(ENABLE_CLANG_TIDY)
     set_target_properties(TreeSheets PROPERTIES CXX_CLANG_TIDY "clang-tidy")
 endif(ENABLE_CLANG_TIDY)
+
+if(ENABLE_ASAN)
+    if(MSVC)
+        target_compile_options(TreeSheets PRIVATE /fsanitize=address)
+    else()
+        target_compile_options(TreeSheets PRIVATE -fsanitize=address -fno-omit-frame-pointer)
+        target_link_options(TreeSheets PRIVATE -fsanitize=address)
+    endif()
+endif(ENABLE_ASAN)
 
 if(APPLE)
     set_target_properties(TreeSheets PROPERTIES
