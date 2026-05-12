@@ -379,7 +379,7 @@ struct Text {
 
     void SetRelSize(Selection &s) {
         if (!t.IsEmpty() || cell->parent == nullptr) { return; }
-        int dd[] = {0, 1, 1, 0, 0, -1, -1, 0};
+        std::array dd = {0, 1, 1, 0, 0, -1, -1, 0};
         for (auto i = 0; i < 4; i++) {
             auto x = max(0, min(s.x + dd[i * 2], s.grid->xs - 1));
             auto y = max(0, min(s.y + dd[i * 2 + 1], s.grid->ys - 1));

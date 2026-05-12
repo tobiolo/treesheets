@@ -28,7 +28,7 @@ struct TSApp : wxApp {
         #endif
         ASSERT(wxUSE_UNICODE);
 
-        exename = GetExecutablePath();
+        exename = wxStandardPaths::Get().GetExecutablePath();
         exepath = wxFileName(exename).GetPath();
 
         #ifdef __WXMAC__
@@ -126,25 +126,6 @@ struct TSApp : wxApp {
     int OnExit() override {
         sys.reset();
         return 0;
-    }
-
-    wxString GetExecutablePath() {
-        wxString executablepath = argv[0];
-        #ifdef __WXMAC__
-            char path[PATH_MAX];
-            uint32_t size = sizeof(path);
-            if(_NSGetExecutablePath(path, &size) == 0) executablepath = path;
-        #elif defined(__WXGTK__)
-            // argv[0] could be relative, this is apparently a more robust way to get the
-            // full path.
-            char path[PATH_MAX];
-            auto len = readlink("/proc/self/exe", path, PATH_MAX - 1);
-            if (len >= 0) {
-                path[len] = 0;
-                executablepath = path;
-            }
-        #endif
-        return executablepath;
     }
 
     void SetupInternationalization() const {
