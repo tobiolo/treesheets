@@ -8,13 +8,13 @@ struct Grid {
     // xsize, ysize
     int xs;
     int ys;
-    int view_margin;
-    int view_grid_outer_spacing;
+    int view_margin {0};
+    int view_grid_outer_spacing {0};
     int user_grid_outer_spacing {g_usergridouterspacing_default};
-    int cell_margin;
+    int cell_margin {0};
     int bordercolor {g_bordercolor_default};
     bool horiz {false};
-    bool tinyborder;
+    bool tinyborder {false};
     bool folded {false};
 
     unique_ptr<Cell> &C(int x, int y) {

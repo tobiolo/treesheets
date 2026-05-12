@@ -1,5 +1,5 @@
 struct System {
-    TSFrame *frame;
+    TSFrame *frame {nullptr};
     wxString defaultfont {
         #ifdef WIN32
             "Lucida Sans Unicode"
@@ -511,7 +511,7 @@ struct System {
                 }
             }
             if (allrow) {
-                int desiredxs;
+                int desiredxs = 0;
                 loopv(i, nodes) {
                     vector<wxXmlNode *> ins;
                     auto xs = GetXMLNodes(nodes[i], ins);

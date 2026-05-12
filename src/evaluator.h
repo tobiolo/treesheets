@@ -3,7 +3,7 @@
 */
 struct Operation {
     virtual ~Operation() = default;
-    const char *args;
+    const char *args {};
 
     virtual unique_ptr<Cell> run() const { return nullptr; }
     virtual double runn(double a) const { return 0; }
@@ -22,7 +22,7 @@ using VariableMap = std::unordered_map<wxString, unique_ptr<Cell>>;
 struct Evaluator {
     OperationMap ops;
     VariableMap vars;
-    bool vert;
+    bool vert {false};
 
     ~Evaluator() = default;
 

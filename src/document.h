@@ -4,7 +4,7 @@ struct UndoItem {
     Selection sel;
     unique_ptr<Cell> clone;
     size_t estimated_size {0};
-    uintptr_t cloned_from;  // May be dead.
+    uintptr_t cloned_from {};  // May be dead.
     int generation {0};
 };
 
@@ -15,20 +15,20 @@ struct Document {
     Selection hover;
     Selection selected;
     Selection begindrag;
-    int isctrlshiftdrag;
-    int scrollx;
-    int scrolly;
-    int maxx;
-    int maxy;
+    int isctrlshiftdrag {0};
+    int scrollx {0};
+    int scrolly {0};
+    int maxx {0};
+    int maxy {0};
     int centerx {0};
     int centery {0};
-    int layoutxs;
-    int layoutys;
-    int hierarchysize;
+    int layoutxs {0};
+    int layoutys {0};
+    int hierarchysize {0};
     int fgutter {6};
-    int lasttextsize;
-    int laststylebits;
-    Cell *currentdrawroot;  // for use during Render() calls
+    int lasttextsize {0};
+    int laststylebits {0};
+    Cell *currentdrawroot {nullptr};  // for use during Render() calls
     vector<unique_ptr<UndoItem>> undolist;
     vector<unique_ptr<UndoItem>> redolist;
     vector<Selection> drawpath;
@@ -235,8 +235,8 @@ struct Document {
 
     void UpdateHover(wxReadOnlyDC &dc, int mx, int my) {
         ResetFont();
-        int x;
-        int y;
+        int x = 0;
+        int y = 0;
         canvas->CalcUnscrolledPosition(mx, my, &x, &y);
         prev = hover;
         hover = Selection();
@@ -251,8 +251,8 @@ struct Document {
     void ScrollIfSelectionOutOfView(const Selection &sel, int sx, int sy, int mx, int my) {
         if (!scaledviewingmode) {
             // required, since sizes of things may have been reset by the last editing operation
-            int canvasw;
-            int canvash;
+            int canvasw = 0;
+            int canvash = 0;
             canvas->GetClientSize(&canvasw, &canvash);
             if ((layoutys > canvash || layoutxs > canvasw) && sel.grid) {
                 wxRect r = sel.grid->GetRect(this, sel);
@@ -1536,7 +1536,7 @@ struct Document {
             case A_MARKVIEWH:
             case A_MARKVIEWV:
             case A_MARKCODE: {
-                int newcelltype;
+                int newcelltype = 0;
                 switch (action) {
                     case A_MARKDATA: newcelltype = CT_DATA; break;
                     case A_MARKVARD: newcelltype = CT_VARD; break;

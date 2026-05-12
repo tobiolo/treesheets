@@ -24,7 +24,7 @@ struct Text {
 
     double GetNum() const {
         std::wstringstream ss(t.ToStdWstring());
-        double r;
+        double r = NAN;
         ss >> r;
         return r;
     }
@@ -163,8 +163,8 @@ struct Text {
         for (;;) {
             auto curl = GetLine(i, maxcolwidth);
             if (curl.IsEmpty()) { break; }
-            int x;
-            int y;
+            int x = 0;
+            int y = 0;
             if (tiny != 0) {
                 x = static_cast<int>(curl.Len());
                 y = 1;

@@ -7,7 +7,7 @@ struct TSFrame : wxFrame {
     #ifdef ENABLE_LOBSTER
         wxFileHistory scripts {A_MAXACTION - A_SCRIPT, A_SCRIPT};
     #endif
-    wxFileSystemWatcher *watcher;
+    wxFileSystemWatcher *watcher {nullptr};
     wxAuiNotebook *notebook {nullptr};
     wxAuiManager aui {this};
     wxBitmap line_nw;
@@ -93,9 +93,9 @@ struct TSFrame : wxFrame {
                         wxTaskBarIconEventHandler(TSFrame::OnTBIDBLClick), nullptr, this);
         }
 
-        bool showtbar;
-        bool showsbar;
-        bool lefttabs;
+        bool showtbar = false;
+        bool showsbar = false;
+        bool lefttabs = false;
 
         sys->cfg->Read("showtbar", &showtbar, true);
         sys->cfg->Read("showsbar", &showsbar, true);
@@ -178,7 +178,7 @@ struct TSFrame : wxFrame {
         filemenu->AppendSeparator();
         MyAppend(filemenu, wxID_EXIT, _("&Exit") + "\tCTRL+Q", _("Quit this program"));
 
-        wxMenu *editmenu;
+        wxMenu *editmenu = nullptr;
         loop(twoeditmenus, 2) {
             auto *sizemenu = new wxMenu();
             MyAppend(sizemenu, A_INCSIZE,
@@ -751,10 +751,10 @@ struct TSFrame : wxFrame {
         const int boundary = 64;
         const int defx = disprect.width - 2 * boundary;
         const int defy = disprect.height - 2 * boundary;
-        int resx;
-        int resy;
-        int posx;
-        int posy;
+        int resx = 0;
+        int resy = 0;
+        int posx = 0;
+        int posy = 0;
         sys->cfg->Read("resx", &resx, defx);
         sys->cfg->Read("resy", &resy, defy);
         sys->cfg->Read("posx", &posx, boundary + disprect.x);
@@ -778,7 +778,7 @@ struct TSFrame : wxFrame {
         SetSize(resx, resy);
         Move(posx, posy);
 
-        bool ismax;
+        bool ismax = false;
         sys->cfg->Read("maximized", &ismax, true);
 
         aui.AddPane(
@@ -1045,12 +1045,12 @@ struct TSFrame : wxFrame {
     // event handling functions
 
     void OnMenu(wxCommandEvent &ce) {
-        wxTextCtrl *tc;
+        wxTextCtrl *tc = nullptr;
         auto *canvas = GetCurrentTab();
         if ((tc = filter) != nullptr && filter == wxWindow::FindFocus() ||
             (tc = replaces) != nullptr && replaces == wxWindow::FindFocus()) {
-            long from;
-            long to;
+            long from = 0;
+            long to = 0;
             tc->GetSelection(&from, &to);
             switch (ce.GetId()) {
                 #if defined(__WXMSW__) || defined(__WXMAC__)

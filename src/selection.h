@@ -142,7 +142,7 @@ struct Selection {
                 if (cursor == cursorend) { firstdx = dx; }
                 int &curs = firstdx < 0 ? cursor : cursorend;
                 int c = curs + dx;
-                wxChar ch;
+                wxChar ch = 0;
                 if (c >= 0 && c <= MaxCursor()) {
                     ch = GetCell()->text.t[min(c, curs)];
                     // TEXT_SPACE > TEXT_SEP > TEXT_CHAR > 0.
@@ -218,8 +218,8 @@ struct Selection {
                                 int maxcolwidth = GetCell()->parent->grid->colwidths[x];
 
                                 int i = 0;
-                                int laststart;
-                                int lastlen;
+                                int laststart = 0;
+                                int lastlen = 0;
                                 int nextoffset = -1;
                                 for (int l = 0;; l++) {
                                     int start = i;
