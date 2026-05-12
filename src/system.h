@@ -373,7 +373,7 @@ struct System {
         cfg->Write("lastopenfile", frame->GetCurrentTab()->doc->filename);
         auto namedfiles = 0;
         for(auto i: frame->notebook->GetPagesInDisplayOrder(frame->notebook->GetActiveTabCtrl())) {
-            auto *canvas = static_cast<TSCanvas *>(frame->notebook->GetPage(i));
+            auto *canvas = dynamic_cast<TSCanvas *>(frame->notebook->GetPage(i));
             if (!canvas->doc->filename.IsEmpty()) {
                 cfg->Write(wxString::Format("lastopenfile_%d", namedfiles), canvas->doc->filename);
                 namedfiles++;
@@ -386,7 +386,7 @@ struct System {
 
     void SaveCheck() const {
         loop(i, frame->notebook->GetPageCount()) {
-            static_cast<TSCanvas *>(frame->notebook->GetPage(i))
+            dynamic_cast<TSCanvas *>(frame->notebook->GetPage(i))
                 ->doc->AutoSave(!frame->IsActive(), i);
         }
     }
