@@ -1142,10 +1142,11 @@ struct TSFrame : wxFrame {
                 if (!IsFullScreen()) {
                     sys->cfg->Write("showtoolbar", sys->showtoolbar = ce.IsChecked());
                     for (const auto &name : GetToolbarPaneNames()) {
-                        if (sys->showtoolbar)
+                        if (sys->showtoolbar) {
                             aui.GetPane(name).Show();
-                        else
+                        } else {
                             aui.GetPane(name).Hide();
+                        }
                     }
                     aui.Update();
                 }

@@ -396,7 +396,7 @@ struct Document {
                 sys->cellclipboard = nullptr;
                 auto *clipboardtextdata = new wxDataObjectComposite();
                 wxString s = "";
-                loopallcellssel(c, true) if (!c->text.t.IsEmpty()) s += c->text.t + " ";
+                loopallcellssel(c, true) if (!c->text.t.IsEmpty()) { s += c->text.t + " "; }
                 if (!selected.TextEdit()) { sys->clipboardcopy = s; }
                 clipboardtextdata->Add(new wxTextDataObject(s));
                 if (wxTheClipboard->Open()) {
@@ -1161,8 +1161,9 @@ struct Document {
                     root->AddUndo(this);
                     loopallcells(c) {
                         if (c->cellcolor == oldbg &&
-                            (c->parent == nullptr || c->parent->cellcolor == color))
+                            (c->parent == nullptr || c->parent->cellcolor == color)) {
                             c->cellcolor = color;
+                        }
                     }
                     canvas->Refresh();
                 }
@@ -1248,7 +1249,7 @@ struct Document {
                     root->ResetChildren();
                     canvas->Refresh();
                 } else {
-                    loopallcellssel(c, true) if (c->text.IsInSearch()) c->AddUndo(this);
+                    loopallcellssel(c, true) if (c->text.IsInSearch()) { c->AddUndo(this); }
                     selected.grid->ReplaceStr(this, replaces, lreplaces, selected);
                     if (action == A_REPLACEONCEJ) { return SearchNext(false, true, false); }
                 }
@@ -1443,14 +1444,15 @@ struct Document {
                 }
                 auto *fc = selected.GetFirst();
                 wxString ct = "";
-                loopallcellssel(ci, true) if (ci != fc && !ci->text.t.IsEmpty()) ct +=
-                    " " + ci->text.t;
+                loopallcellssel(ci, true) if (ci != fc && !ci->text.t.IsEmpty()) {
+                    ct += " " + ci->text.t;
+                }
                 if (!fc->HasContent() && ct.IsEmpty()) {
                     return _("There is no content to collapse.");
                 }
                 fc->parent->AddUndo(this);
                 fc->text.t += ct;
-                loopallcellssel(ci, false) if (ci != fc) ci->Clear();
+                loopallcellssel(ci, false) if (ci != fc) { ci->Clear(); }
                 Selection deletesel(selected.grid,
                                     selected.x + int(selected.xs > 1),  // sidestep is possible?
                                     selected.y + int(selected.ys > 1),
@@ -1740,8 +1742,9 @@ struct Document {
                 loopallcellssel(c, true) switch (action) {
                     case A_RESETSIZE: c->text.relsize = 0; break;
                     case A_RESETWIDTH:
-                        for (int x = selected.x; x < selected.x + selected.xs; x++)
+                        for (int x = selected.x; x < selected.x + selected.xs; x++) {
                             selected.grid->colwidths[x] = sys->defaultmaxcolwidth;
+                        }
                         selected.grid->cell->ResetLayout();
                         break;
                     case A_RESETSTYLE: c->text.stylebits = 0; break;
@@ -1752,16 +1755,17 @@ struct Document {
                             c->textcolor = g_textcolor_default;
                         }
                         c->cellcolor = g_cellcolor_default;
-                        if (c->grid) c->grid->bordercolor = g_bordercolor_default;
+                        if (c->grid) { c->grid->bordercolor = g_bordercolor_default; }
                         break;
                     case A_LASTCELLCOLOR: c->cellcolor = sys->lastcellcolor; break;
                     case A_LASTTEXTCOLOR: c->textcolor = sys->lasttextcolor; break;
                     case A_LASTBORDCOLOR:
-                        if (c->parent != nullptr && c->parent->grid)
+                        if (c->parent != nullptr && c->parent->grid) {
                             c->parent->grid->bordercolor = sys->lastbordcolor;
+                        }
                         break;
                     case A_LASTIMAGE:
-                        if (sys->lastimage != nullptr) c->text.image = sys->lastimage;
+                        if (sys->lastimage != nullptr) { c->text.image = sys->lastimage; }
                         break;
                 }
                 selected.grid->cell->ResetChildren();
@@ -1827,8 +1831,9 @@ struct Document {
                 for (auto *image : imagestomanipulate) {
                     if (action == A_IMAGESCW) {
                         int pw = image->pixel_width;
-                        if (pw != 0)
+                        if (pw != 0) {
                             image->ImageRescale(static_cast<double>(v) / static_cast<double>(pw));
+                        }
                     } else if (action == A_IMAGESCP) {
                         image->ImageRescale(v / 100.0);
                     } else {
@@ -1853,8 +1858,9 @@ struct Document {
 
             case A_IMAGESVA: {
                 set<Image *> imagestosave;
-                loopallcellssel(c, true) if (auto *image = c->text.image)
+                loopallcellssel(c, true) if (auto *image = c->text.image) {
                     imagestosave.insert(image);
+                }
                 if (imagestosave.empty()) { return _("There are no images in the selection."); }
                 wxString filename = ::wxFileSelector(
                     _("Choose image file to save:"), "", "", "",
@@ -1931,7 +1937,7 @@ struct Document {
                     }
                     auto f = c->text.ToText(0, selected, A_EXPTEXT);
                     wxFileName fn(f);
-                    if (fn.IsRelative()) fn.MakeAbsolute(wxFileName(filename).GetPath());
+                    if (fn.IsRelative()) { fn.MakeAbsolute(wxFileName(filename).GetPath()); }
                     if (!wxLaunchDefaultApplication(fn.GetFullPath())) {
                         returnmessage = _("At least one file could not be opened.");
                     } else {
@@ -1943,7 +1949,7 @@ struct Document {
 
             case A_TAGADD: {
                 loopallcellssel(c, false) {
-                    if (c->text.t.IsEmpty()) continue;
+                    if (c->text.t.IsEmpty()) { continue; }
                     tags[c->text.t] = g_tagcolor_default;
                 }
                 canvas->Refresh();
@@ -1964,7 +1970,7 @@ struct Document {
                     ac->grid->Transpose();
                     SetSelect(ac->parent != nullptr ? ac->parent->grid->FindCell(ac) : Selection());
                 } else {
-                    loopallcellssel(c, false) if (c->grid) c->grid->Transpose();
+                    loopallcellssel(c, false) if (c->grid) { c->grid->Transpose(); }
                 }
                 ac->ResetChildren();
                 canvas->Refresh();
@@ -2438,7 +2444,7 @@ struct Document {
 
     wxString TagSet(int tagno) {
         int i = 0;
-        for (auto &[tag, color] : tags)
+        for (auto &[tag, color] : tags) {
             if (i++ == tagno) {
                 selected.grid->cell->AddUndo(this);
                 loopallcellssel(c, false) {
@@ -2450,6 +2456,7 @@ struct Document {
                 canvas->Refresh();
                 return wxEmptyString;
             }
+        }
         ASSERT(0);
         return wxEmptyString;
     }
@@ -2507,11 +2514,13 @@ struct Document {
     void ExportAllImages(const wxString &filename, Cell *exportroot) {
         std::set<Image *> exportimages;
         CollectCells(exportroot);
-        for (auto *c : itercells)
-            if (c->text.image != nullptr) exportimages.insert(c->text.image);
+        for (auto *c : itercells) {
+            if (c->text.image != nullptr) { exportimages.insert(c->text.image); }
+        }
         wxFileName fn(filename);
         auto directory = fn.GetPathWithSep();
-        for (auto *image : exportimages)
-            if (!image->ExportToDirectory(directory)) break;
+        for (auto *image : exportimages) {
+            if (!image->ExportToDirectory(directory)) { break; }
+        }
     }
 };

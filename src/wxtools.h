@@ -194,7 +194,7 @@ struct ImageDropdown : wxOwnerDrawnComboBox {
     }
 
     void FillBitmapVector(const wxString &directory) {
-        if (!bitmaps_display.empty()) bitmaps_display.resize(0);
+        if (!bitmaps_display.empty()) { bitmaps_display.resize(0); }
         auto filename = wxFindFirstFile(directory + "*.*");
         while (!filename.empty()) {
             wxBitmap bitmap;

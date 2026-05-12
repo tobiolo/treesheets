@@ -333,7 +333,7 @@ struct System {
             for (const auto &image : sys->imagelist) {
                 pool.enqueue(
                     [](auto img) {
-                        if (img->trefc) img->Display();
+                        if (img->trefc) { img->Display(); }
                     },
                     image.get());
             }
@@ -504,11 +504,12 @@ struct System {
             FillXML(c, nodes[0], attributestoo);
         } else {
             auto allrow = node->GetName() == "grid";
-            for (auto *node : nodes)
+            for (auto *node : nodes) {
                 if (node->GetName() != "row") {
                     allrow = false;
                     break;
                 }
+            }
             if (allrow) {
                 int desiredxs;
                 loopv(i, nodes) {
