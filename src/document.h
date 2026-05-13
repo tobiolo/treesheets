@@ -153,9 +153,14 @@ struct Document {
             wxFFileOutputStream fos(savefilename);
             if (!fos.IsOk()) {
                 if (!istempfile) {
-                    wxMessageBox(
-                        _("Error writing TreeSheets file! (try saving under new filename)."),
-                        savefilename.wx_str(), wxOK, sys->frame);
+                    auto answer =
+                        wxMessageBox(_("Error writing TreeSheets file! Would you like to "
+                                       "save at a different location?"),
+                                     savefilename, wxYES_NO | wxICON_QUESTION, sys->frame);
+                    switch (answer) {
+                        case wxYES: return Save(true);
+                        default: return _("Save cancelled.");
+                    }
                 }
                 return _("Error writing to file.");
             }
