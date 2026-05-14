@@ -1137,7 +1137,7 @@ struct TSFrame : wxFrame {
                 case A_ADDSCRIPT: {
                     wxArrayString filenames;
                     wxString path = app->GetDataPath("scripts/");
-                    if (!wxDirExists(path)) path = "";
+                    if (!wxDirExists(path) || !sys->scripts.IsEmpty()) path = "";
                     GetFilesFromUser(filenames, this, _("Please select Lobster script file(s):"),
                                      _("Lobster Files (*.lobster)|*.lobster|All Files (*.*)|*.*"),
                                      path);
