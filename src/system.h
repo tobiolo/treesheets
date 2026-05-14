@@ -11,6 +11,7 @@ struct System {
     wxString defaultlang {wxEmptyString};
     wxString searchstring;
     unique_ptr<wxConfigBase> cfg;
+    wxArrayString scripts;
     Evaluator evaluator;
     wxString clipboardcopy;
     unique_ptr<Cell> cellclipboard;
@@ -100,6 +101,9 @@ struct System {
         cfg->Read("lastcellcolor", &lastcellcolor, lastcellcolor);
         cfg->Read("lasttextcolor", &lasttextcolor, lasttextcolor);
         cfg->Read("lastbordcolor", &lastbordcolor, lastbordcolor);
+        #ifdef ENABLE_LOBSTER
+            ReadScripts();
+        #endif
         // fsw.Connect(wxID_ANY, wxID_ANY, wxEVT_FSWATCHER,
         // wxFileSystemWatcherEventHandler(System::OnFileChanged));
         colormask = (followdarkmode && wxSystemSettings::GetAppearance().IsDark()) ? 0x00FFFFFF : 0;
@@ -383,6 +387,26 @@ struct System {
         cfg->Write("numopenfiles", namedfiles);
         cfg->Flush();
     }
+
+    #ifdef ENABLE_LOBSTER
+        void RememberScripts() const {
+            cfg->Write("numscripts", scripts.GetCount());
+            for (auto i = 0; i < scripts.GetCount(); ++i) {
+                cfg->Write(wxString::Format("script_%d", i), scripts[i]);
+            }
+        }
+
+        void ReadScripts() {
+            auto numscripts = 0;
+            if (cfg->Read("numscripts", &numscripts)) {
+                loop(i, numscripts) {
+                    wxString script {};
+                    cfg->Read(wxString::Format("script_%d", i), &script);
+                    if (!script.IsEmpty()) { scripts.Add(script); }
+                }
+            }
+        }
+    #endif
 
     void SaveCheck() const {
         loop(i, frame->notebook->GetPageCount()) {
