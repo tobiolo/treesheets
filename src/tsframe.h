@@ -1136,8 +1136,11 @@ struct TSFrame : wxFrame {
             #ifdef ENABLE_LOBSTER
                 case A_ADDSCRIPT: {
                     wxArrayString filenames;
+                    wxString path = app->GetDataPath("scripts/");
+                    if (!wxDirExists(path)) path = "";
                     GetFilesFromUser(filenames, this, _("Please select Lobster script file(s):"),
-                                     _("Lobster Files (*.lobster)|*.lobster|All Files (*.*)|*.*"));
+                                     _("Lobster Files (*.lobster)|*.lobster|All Files (*.*)|*.*"),
+                                     path);
                     if (!filenames.IsEmpty()) {
                         for (auto &filename : filenames) { sys->scripts.Add(filename); }
                         UpdateScriptMenu(scriptmenu);

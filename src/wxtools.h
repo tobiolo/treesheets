@@ -246,8 +246,8 @@ static uint64_t CalculateHash(vector<uint8_t> &buffer) {
 }
 
 static void GetFilesFromUser(wxArrayString &filenames, wxWindow *parent, const wxString &title,
-                             const wxString &filter) {
-    wxFileDialog filedialog(parent, title, "", "", filter,
+                             const wxString &filter, const wxString &defaultdir = "") {
+    wxFileDialog filedialog(parent, title, defaultdir, "", filter,
                             wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_CHANGE_DIR | wxFD_MULTIPLE);
     if (filedialog.ShowModal() == wxID_OK) { filedialog.GetPaths(filenames); }
 }
