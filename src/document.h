@@ -37,6 +37,7 @@ struct Document {
     long lastmodsinceautosave {0};
     long undolistsizeatfullsave {0};
     long lastsave {wxGetLocalTime()};
+    bool skiplayout {false};
     bool modified {false};
     bool tmpsavesuccess {true};
     wxDataObjectComposite *dndobjc {new wxDataObjectComposite()};
@@ -581,7 +582,11 @@ struct Document {
     void Draw(wxDC &dc) {
         if (!root) { return; }
         canvas->GetClientSize(&maxx, &maxy);
-        Layout(dc);
+        if (!skiplayout) {
+            Layout(dc);
+        } else {
+            skiplayout = false;
+        }
         dc.SetBackground(wxBrush(LightColor(Background())));
         dc.Clear();
         double xscale = maxx / static_cast<double>(layoutxs);
@@ -1170,6 +1175,7 @@ struct Document {
                             c->cellcolor = color;
                         }
                     }
+                    skiplayout = true;
                     canvas->Refresh();
                 }
                 return wxEmptyString;
@@ -1179,6 +1185,7 @@ struct Document {
                 if (auto color = PickColor(sys->frame, sys->cursorcolor);
                     color != static_cast<uint>(-1)) {
                     sys->cfg->Write("cursorcolor", sys->cursorcolor = color);
+                    skiplayout = true;
                     canvas->Refresh();
                 }
                 return wxEmptyString;
@@ -1207,6 +1214,7 @@ struct Document {
                                         ? sys->frame->filter->GetValue()
                                         : sys->frame->filter->GetValue().Lower();
                 auto message = SearchNext(false, false, false);
+                skiplayout = true;
                 canvas->Refresh();
                 return message;
             }
@@ -1474,6 +1482,7 @@ struct Document {
 
             case wxID_SELECTALL:
                 selected.SelAll();
+                skiplayout = true;
                 canvas->Refresh();
                 sys->frame->UpdateStatus(selected, true);
                 return wxEmptyString;
@@ -1517,6 +1526,7 @@ struct Document {
                     }
 
                     sys->frame->UpdateStatus(selected, true);
+                    skiplayout = true;
                     canvas->Refresh();
                 } else if (action == A_SCLEFT || action == A_SCRIGHT) {
                     selected.Cursor(this, action - A_SCUP + A_UP, true, true);
@@ -2131,6 +2141,7 @@ struct Document {
                     case A_END: cell->text.HomeEnd(selected, false); break;
                 }
                 paintscrolltoselection = true;
+                skiplayout = true;
                 canvas->Refresh();
                 return wxEmptyString;
             }

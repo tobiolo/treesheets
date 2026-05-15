@@ -405,6 +405,7 @@ struct Selection {
             y = grid->ys - 1;
         }
         doc->paintscrolltoselection = true;
+        doc->skiplayout = true;
         doc->canvas->Refresh();
     }
 };

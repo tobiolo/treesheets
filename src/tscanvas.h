@@ -40,6 +40,7 @@ struct TSCanvas : public wxScrolledCanvas {
         if (me.LeftIsDown() || me.RightIsDown()) {
             if (me.AltDown() && me.ShiftDown()) {
                 doc->Copy(A_DRAGANDDROP);
+                doc->skiplayout = true;
                 Refresh();
             } else {
                 if (doc->isctrlshiftdrag != 0) {
@@ -48,12 +49,14 @@ struct TSCanvas : public wxScrolledCanvas {
                     if (doc->begindrag.Thin() || doc->selected.Thin()) {
                         doc->SetSelect(doc->hover);
                         doc->ResetCursor();
+                        doc->skiplayout = true;
                         Refresh();
                     } else {
                         Selection old = doc->selected;
                         doc->selected.Merge(doc->begindrag, doc->hover);
                         if (!(old == doc->selected)) {
                             doc->ResetCursor();
+                            doc->skiplayout = true;
                             Refresh();
                         }
                     }
@@ -80,6 +83,7 @@ struct TSCanvas : public wxScrolledCanvas {
         doc->UpdateHover(dc, mx, my);
         doc->SelectClick(right);
         sys->frame->UpdateStatus(doc->selected, true);
+        doc->skiplayout = true;
         Refresh();
     }
 
@@ -104,6 +108,7 @@ struct TSCanvas : public wxScrolledCanvas {
             doc->UpdateHover(dc, me.GetX(), me.GetY());
             doc->SelectUp();
             sys->frame->UpdateStatus(doc->selected, true);
+            doc->skiplayout = true;
             Refresh();
         }
     }
@@ -122,6 +127,7 @@ struct TSCanvas : public wxScrolledCanvas {
         doc->UpdateHover(dc, me.GetX(), me.GetY());
         doc->DoubleClick();
         sys->frame->UpdateStatus(doc->selected, true);
+        doc->skiplayout = true;
         Refresh();
     }
 
