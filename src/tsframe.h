@@ -1142,7 +1142,11 @@ struct TSFrame : wxFrame {
                                      _("Lobster Files (*.lobster)|*.lobster|All Files (*.*)|*.*"),
                                      path);
                     if (!filenames.IsEmpty()) {
-                        for (auto &filename : filenames) { sys->scripts.Add(filename); }
+                        for (auto &filename : filenames) {
+                            if (sys->scripts.Index(filename) == wxNOT_FOUND) {
+                                sys->scripts.Add(filename);
+                            }
+                        }
                         UpdateScriptMenu(scriptmenu);
                     }
                     break;
