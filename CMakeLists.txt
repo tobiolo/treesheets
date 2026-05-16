@@ -79,8 +79,8 @@ FetchContent_MakeAvailable(wxwidgets)
 if(ENABLE_LOBSTER)
     FetchContent_Declare(
         lobster
-        URL https://github.com/aardappel/lobster/archive/refs/tags/v2026.1.tar.gz
-        URL_HASH SHA256=fecd443c8bf03052f0eca3308bb8428e1f40292d61fb370e060e55094f853d67
+        URL https://github.com/aardappel/lobster/archive/refs/tags/v2026.2.tar.gz
+        URL_HASH SHA256=b926d34f55c94d3cd814d258ad96d319db711f231e33c9ddeaca0fb7095f587e
     )
     FetchContent_MakeAvailable(lobster)
 endif()
@@ -129,6 +129,7 @@ target_compile_definitions(TreeSheets PRIVATE "PACKAGE_VERSION=\"${TREESHEETS_VE
 
 if(ENABLE_LOBSTER)
     target_compile_definitions(TreeSheets PRIVATE "ENABLE_LOBSTER=1")
+    target_compile_definitions(lobster PRIVATE "LOBSTER_ENGINE=0")
 endif(ENABLE_LOBSTER)
 
 if(ENABLE_CLANG_TIDY)
