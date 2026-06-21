@@ -96,6 +96,7 @@ jobs:
     - name: cmake
       run: >
         cmake -S . -B _build 
+        -G "Visual Studio 18 2026" 
         -DCMAKE_BUILD_TYPE=Release 
         -DwxBUILD_SHARED=OFF 
         -DwxBUILD_INSTALL=OFF 
