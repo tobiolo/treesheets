@@ -28,7 +28,7 @@ struct Image {
 
     void DisplayScale(double scale) {
         display_scale /= scale;
-        #ifndef __WXMSW__
+        #if !(defined __WXMSW__) && !(defined ENABLE_WXPDFDOC) 
             bm_display.SetScaleFactor(display_scale);
         #else
             bm_display = wxNullBitmap;
@@ -37,7 +37,7 @@ struct Image {
 
     void ResetScale(double scale) {
         display_scale = scale;
-        #ifndef __WXMSW__
+        #if !(defined __WXMSW__) && !(defined ENABLE_WXPDFDOC)
             bm_display.SetScaleFactor(display_scale);
         #else
             bm_display = wxNullBitmap;
@@ -52,7 +52,7 @@ struct Image {
         // and callees must be thread-safe.
         if (!bm_display.IsOk()) {
             auto &it = imagetypes.at(type).first;
-            #ifndef __WXMSW__
+            #if (!defined __WXMSW__) && (!defined ENABLE_WXPDFDOC)
                 bm_display = ConvertBufferToWxBitmap(data, it);
                 pixel_width = bm_display.GetWidth();
                 bm_display.SetScaleFactor(display_scale);
