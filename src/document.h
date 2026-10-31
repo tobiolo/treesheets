@@ -126,6 +126,7 @@ struct Document {
     int layoutxs {0};
     int layoutys {0};
     int layouts {0};  // how often Layout() laid out cells, see RefreshSelect()
+    bool layoutstale {false};  // laid out once its tab is shown, see TSFrame::TabsReset()
     int hierarchysize {0};
     int fgutter {6};
     int lasttextsize {0};

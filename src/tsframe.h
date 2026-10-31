@@ -1985,7 +1985,15 @@ struct TSFrame : wxFrame {
         ActivateTab(dynamic_cast<TSCanvas *>(notebook->GetPage(nbe.GetSelection())));
     }
 
+    static void LayOutIfStale(Document *doc) {
+        if (!doc->layoutstale) { return; }
+        doc->layoutstale = false;
+        doc->UpdateLayout();
+        doc->ScrollIfSelectionOutOfView();
+    }
+
     void ActivateTab(TSCanvas *canvas) {
+        LayOutIfStale(canvas->doc.get());
         canvas->SetFocus();
         canvas->doc->UpdateFileName();
         UpdateStatus(canvas->doc->selected, true);
@@ -2412,11 +2420,13 @@ struct TSFrame : wxFrame {
 
     void TabsReset() const {
         if (notebook != nullptr) {
+            // Tabs that aren't shown are laid out once they are, see ActivateTab().
+            auto *current = GetCurrentTab();
             loop(i, notebook->GetPageCount()) {
-                auto *canvas = dynamic_cast<TSCanvas *>(notebook->GetPage(i));
-                canvas->doc->root->ResetChildren();
-                canvas->doc->UpdateLayout();
-                canvas->doc->ScrollIfSelectionOutOfView();
+                auto *doc = dynamic_cast<TSCanvas *>(notebook->GetPage(i))->doc.get();
+                doc->root->ResetChildren();
+                doc->layoutstale = true;
+                if (doc->canvas == current) { LayOutIfStale(doc); }
             }
             notebook->Refresh();
             notebook->Update();
