@@ -2375,7 +2375,7 @@ msgstr "Эта операция применима только к одной в
 msgid "Toggle &Fullscreen View"
 msgstr "Переключить Полноэкранный режим"
 
-msgid "Toggle &Scaled Presentation View"
+msgid "&Scaled Presentation View"
 msgstr ".. Масштабированное представление"
 
 msgid "Toggle Fold (CTRL+double-click)"

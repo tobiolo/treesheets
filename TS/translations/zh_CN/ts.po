@@ -2058,8 +2058,8 @@ msgstr "此操作仅对单个选定单元格有效。"
 msgid "Toggle &Fullscreen View"
 msgstr "切换全屏视图(&F)"
 
-msgid "Toggle &Scaled Presentation View"
-msgstr "切换缩放演示视图(&S)"
+msgid "&Scaled Presentation View"
+msgstr "缩放演示视图(&S)"
 
 msgid "Toggle Fold (CTRL+double-click)"
 msgstr "切换折叠 (CTRL+双击)"

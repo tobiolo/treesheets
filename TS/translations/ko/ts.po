@@ -2087,8 +2087,8 @@ msgstr "이 작업은 선택한 단일 셀에서만 작동합니다."
 msgid "Toggle &Fullscreen View"
 msgstr "전체 화면 보기 전환(&F)"
 
-msgid "Toggle &Scaled Presentation View"
-msgstr "크기 조정된 프레젠테이션 보기 전환(&S)"
+msgid "&Scaled Presentation View"
+msgstr "크기 조정된 프레젠테이션 보기(&S)"
 
 msgid "Toggle Fold (CTRL+double-click)"
 msgstr "접기 전환 (Ctrl+더블 클릭)"

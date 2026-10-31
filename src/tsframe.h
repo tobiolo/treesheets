@@ -721,9 +721,9 @@ struct TSFrame : wxFrame {
                  #endif
         MyAppend(viewmenu, A_SCALED,
                  #ifdef __WXMAC__
-                 _("Toggle &Scaled Presentation View") + "\tCTRL+F12", "", wxITEM_CHECK);
+                 _("&Scaled Presentation View") + "\tCTRL+F12", "", wxITEM_CHECK);
                  #else
-                 _("Toggle &Scaled Presentation View") + "\tF12", "", wxITEM_CHECK);
+                 _("&Scaled Presentation View") + "\tF12", "", wxITEM_CHECK);
                  #endif
         viewmenu->AppendSeparator();
         viewmenu->AppendSubMenu(scrollmenu, _("Scroll Sheet"));

@@ -2171,7 +2171,7 @@ msgstr ""
 msgid "Toggle &Fullscreen View"
 msgstr "Plein Ecran"
 
-msgid "Toggle &Scaled Presentation View"
+msgid "&Scaled Presentation View"
 msgstr "Affichage optimal"
 
 msgid "Toggle Fold (CTRL+double-click)"

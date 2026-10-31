@@ -2055,8 +2055,8 @@ msgstr "此操作僅對單一選取的儲存格有效。"
 msgid "Toggle &Fullscreen View"
 msgstr "切換全螢幕檢視(&F)"
 
-msgid "Toggle &Scaled Presentation View"
-msgstr "切換縮放簡報檢視(&S)"
+msgid "&Scaled Presentation View"
+msgstr "縮放簡報檢視(&S)"
 
 msgid "Toggle Fold (CTRL+double-click)"
 msgstr "切換摺疊（Ctrl + 按兩下）"

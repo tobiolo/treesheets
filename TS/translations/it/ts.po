@@ -2154,7 +2154,7 @@ msgstr "Questa operazione funziona solo su una singola cella selezionata."
 msgid "Toggle &Fullscreen View"
 msgstr "Attiva / disattiva visualizzazione a schermo"
 
-msgid "Toggle &Scaled Presentation View"
+msgid "&Scaled Presentation View"
 msgstr "Mostra presentazione a scalare e ridimensionata"
 
 msgid "Toggle Fold (CTRL+double-click)"

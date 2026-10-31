@@ -2173,8 +2173,8 @@ msgstr "Dieser Vorgang funktioniert nur mit einer einzigen ausgewählten Zelle."
 msgid "Toggle &Fullscreen View"
 msgstr "&Vollbildmodus ein-/ausschalten"
 
-msgid "Toggle &Scaled Presentation View"
-msgstr "&Skalierte Präsentationsansicht ein-/ausschalten"
+msgid "&Scaled Presentation View"
+msgstr "&Skalierte Präsentationsansicht"
 
 msgid "Toggle Fold (CTRL+double-click)"
 msgstr "Ein-/Ausklappen (STRG+Doppelklick)"

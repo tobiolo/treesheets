@@ -2113,8 +2113,8 @@ msgstr "この操作は単一の選択セルのみで機能します。"
 msgid "Toggle &Fullscreen View"
 msgstr "全画面表示を切り替え(&F)"
 
-msgid "Toggle &Scaled Presentation View"
-msgstr "スケール表示プレゼンテーションビューを切り替え(&S)"
+msgid "&Scaled Presentation View"
+msgstr "スケール表示プレゼンテーションビュー(&S)"
 
 msgid "Toggle Fold (CTRL+double-click)"
 msgstr "折りたたみを切り替え (Ctrl+ダブルクリック)"

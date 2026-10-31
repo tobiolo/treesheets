@@ -2106,8 +2106,8 @@ msgstr "Thao tác này chỉ hoạt động trên một ô được chọn duy n
 msgid "Toggle &Fullscreen View"
 msgstr "Bật/tắt chế độ toàn màn hình (&F)"
 
-msgid "Toggle &Scaled Presentation View"
-msgstr "Bật/tắt chế độ trình diễn theo tỷ lệ (&S)"
+msgid "&Scaled Presentation View"
+msgstr "Chế độ trình diễn theo tỷ lệ (&S)"
 
 msgid "Toggle Fold (CTRL+double-click)"
 msgstr "Bật/tắt gấp (Fold) (CTRL+nhấp đúp)"

@@ -2158,8 +2158,8 @@ msgstr "Essa operação funciona em uma única célula selecionada."
 msgid "Toggle &Fullscreen View"
 msgstr "Entrar/Sair da Visualização em Tela &Cheia"
 
-msgid "Toggle &Scaled Presentation View"
-msgstr "Entrar/Sair da Visualização de Apresentação em &Escala"
+msgid "&Scaled Presentation View"
+msgstr "Visualização de Apresentação em &Escala"
 
 msgid "Toggle Fold (CTRL+double-click)"
 msgstr "Dobrar/Desdobrar (CTRL+clique duplo)"
