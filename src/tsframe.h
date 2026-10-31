@@ -721,9 +721,9 @@ struct TSFrame : wxFrame {
                  #endif
         MyAppend(viewmenu, A_SCALED,
                  #ifdef __WXMAC__
-                 _("Toggle &Scaled Presentation View") + "\tCTRL+F12");
+                 _("Toggle &Scaled Presentation View") + "\tCTRL+F12", "", wxITEM_CHECK);
                  #else
-                 _("Toggle &Scaled Presentation View") + "\tF12");
+                 _("Toggle &Scaled Presentation View") + "\tF12", "", wxITEM_CHECK);
                  #endif
         viewmenu->AppendSeparator();
         viewmenu->AppendSubMenu(scrollmenu, _("Scroll Sheet"));
@@ -1024,6 +1024,10 @@ struct TSFrame : wxFrame {
         Bind(wxEVT_UPDATE_UI, &TSFrame::OnUpdateBorder, this, A_BORD0, A_BORD5);
         Bind(wxEVT_UPDATE_UI, &TSFrame::OnUpdateNoteOrLink, this, A_EDITNOTE);
         Bind(wxEVT_UPDATE_UI, &TSFrame::OnUpdateNoteOrLink, this, A_HYPERLINK);
+        Bind(wxEVT_UPDATE_UI, [this](wxUpdateUIEvent &ue) {
+            auto *canvas = GetCurrentTab();
+            ue.Check(canvas != nullptr && canvas->doc->scaledviewingmode);
+        }, A_SCALED);
         #if wxUSE_WEBREQUEST
             Bind(wxEVT_WEBREQUEST_STATE, &TSFrame::OnUpdateCheck, this, A_CHECKUPDATES);
         #endif
