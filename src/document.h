@@ -2674,7 +2674,6 @@ struct Document {
 
             case A_SCALED:
                 scaledviewingmode = !scaledviewingmode;
-                root->ResetChildren();
                 UpdateLayout();
                 canvas->Refresh();
                 return scaledviewingmode ? _("Now viewing TreeSheet to fit to the screen exactly, press F12 to return to normal.")
