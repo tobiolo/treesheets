@@ -101,7 +101,7 @@ msgid "&Flatten"
 msgstr "Làm &phẳng"
 
 msgid "&Formula"
-msgstr ""
+msgstr "Công thức (&F)"
 
 msgid "&Grid Reorganization"
 msgstr "Tổ chức lại &lưới"
@@ -641,7 +641,7 @@ msgid "Copy As Continuous Text"
 msgstr "Sao chép dưới dạng văn bản liên tục"
 
 msgid "Copy as &SVG"
-msgstr ""
+msgstr "Sao chép dưới dạng SVG (&S)"
 
 msgid "Copy selection"
 msgstr "Sao chép vùng chọn"
@@ -651,7 +651,7 @@ msgid ""
 msgstr "Sao chép hình ảnh của ô đã chọn vào khay nhớ tạm, với kích thước gốc"
 
 msgid "Copy the selection as SVG vector graphics"
-msgstr ""
+msgstr "Sao chép vùng chọn dưới dạng đồ họa vector SVG"
 
 msgid "Copy with &Images"
 msgstr "Sao chép kèm theo hình &ảnh"
@@ -1064,10 +1064,10 @@ msgid "Font..."
 msgstr "Phông chữ..."
 
 msgid "Formula "
-msgstr ""
+msgstr "Công thức "
 
 msgid "Formula bar"
-msgstr ""
+msgstr "Thanh công thức"
 
 msgid "Found an image type that is not defined in this program."
 msgstr "Tìm thấy loại hình ảnh không được định nghĩa trong chương trình này."
@@ -1756,7 +1756,7 @@ msgid "S&cript"
 msgstr "Kị&ch bản"
 
 msgid "SVG copied to clipboard"
-msgstr ""
+msgstr "Đã sao chép SVG vào khay nhớ tạm"
 
 msgid "Save &As..."
 msgstr "Lưu dưới dạng (&A)..."

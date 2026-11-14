@@ -106,7 +106,7 @@ msgid "&Flatten"
 msgstr "扁平化(&F)"
 
 msgid "&Formula"
-msgstr ""
+msgstr "公式(&F)"
 
 msgid "&Grid Reorganization"
 msgstr "网格重组(&G)"
@@ -637,7 +637,7 @@ msgid "Copy As Continuous Text"
 msgstr "复制为连续文本"
 
 msgid "Copy as &SVG"
-msgstr ""
+msgstr "复制为 SVG(&S)"
 
 msgid "Copy selection"
 msgstr "复制所选内容"
@@ -647,7 +647,7 @@ msgid ""
 msgstr "将所选单元格的图像以原始尺寸复制到剪贴板"
 
 msgid "Copy the selection as SVG vector graphics"
-msgstr ""
+msgstr "将所选内容复制为 SVG 矢量图形"
 
 msgid "Copy with &Images"
 msgstr "带图像复制(&I)"
@@ -1041,10 +1041,10 @@ msgid "Font..."
 msgstr "字体..."
 
 msgid "Formula "
-msgstr ""
+msgstr "公式 "
 
 msgid "Formula bar"
-msgstr ""
+msgstr "公式栏"
 
 msgid "Found an image type that is not defined in this program."
 msgstr "发现此程序未定义的图像类型。"
@@ -1712,7 +1712,7 @@ msgid "S&cript"
 msgstr "脚本(&C)"
 
 msgid "SVG copied to clipboard"
-msgstr ""
+msgstr "SVG 已复制到剪贴板"
 
 msgid "Save &As..."
 msgstr "另存为(&A)..."

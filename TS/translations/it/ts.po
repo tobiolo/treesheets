@@ -105,7 +105,7 @@ msgid "&Flatten"
 msgstr "&Appiattire"
 
 msgid "&Formula"
-msgstr ""
+msgstr "&Formula"
 
 msgid "&Grid Reorganization"
 msgstr "&Riorganizzazione della griglia"
@@ -649,7 +649,7 @@ msgid "Copy As Continuous Text"
 msgstr "Copia come testo continuo"
 
 msgid "Copy as &SVG"
-msgstr ""
+msgstr "Copia come &SVG"
 
 msgid "Copy selection"
 msgstr "Copia selezione"
@@ -661,7 +661,7 @@ msgstr ""
 "originali"
 
 msgid "Copy the selection as SVG vector graphics"
-msgstr ""
+msgstr "Copia la selezione come grafica vettoriale SVG"
 
 msgid "Copy with &Images"
 msgstr "Copia con &immagini"
@@ -1088,10 +1088,10 @@ msgid "Font..."
 msgstr "Carattere..."
 
 msgid "Formula "
-msgstr ""
+msgstr "Formula "
 
 msgid "Formula bar"
-msgstr ""
+msgstr "Barra della formula"
 
 msgid "Found an image type that is not defined in this program."
 msgstr "È stato trovato un tipo di immagine non definito in questo programma."
@@ -1794,7 +1794,7 @@ msgid "S&cript"
 msgstr "S&cript"
 
 msgid "SVG copied to clipboard"
-msgstr ""
+msgstr "SVG copiato negli appunti"
 
 msgid "Save &As..."
 msgstr "Salva &come..."

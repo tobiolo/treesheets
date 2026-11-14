@@ -106,7 +106,7 @@ msgid "&Flatten"
 msgstr "フラット化(&F)"
 
 msgid "&Formula"
-msgstr ""
+msgstr "数式(&F)"
 
 msgid "&Grid Reorganization"
 msgstr "グリッド再構成(&G)"
@@ -645,7 +645,7 @@ msgid "Copy As Continuous Text"
 msgstr "連続テキストとしてコピー"
 
 msgid "Copy as &SVG"
-msgstr ""
+msgstr "SVG としてコピー(&S)"
 
 msgid "Copy selection"
 msgstr "選択範囲をコピー"
@@ -655,7 +655,7 @@ msgid ""
 msgstr "選択したセルの画像を元のサイズでクリップボードにコピーします"
 
 msgid "Copy the selection as SVG vector graphics"
-msgstr ""
+msgstr "選択範囲を SVG ベクター画像としてコピーします"
 
 msgid "Copy with &Images"
 msgstr "画像付きでコピー(&I)"
@@ -1070,10 +1070,10 @@ msgid "Font..."
 msgstr "フォント..."
 
 msgid "Formula "
-msgstr ""
+msgstr "数式 "
 
 msgid "Formula bar"
-msgstr ""
+msgstr "数式バー"
 
 msgid "Found an image type that is not defined in this program."
 msgstr "このプログラムで定義されていない画像タイプが見つかりました。"
@@ -1760,7 +1760,7 @@ msgid "S&cript"
 msgstr "スクリプト(&C)"
 
 msgid "SVG copied to clipboard"
-msgstr ""
+msgstr "SVG をクリップボードにコピーしました"
 
 msgid "Save &As..."
 msgstr "名前を付けて保存(&A)..."
